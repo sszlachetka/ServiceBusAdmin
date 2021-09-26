@@ -1,11 +1,11 @@
 ﻿using System;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace AzureServiceBusExplorer.Topic
+namespace ServiceBusAdmin.Topic
 {
     [Command]
     [Subcommand(typeof(ListCommand))]
-    public class TopicCommand : AsbeCommandBase
+    public class TopicCommand : SbaCommandBase
     {
     }
 }

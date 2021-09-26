@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureServiceBusExplorer", "AzureServiceBusExplorer\AzureServiceBusExplorer.csproj", "{A65BEF4A-3E34-4158-A1F2-BEB219563F88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBusAdmin", "ServiceBusAdmin\ServiceBusAdmin.csproj", "{A65BEF4A-3E34-4158-A1F2-BEB219563F88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

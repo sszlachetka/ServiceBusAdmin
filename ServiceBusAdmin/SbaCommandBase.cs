@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus.Administration;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace AzureServiceBusExplorer
+namespace ServiceBusAdmin
 {
     [HelpOption("-?|--help")]
-    public class AsbeCommandBase
+    public class SbaCommandBase
     {
-        private const string ConnectionStringEnvironmentVariable = "ASBE_CONNECTION_STRING";
+        private const string ConnectionStringEnvironmentVariable = "SBA_CONNECTION_STRING";
         private const string ConnectionStringOption = "-c|--connection-string";
 
         [Option(ConnectionStringOption)]

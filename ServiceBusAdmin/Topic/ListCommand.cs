@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace AzureServiceBusExplorer.Topic
+namespace ServiceBusAdmin.Topic
 {
     [Command(Description = "Lists all topics")]
-    public class ListCommand: AsbeCommandBase
+    public class ListCommand: SbaCommandBase
     {
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {

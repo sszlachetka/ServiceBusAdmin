@@ -5,11 +5,11 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace AzureServiceBusExplorer
 {
-    [HelpOption("--help")]
+    [HelpOption("-?|--help")]
     public class AsbeCommandBase
     {
         private const string ConnectionStringEnvironmentVariable = "ASBE_CONNECTION_STRING";
-        private const string ConnectionStringOption = "-c";
+        private const string ConnectionStringOption = "-c|--connection-string";
 
         [Option(ConnectionStringOption)]
         public string ConnectionString { get; set; }

@@ -6,7 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 namespace AzureServiceBusExplorer
 {
     [Command("asbe")]
-    [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
+    [VersionOptionFromMember("-v|--version", MemberName = nameof(GetVersion))]
     [Subcommand(
         typeof(TopicCommand))]
     public class Asbe : AsbeCommandBase

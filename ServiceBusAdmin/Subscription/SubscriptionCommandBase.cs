@@ -10,6 +10,7 @@ namespace ServiceBusAdmin.Subscription
 
         private const string FullSubscriptionArgumentDescription = "Must be in following format <topic name>/<subscription name>";
         
+        [Required]
         [ValidFullSubscriptionNameAttribute]
         [Argument(0, FullSubscriptionArgumentName, FullSubscriptionArgumentDescription)]
         protected string FullSubscriptionName { get; set; }

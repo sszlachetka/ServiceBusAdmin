@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -19,6 +20,13 @@ namespace ServiceBusAdmin
             app.ShowHelp();
 
             return Task.FromResult(1);
+        }
+        
+        protected ServiceBusClient ServiceBusClient(CommandLineApplication app)
+        {
+            var connectionString = GetConnectionString(app);
+
+            return new ServiceBusClient(connectionString);
         }
 
         protected ServiceBusAdministrationClient AdministrationClient(CommandLineApplication app)

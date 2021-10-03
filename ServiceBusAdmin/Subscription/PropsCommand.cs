@@ -9,8 +9,6 @@ namespace ServiceBusAdmin.Subscription
     {
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
-            if (string.IsNullOrWhiteSpace(FullSubscriptionName)) return await base.OnExecute(app);
-
             var admin = AdministrationClient(app);
             var (topic, subscription) = ParseFullSubscriptionName();
             var response = await admin.GetSubscriptionRuntimePropertiesAsync(topic, subscription);

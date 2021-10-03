@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.Subscription;
 using ServiceBusAdmin.Topic;
 
 namespace ServiceBusAdmin
@@ -8,7 +9,8 @@ namespace ServiceBusAdmin
     [Command("sba")]
     [VersionOptionFromMember("-v|--version", MemberName = nameof(GetVersion))]
     [Subcommand(
-        typeof(TopicCommand))]
+        typeof(TopicCommand),
+        typeof(SubscriptionCommand))]
     public class Sba : SbaCommandBase
     {
         public static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Sba>(args);

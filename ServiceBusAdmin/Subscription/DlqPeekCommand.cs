@@ -6,8 +6,8 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin.Subscription
 {
-    [Command("peek-dlq")]
-    public class PeekDlqCommand : SubscriptionCommandBase
+    [Command("dlq-peek")]
+    public class DlqPeekCommand : SubscriptionCommandBase
     {
         [Option("-o|--output-format", Description = "Provide index-based string format where: 0 - body, 1 - sequence number, 2 - Id")]
         public string OutputFormat { get; set; } = "{0}";
@@ -17,6 +17,7 @@ namespace ServiceBusAdmin.Subscription
 
         [Option("-t|--top", Description = "Count of messages to peek")]
         public int Top { get; set; } = 10;
+
         protected override async Task<int> OnExecute(CommandLineApplication app)
         {
             var (topic, subscription) = ParseFullSubscriptionName();
@@ -29,12 +30,11 @@ namespace ServiceBusAdmin.Subscription
                     SubQueue = SubQueue.DeadLetter
                 });
 
+            var encoding = Encoding.GetEncoding(EncodingName);
             var peeked = 0;
             ServiceBusReceivedMessage message;
             while (peeked < Top && (message = await receiver.PeekMessageAsync()) != null)
             {
-                var encoding = Encoding.GetEncoding(EncodingName);
-
                 Console.WriteLine(OutputFormat, encoding.GetString(message.Body), message.SequenceNumber,
                     message.MessageId);
 

@@ -12,10 +12,10 @@ namespace ServiceBusAdmin.Subscription
             var admin = AdministrationClient(app);
             var (topic, subscription) = ParseFullSubscriptionName();
             var response = await admin.GetSubscriptionRuntimePropertiesAsync(topic, subscription);
-            var runtimeProperties = response.Value;
+            var props = response.Value;
 
-            Console.WriteLine($"ActiveMessageCount\t{runtimeProperties.ActiveMessageCount}");
-            Console.WriteLine($"DeadLetterMessageCount\t{runtimeProperties.DeadLetterMessageCount}");
+            Console.WriteLine($"ActiveMessageCount\t{props.ActiveMessageCount}");
+            Console.WriteLine($"DeadLetterMessageCount\t{props.DeadLetterMessageCount}");
 
             return 0;
         }

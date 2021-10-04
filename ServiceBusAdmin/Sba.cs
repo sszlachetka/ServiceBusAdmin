@@ -9,6 +9,7 @@ namespace ServiceBusAdmin
     [Command("sba")]
     [VersionOptionFromMember("-v|--version", MemberName = nameof(GetVersion))]
     [Subcommand(
+        typeof(PropsCommand),
         typeof(TopicCommand),
         typeof(SubscriptionCommand))]
     public class Sba : SbaCommandBase

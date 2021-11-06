@@ -1,23 +1,33 @@
-using System;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Subscription
 {
-    [Command]
-    public class PropsCommand : SubscriptionCommandBase
+    public class PropsCommand : SebaCommand
     {
-        protected override async Task<int> OnExecute(CommandLineApplication app)
+        private CommandArgument<string>? _argument;
+
+        public PropsCommand(SebaContext context) : base(context)
         {
-            var admin = AdministrationClient(app);
-            var (topic, subscription) = ParseFullSubscriptionName();
-            var response = await admin.GetSubscriptionRuntimePropertiesAsync(topic, subscription);
-            var props = response.Value;
+        }
 
-            Console.WriteLine($"ActiveMessageCount\t{props.ActiveMessageCount}");
-            Console.WriteLine($"DeadLetterMessageCount\t{props.DeadLetterMessageCount}");
+        protected override void ConfigureArgsAndOptions(CommandLineApplication command)
+        {
+            _argument = command.ConfigureFullSubscriptionNameArgument();
+        }
 
-            return 0;
+        protected override async Task ExecuteAsync(CommandLineApplication command, CancellationToken cancellationToken)
+        {
+            var (topic, subscription) = _argument.ParseFullSubscriptionName();
+            var client = CreateServiceBusClient();
+
+            var (activeMessageCount, deadLetterMessageCount) =
+                await client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);
+
+            Output.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
+            Output.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");
         }
     }
 }

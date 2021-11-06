@@ -2,14 +2,16 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin.Subscription
 {
-    [Command]
-    [Subcommand(
-        typeof(PropsCommand),
-        typeof(PeekCommand),
-        typeof(DlqPeekCommand),
-        typeof(DlqResubmitCommand)
-    )]
-    public class SubscriptionCommand : SbaCommandBase
+    public class SubscriptionCommand : SebaCommand
     {
+        public SubscriptionCommand(SebaContext context) : base(context)
+        {
+        }
+
+        protected override void ConfigureSubCommands(CommandLineApplication command)
+        {
+            command.Configure(new PropsCommand(Context));
+            command.Configure(new PeekCommand(Context));
+        }
     }
 }

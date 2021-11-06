@@ -1,11 +1,16 @@
-﻿using System;
-using McMaster.Extensions.CommandLineUtils;
+﻿using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin.Topic
 {
-    [Command]
-    [Subcommand(typeof(ListCommand))]
-    public class TopicCommand : SbaCommandBase
+    public class TopicCommand : SebaCommand
     {
+        public TopicCommand(SebaContext context) : base(context)
+        {
+        }
+
+        protected override void ConfigureSubCommands(CommandLineApplication command)
+        {
+            command.Configure(new ListCommand(Context));
+        }
     }
 }

@@ -1,22 +1,25 @@
-﻿using System;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin.Topic
 {
-    [Command(Description = "Lists all topics")]
-    public class ListCommand: SbaCommandBase
+    public class ListCommand: SebaCommand
     {
-        protected override async Task<int> OnExecute(CommandLineApplication app)
+        public ListCommand(SebaContext context) : base(context)
         {
-            var admin = AdministrationClient(app);
-            var topics = admin.GetTopicsAsync();
-            await foreach (var topic in topics)
-            {
-                Console.WriteLine(topic.Name);
-            }
+        }
 
-            return 0;
+        protected override string Description => "Lists all topics";
+
+        protected override async Task ExecuteAsync(CommandLineApplication command, CancellationToken cancellationToken)
+        {
+            var client = CreateServiceBusClient();
+            var topicsNames = await client.GetTopicsNames(cancellationToken);
+            foreach (var topicName in topicsNames)
+            {
+                Output.WriteLine(topicName);
+            }
         }
     }
 }

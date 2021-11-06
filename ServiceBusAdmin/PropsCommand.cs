@@ -1,21 +1,21 @@
-using System;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin
 {
-    [Command]
-    public class PropsCommand : SbaCommandBase
+    public class PropsCommand : SebaCommand
     {
-        protected override async Task<int> OnExecute(CommandLineApplication app)
+        public PropsCommand(SebaContext context) : base(context)
         {
-            var admin = AdministrationClient(app);
-            var response = await admin.GetNamespacePropertiesAsync();
-            var props = response.Value;
+        }
+        
+        protected override async Task ExecuteAsync(CommandLineApplication command, CancellationToken cancellationToken)
+        {
+            var client = CreateServiceBusClient();
+            var name = await client.GetNamespaceName(cancellationToken);
 
-            Console.WriteLine($"Namespace\t{props.Name}");
-
-            return 0;
+            Output.WriteLine($"Namespace\t{name}");
         }
     }
 }

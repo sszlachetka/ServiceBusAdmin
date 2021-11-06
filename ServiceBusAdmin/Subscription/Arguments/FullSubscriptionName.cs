@@ -9,17 +9,18 @@ namespace ServiceBusAdmin.Subscription.Arguments
         private const string Name = "Full subscription name";
         private const string Description = "must be provided in following format <topic name>/<subscription name>";
 
-        public static CommandArgument<string> ConfigureFullSubscriptionNameArgument(this CommandLineApplication command)
+        public static Func<(string topic, string subscription)> ConfigureFullSubscriptionNameArgument(
+            this CommandLineApplication command)
         {
-            return command
+            var argument = command
                 .Argument<string>(Name, Description)
                 .IsRequired();
+
+            return () => ParseFullSubscriptionName(argument);
         }
 
-        public static (string topic, string subscription) ParseFullSubscriptionName(this CommandArgument<string>? argument)
+        private static (string topic, string subscription) ParseFullSubscriptionName(this CommandArgument<string> argument)
         {
-            if (argument == null) throw new ArgumentNullException(nameof(argument));
-
             var value = Validate(argument);
             var topicSubscription = value.Split('/');
 

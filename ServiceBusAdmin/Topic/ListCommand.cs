@@ -6,13 +6,12 @@ namespace ServiceBusAdmin.Topic
 {
     public class ListCommand: SebaCommand
     {
-        public ListCommand(SebaContext context) : base(context)
+        public ListCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            Command.Description = "Lists all topics";
         }
 
-        protected override string Description => "Lists all topics";
-
-        protected override async Task ExecuteAsync(CommandLineApplication command, CancellationToken cancellationToken)
+        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
             var client = CreateServiceBusClient();
             var topicsNames = await client.GetTopicsNames(cancellationToken);
@@ -20,6 +19,8 @@ namespace ServiceBusAdmin.Topic
             {
                 Output.WriteLine(topicName);
             }
+
+            return SebaResult.Success;
         }
     }
 }

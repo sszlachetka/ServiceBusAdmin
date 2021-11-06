@@ -5,19 +5,14 @@ namespace ServiceBusAdmin.Subscription.Options
 {
     public static class Top
     {
-        public static CommandOption<int?> ConfigureTopOption(this CommandLineApplication command, string description)
+        public static Func<int> ConfigureTopOption(this CommandLineApplication command, string description, int defaultValue = 10)
         {
-            return command.Option<int?>(
+            var option = command.Option<int?>(
                 "-t|--top",
                 description,
                 CommandOptionType.SingleValue);
-        }
 
-        public static int ParseTop(this CommandOption<int?>? option)
-        {
-            if (option == null) throw new ArgumentNullException(nameof(option));
-
-            return option.ParsedValue ?? 10;
+            return () => option.ParsedValue ?? defaultValue;
         }
     }
 }

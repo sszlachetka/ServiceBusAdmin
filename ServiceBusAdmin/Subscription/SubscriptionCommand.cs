@@ -4,14 +4,10 @@ namespace ServiceBusAdmin.Subscription
 {
     public class SubscriptionCommand : SebaCommand
     {
-        public SubscriptionCommand(SebaContext context) : base(context)
+        public SubscriptionCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-        }
-
-        protected override void ConfigureSubCommands(CommandLineApplication command)
-        {
-            command.Configure(new PropsCommand(Context));
-            command.Configure(new PeekCommand(Context));
+            Command.Subcommand(new PropsCommand(context, Command));
+            Command.Subcommand(new PeekCommand(context, Command));
         }
     }
 }

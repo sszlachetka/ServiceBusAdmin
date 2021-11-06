@@ -79,9 +79,9 @@ namespace ServiceBusAdmin
 
         private static void ConfigureCommands(CommandLineApplication app, SebaContext context)
         {
-            app.Configure(new PropsCommand(context));
-            app.Configure(new TopicCommand(context));
-            app.Configure(new SubscriptionCommand(context));
+            app.Subcommand(new PropsCommand(context, app));
+            app.Subcommand(new TopicCommand(context, app));
+            app.Subcommand(new SubscriptionCommand(context, app));
         }
     }
 }

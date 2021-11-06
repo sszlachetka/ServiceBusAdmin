@@ -4,13 +4,9 @@ namespace ServiceBusAdmin.Topic
 {
     public class TopicCommand : SebaCommand
     {
-        public TopicCommand(SebaContext context) : base(context)
+        public TopicCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-        }
-
-        protected override void ConfigureSubCommands(CommandLineApplication command)
-        {
-            command.Configure(new ListCommand(Context));
+            Command.Subcommand(new ListCommand(Context, Command));
         }
     }
 }

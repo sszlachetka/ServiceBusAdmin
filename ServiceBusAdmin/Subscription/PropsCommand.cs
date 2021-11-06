@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -7,20 +8,16 @@ namespace ServiceBusAdmin.Subscription
 {
     public class PropsCommand : SebaCommand
     {
-        private CommandArgument<string>? _argument;
+        private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
 
-        public PropsCommand(SebaContext context) : base(context)
+        public PropsCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 
-        protected override void ConfigureArgsAndOptions(CommandLineApplication command)
+        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
-            _argument = command.ConfigureFullSubscriptionNameArgument();
-        }
-
-        protected override async Task ExecuteAsync(CommandLineApplication command, CancellationToken cancellationToken)
-        {
-            var (topic, subscription) = _argument.ParseFullSubscriptionName();
+            var (topic, subscription) = _getFullSubscriptionName();
             var client = CreateServiceBusClient();
 
             var (activeMessageCount, deadLetterMessageCount) =
@@ -28,6 +25,8 @@ namespace ServiceBusAdmin.Subscription
 
             Output.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
             Output.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");
+
+            return SebaResult.Success;
         }
     }
 }

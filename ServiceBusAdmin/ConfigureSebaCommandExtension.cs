@@ -4,9 +4,9 @@ namespace ServiceBusAdmin
 {
     public static class ConfigureSebaCommandExtension
     {
-        public static void Configure(this CommandLineApplication application, SebaCommand command)
+        public static void Subcommand(this CommandLineApplication parentCommand, SebaCommand subcommand)
         {
-            application.Command(command.Name, command.Configure);
+            parentCommand.AddSubcommand(subcommand.Command);
         }
     }
 }

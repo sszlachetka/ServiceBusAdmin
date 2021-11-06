@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -11,46 +12,40 @@ namespace ServiceBusAdmin.Subscription
 {
     public class PeekCommand : SebaCommand
     {
-        private CommandArgument<string>? _argument;
-        private CommandOption<string?>? _outputFormatOption;
-        private CommandOption<string?>? _encodingNameOption;
-        private CommandOption<int?>? _topOption;
+        private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
+        private readonly Func<string> _getOutputFormat;
+        private readonly Func<string> _getEncodingName;
+        private readonly Func<int> _getTop;
 
-        public PeekCommand(SebaContext context) : base(context)
+        public PeekCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
+            _getOutputFormat = Command.ConfigureOutputFormatOption();
+            _getEncodingName = Command.ConfigureEncodingNameOption();
+            _getTop = Command.ConfigureTopOption("Count of messages to peek");
         }
 
-        protected override void ConfigureArgsAndOptions(CommandLineApplication command)
-        {
-            _argument = command.ConfigureFullSubscriptionNameArgument();
-            _outputFormatOption = command.ConfigureOutputFormatOption();
-            _encodingNameOption = command.ConfigureEncodingNameOption();
-            _topOption = command.ConfigureTopOption("Count of messages to peek");
-        }
-
-        protected override async Task ExecuteAsync(CommandLineApplication command, CancellationToken cancellationToken)
+        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
             var messageHandler = CreateMessageHandler();
             var options = CreateTopicReceiverOptions();
             var client = CreateServiceBusClient();
 
             await client.Peek(options, messageHandler.Handle);
+
+            return SebaResult.Success;
         }
 
         private MessageHandler CreateMessageHandler()
         {
-            var outputFormat = _outputFormatOption.ParseOutputFormat();
-            var encodingName = _encodingNameOption.ParseEncodingName();
-
-            return new MessageHandler(outputFormat, encodingName, Output);
+            return new (_getOutputFormat(), _getEncodingName(), Output);
         }
         
         private TopicReceiverOptions CreateTopicReceiverOptions()
         {
-            var (topic, subscription) = _argument.ParseFullSubscriptionName();
-            var top = _topOption.ParseTop();
+            var (topic, subscription) = _getFullSubscriptionName();
 
-            return new TopicReceiverOptions(topic, subscription, ServiceBusReceiveMode.PeekLock, top);
+            return new TopicReceiverOptions(topic, subscription, ServiceBusReceiveMode.PeekLock, _getTop());
         }
 
         private class MessageHandler

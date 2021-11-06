@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.ServiceBusClient;
 using ServiceBusAdmin.Subscription.Arguments;
 using ServiceBusAdmin.Subscription.Options;
 
@@ -29,7 +30,7 @@ namespace ServiceBusAdmin.Subscription
         {
             var messageHandler = CreateMessageHandler();
             var options = CreateTopicReceiverOptions();
-            var client = CreateServiceBusClient();
+            var client = CreateClient();
 
             await client.Peek(options, messageHandler.Handle);
 

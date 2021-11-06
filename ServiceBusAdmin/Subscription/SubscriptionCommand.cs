@@ -8,6 +8,7 @@ namespace ServiceBusAdmin.Subscription
         {
             Command.Subcommand(new PropsCommand(context, Command));
             Command.Subcommand(new PeekCommand(context, Command));
+            Command.Subcommand(new ListCommand(context, Command));
         }
     }
 }

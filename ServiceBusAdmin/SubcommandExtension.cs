@@ -2,7 +2,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin
 {
-    public static class ConfigureSebaCommandExtension
+    public static class SubcommandExtension
     {
         public static void Subcommand(this CommandLineApplication parentCommand, SebaCommand subcommand)
         {

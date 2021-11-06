@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Topic
 
         protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
-            var client = CreateServiceBusClient();
+            var client = CreateClient();
             var topicsNames = await client.GetTopicsNames(cancellationToken);
             foreach (var topicName in topicsNames)
             {

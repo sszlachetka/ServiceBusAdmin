@@ -12,7 +12,7 @@ namespace ServiceBusAdmin
 
         protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
-            var client = CreateServiceBusClient();
+            var client = CreateClient();
             var name = await client.GetNamespaceName(cancellationToken);
 
             Output.WriteLine($"Namespace\t{name}");

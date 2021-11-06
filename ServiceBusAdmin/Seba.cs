@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.ServiceBusClient;
 using ServiceBusAdmin.Subscription;
 using ServiceBusAdmin.Topic;
 

@@ -5,20 +5,8 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 
-namespace ServiceBusAdmin
+namespace ServiceBusAdmin.ServiceBusClient
 {
-    public interface IServiceBusClient
-    {
-        Task<string> GetNamespaceName(CancellationToken cancellationToken);
-
-        Task<IReadOnlyCollection<string>> GetTopicsNames(CancellationToken cancellationToken);
-
-        Task<(long ActiveMessageCount, long DeadLetterMessageCount)> GetSubscriptionRuntimeProperties(
-            string topic, string subscription, CancellationToken cancellationToken);
-
-        Task Peek(TopicReceiverOptions options, Func<ServiceBusReceivedMessage, Task> messageHandler);
-    }
-
     public class SebaClient : IServiceBusClient
     {
         private readonly string _connectionString;
@@ -43,6 +31,18 @@ namespace ServiceBusAdmin
             await foreach (var topic in topics)
             {
                 result.Add(topic.Name);
+            }
+
+            return result;
+        }
+        
+        public async Task<IReadOnlyCollection<string>> GetSubscriptionsNames(string topicName, CancellationToken cancellationToken)
+        {
+            var result = new List<string>();
+            var subscriptions = AdministrationClient().GetSubscriptionsAsync(topicName, cancellationToken);
+            await foreach (var subscription in subscriptions)
+            {
+                result.Add(subscription.SubscriptionName);
             }
 
             return result;
@@ -79,25 +79,9 @@ namespace ServiceBusAdmin
             return new (_connectionString);
         }
 
-        private ServiceBusClient ServiceBusClient()
+        private Azure.Messaging.ServiceBus.ServiceBusClient ServiceBusClient()
         {
             return new(_connectionString);
         }
-    }
-
-    public class TopicReceiverOptions
-    {
-        public TopicReceiverOptions(string topic, string subscription, ServiceBusReceiveMode receiveMode, int top)
-        {
-            Topic = topic;
-            Subscription = subscription;
-            ReceiveMode = receiveMode;
-            Top = top;
-        }
-
-        public string Topic { get; }
-        public string Subscription { get; }
-        public ServiceBusReceiveMode ReceiveMode { get; }
-        public int Top { get; }
     }
 }

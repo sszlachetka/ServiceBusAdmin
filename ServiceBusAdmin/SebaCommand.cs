@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.ServiceBusClient;
 
 namespace ServiceBusAdmin
 {
@@ -24,7 +25,7 @@ namespace ServiceBusAdmin
             return Task.FromResult(SebaResult.Failure);
         }
 
-        protected IServiceBusClient CreateServiceBusClient()
+        protected IServiceBusClient CreateClient()
         {
             return Context.CreateServiceBusClient();
         }

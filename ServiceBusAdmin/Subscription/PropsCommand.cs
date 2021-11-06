@@ -18,7 +18,7 @@ namespace ServiceBusAdmin.Subscription
         protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
             var (topic, subscription) = _getFullSubscriptionName();
-            var client = CreateServiceBusClient();
+            var client = CreateClient();
 
             var (activeMessageCount, deadLetterMessageCount) =
                 await client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);

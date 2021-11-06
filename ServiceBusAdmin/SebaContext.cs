@@ -1,3 +1,5 @@
+using ServiceBusAdmin.ServiceBusClient;
+
 namespace ServiceBusAdmin
 {
     public delegate IServiceBusClient CreateServiceBusClient();

@@ -1,6 +1,6 @@
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool
+namespace ServiceBusAdmin.Tool.Options
 {
     public delegate string? GetEnvironmentVariable(string variableName);
     public delegate string GetConnectionString();

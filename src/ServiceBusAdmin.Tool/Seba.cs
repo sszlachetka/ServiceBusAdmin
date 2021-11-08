@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Client;
+using ServiceBusAdmin.Tool.Options;
 using ServiceBusAdmin.Tool.Subscription;
 using ServiceBusAdmin.Tool.Topic;
 
@@ -14,25 +15,29 @@ namespace ServiceBusAdmin.Tool
         public static async Task<int> Main(string[] args)
         {
             var seba = new Seba(
-                connectionString => new SebaClient(connectionString),
                 PhysicalConsole.Singleton,
+                connectionString => new SebaClient(connectionString),
                 Environment.GetEnvironmentVariable);
 
             return (int) await seba.Execute(args);
         }
 
         private readonly CommandLineApplication _app;
-        private readonly IConsole _console;
+        private readonly SebaConsole _console;
 
         public Seba(
-            CreateServiceBusClient createServiceBusClient,
             IConsole console,
+            CreateServiceBusClient createServiceBusClient,
             GetEnvironmentVariable getEnvironmentVariable)
         {
-            _console = console;
             _app = CreateApplication(console);
+
+            var isVerboseOutput = _app.ConfigureVerboseOption();
+            _console = new SebaConsole(console, isVerboseOutput);
+
             var getConnectionString = _app.ConfigureConnectionStringOption(getEnvironmentVariable);
-            var context = CreateContext(createServiceBusClient, console, getConnectionString);
+            var context = CreateContext(createServiceBusClient, getConnectionString, _console);
+
             ConfigureCommands(_app, context);
         }
 
@@ -44,7 +49,8 @@ namespace ServiceBusAdmin.Tool
             }
             catch (Exception e)
             {
-                await _console.Error.WriteLineAsync(e.Message);
+                _console.Error(e.Message);
+                _console.Verbose(e.ToString());
 
                 return SebaResult.Failure;
             }
@@ -69,9 +75,9 @@ namespace ServiceBusAdmin.Tool
         }
 
         private static SebaContext CreateContext(
-            CreateServiceBusClient createServiceBusClient, 
-            IConsole console,
-            GetConnectionString getConnectionString)
+            CreateServiceBusClient createServiceBusClient,
+            GetConnectionString getConnectionString,
+            SebaConsole console)
         {
             IServiceBusClient CreateServiceBusClient() => createServiceBusClient(getConnectionString());
 

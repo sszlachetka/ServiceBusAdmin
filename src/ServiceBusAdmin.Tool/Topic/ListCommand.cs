@@ -16,7 +16,7 @@ namespace ServiceBusAdmin.Tool.Topic
             var topicsNames = await Client.GetTopicsNames(cancellationToken);
             foreach (var topicName in topicsNames)
             {
-                Console.WriteLine(topicName);
+                Console.Info(topicName);
             }
         }
     }

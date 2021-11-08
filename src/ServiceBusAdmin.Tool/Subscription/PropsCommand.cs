@@ -22,8 +22,8 @@ namespace ServiceBusAdmin.Tool.Subscription
             var (activeMessageCount, deadLetterMessageCount) =
                 await Client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);
 
-            Console.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
-            Console.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");
+            Console.Info($"ActiveMessageCount\t{activeMessageCount}");
+            Console.Info($"DeadLetterMessageCount\t{deadLetterMessageCount}");
         }
     }
 }

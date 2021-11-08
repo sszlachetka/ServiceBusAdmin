@@ -50,9 +50,9 @@ namespace ServiceBusAdmin.Tool.Subscription
         {
             private readonly string _outputFormat;
             private readonly Encoding _encoding;
-            private readonly IConsole _console;
+            private readonly SebaConsole _console;
 
-            public MessageHandler(string outputFormat, string encodingName, IConsole console)
+            public MessageHandler(string outputFormat, string encodingName, SebaConsole console)
             {
                 _outputFormat = outputFormat;
                 _encoding = Encoding.GetEncoding(encodingName);
@@ -61,7 +61,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
             public Task Handle(ServiceBusReceivedMessage message)
             {
-                _console.WriteLine(_outputFormat, 
+                _console.Info(_outputFormat, 
                     _encoding.GetString(message.Body),
                     message.SequenceNumber,
                     message.MessageId,

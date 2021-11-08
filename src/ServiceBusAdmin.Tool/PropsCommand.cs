@@ -14,7 +14,7 @@ namespace ServiceBusAdmin.Tool
         {
             var name = await Client.GetNamespaceName(cancellationToken);
 
-            Console.WriteLine($"Namespace\t{name}");
+            Console.Info($"Namespace\t{name}");
         }
     }
 }

@@ -20,7 +20,7 @@ namespace ServiceBusAdmin.Tool.Subscription
             var subscriptions = await Client.GetSubscriptionsNames(_getTopicName(), cancellationToken);
             foreach (var subscription in subscriptions)
             {
-                Console.WriteLine(subscription);
+                Console.Info(subscription);
             }
         }
     }

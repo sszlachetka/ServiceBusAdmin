@@ -1,9 +1,7 @@
 using System;
-using System.IO;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using McMaster.Extensions.CommandLineUtils;
 using Moq;
 using ServiceBusAdmin.Client;
 using Xunit;
@@ -12,53 +10,37 @@ namespace ServiceBusAdmin.Tool.Tests
 {
     public class PropsCommandTests
     {
+        private readonly TestConsole _console = new ();
+        private readonly Mock<IServiceBusClient> _client = new(MockBehavior.Strict);
+
         [Fact]
         public async Task Returns_service_bus_namespace_name()
         {
-            var client = new Mock<IServiceBusClient>(MockBehavior.Strict);
-            IServiceBusClient CreateServiceBusClient(string connectionString) =>
-                connectionString == "secretConnectionString"
-                    ? client.Object
-                    : throw new ArgumentException(connectionString);
-            var console = new TestConsole();
+            _client.Setup(x => x.GetNamespaceName(It.IsAny<CancellationToken>()))
+                .ReturnsAsync("test-namespace");
+
+            var result = await Seba().Execute(new[] {"props"});
+
+            AssertIsSuccess(result);
+            _console.OutputText.Should().Be($"Namespace\ttest-namespace{Environment.NewLine}");
+        }
+
+        private void AssertIsSuccess(SebaResult result)
+        {
+            _console.ErrorText.Should().BeEmpty();
+            result.Should().Be(SebaResult.Success);
+        }
+
+        private Seba Seba()
+        {
             static string? GetEnvironmentVariable(string variableName) =>
                 variableName == "SEBA_CONNECTION_STRING" ? "secretConnectionString" : null;
-            var seba = new Seba(CreateServiceBusClient, console, GetEnvironmentVariable);
+            IServiceBusClient CreateServiceBusClient(string connectionString) =>
+                connectionString == "secretConnectionString"
+                    ? _client.Object
+                    : throw new ArgumentException(connectionString);
 
-            var result = await seba.Execute(new[] {"props"});
-
-            console.ErrorText.Should().BeEmpty();
-            result.Should().Be(SebaResult.Success);
-            console.OutputText.Should().Be("dsds");
+            return new Seba(_console, CreateServiceBusClient, GetEnvironmentVariable);
         }
-    }
-
-    internal class TestConsole : IConsole
-    {
-        private readonly StringBuilder _output = new();
-        private readonly StringBuilder _error = new();
-
-        public string OutputText => _output.ToString();
-        public string ErrorText => _error.ToString();
-
-        public TestConsole()
-        {
-            Out = new StringWriter(_output);
-            Error = new StringWriter(_error);
-        }
-
-        public void ResetColor()
-        {
-        }
-
-        public TextWriter Out { get; }
-        public TextWriter Error { get; }
-        public TextReader In => throw new NotImplementedException();
-        public bool IsInputRedirected => throw new NotImplementedException();
-        public bool IsOutputRedirected => true;
-        public bool IsErrorRedirected => true;
-        public ConsoleColor ForegroundColor { get; set; }
-        public ConsoleColor BackgroundColor { get; set; }
-        public event ConsoleCancelEventHandler? CancelKeyPress;
     }
 }

@@ -34,6 +34,6 @@ namespace ServiceBusAdmin.Tool
 
         protected IServiceBusClient Client => Context.Client;
 
-        protected IConsole Console => Context.Console;
+        protected SebaConsole Console => Context.Console;
     }
 }

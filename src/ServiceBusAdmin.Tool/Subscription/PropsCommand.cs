@@ -15,7 +15,7 @@ namespace ServiceBusAdmin.Tool.Subscription
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 
-        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
+        protected override async Task Execute(CancellationToken cancellationToken)
         {
             var (topic, subscription) = _getFullSubscriptionName();
 
@@ -24,8 +24,6 @@ namespace ServiceBusAdmin.Tool.Subscription
 
             Console.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
             Console.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");
-
-            return SebaResult.Success;
         }
     }
 }

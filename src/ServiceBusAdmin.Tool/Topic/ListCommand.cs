@@ -11,15 +11,13 @@ namespace ServiceBusAdmin.Tool.Topic
             Command.Description = "Lists all topics";
         }
 
-        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
+        protected override async Task Execute(CancellationToken cancellationToken)
         {
             var topicsNames = await Client.GetTopicsNames(cancellationToken);
             foreach (var topicName in topicsNames)
             {
                 Console.WriteLine(topicName);
             }
-
-            return SebaResult.Success;
         }
     }
 }

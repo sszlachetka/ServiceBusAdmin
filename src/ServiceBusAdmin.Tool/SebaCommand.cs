@@ -7,6 +7,7 @@ namespace ServiceBusAdmin.Tool
 {
     public abstract class SebaCommand
     {
+        private const string CommandSuffix = "command";
         public CommandLineApplication Command { get; }
         protected SebaContext Context { get; }
 
@@ -15,14 +16,20 @@ namespace ServiceBusAdmin.Tool
             Context = context;
             Command = new CommandLineApplication();
             Command.Parent = parentCommand;
-            Command.Name = GetType().Name.ToLower().Replace("command", string.Empty);
-            Command.OnExecuteAsync(async cancellationToken => (int) await Execute(cancellationToken));
+            Command.Name = GetType().Name.ToLower().Replace(CommandSuffix, string.Empty);
+            Command.OnExecuteAsync(async cancellationToken => (int) await ExecuteInternal(cancellationToken));
+        }
+        
+        private async Task<SebaResult> ExecuteInternal(CancellationToken cancellationToken)
+        {
+            await Execute(cancellationToken);
+            return SebaResult.Success;
         }
 
-        protected virtual Task<SebaResult> Execute(CancellationToken cancellationToken)
+        protected virtual Task Execute(CancellationToken cancellationToken)
         {
             Command.ShowHelp();
-            return Task.FromResult(SebaResult.Failure);
+            return Task.CompletedTask;
         }
 
         protected IServiceBusClient Client => Context.Client;

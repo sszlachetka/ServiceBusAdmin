@@ -10,13 +10,11 @@ namespace ServiceBusAdmin.Tool
         {
         }
 
-        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
+        protected override async Task Execute(CancellationToken cancellationToken)
         {
             var name = await Client.GetNamespaceName(cancellationToken);
 
             Console.WriteLine($"Namespace\t{name}");
-
-            return SebaResult.Success;
         }
     }
 }

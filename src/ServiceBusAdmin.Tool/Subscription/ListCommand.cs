@@ -15,15 +15,13 @@ namespace ServiceBusAdmin.Tool.Subscription
             _getTopicName = Command.ConfigureTopicNameArgument();
         }
 
-        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
+        protected override async Task Execute(CancellationToken cancellationToken)
         {
             var subscriptions = await Client.GetSubscriptionsNames(_getTopicName(), cancellationToken);
             foreach (var subscription in subscriptions)
             {
                 Console.WriteLine(subscription);
             }
-
-            return SebaResult.Success;
         }
     }
 }

@@ -26,14 +26,12 @@ namespace ServiceBusAdmin.Tool.Subscription
             _getTop = Command.ConfigureTopOption("Count of messages to peek");
         }
 
-        protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
+        protected override async Task Execute(CancellationToken cancellationToken)
         {
             var messageHandler = CreateMessageHandler();
             var options = CreateTopicReceiverOptions();
 
             await Client.Peek(options, messageHandler.Handle);
-
-            return SebaResult.Success;
         }
 
         private MessageHandler CreateMessageHandler()

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using ServiceBusAdmin.Client;
+using ServiceBusAdmin.Tool.Options;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests
@@ -33,10 +34,11 @@ namespace ServiceBusAdmin.Tool.Tests
 
         private Seba Seba()
         {
+            const string connectionStringValue = "secretConnectionString";
             static string? GetEnvironmentVariable(string variableName) =>
-                variableName == "SEBA_CONNECTION_STRING" ? "secretConnectionString" : null;
+                variableName == ConnectionStringOption.EnvironmentVariableName ? connectionStringValue : null;
             IServiceBusClient CreateServiceBusClient(string connectionString) =>
-                connectionString == "secretConnectionString"
+                connectionString == connectionStringValue
                     ? _client.Object
                     : throw new ArgumentException(connectionString);
 

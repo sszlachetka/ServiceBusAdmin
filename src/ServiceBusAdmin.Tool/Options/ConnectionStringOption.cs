@@ -7,7 +7,7 @@ namespace ServiceBusAdmin.Tool.Options
 
     public static class ConnectionStringOption
     {
-        private const string EnvironmentVariableName = "SEBA_CONNECTION_STRING";
+        public const string EnvironmentVariableName = "SEBA_CONNECTION_STRING";
         private const string Template = "-c|--connection-string";
 
         public static GetConnectionString ConfigureConnectionStringOption(this CommandLineApplication application,

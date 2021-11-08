@@ -20,7 +20,7 @@ namespace ServiceBusAdmin.Tool.Subscription
             var subscriptions = await CreateClient().GetSubscriptionsNames(_getTopicName(), cancellationToken);
             foreach (var subscription in subscriptions)
             {
-                Output.WriteLine(subscription);
+                Console.WriteLine(subscription);
             }
 
             return SebaResult.Success;

@@ -30,6 +30,6 @@ namespace ServiceBusAdmin.Tool
             return Context.CreateServiceBusClient();
         }
 
-        protected IOutputWriter Output => Context.OutputWriter;
+        protected IConsole Console => Context.Console;
     }
 }

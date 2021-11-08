@@ -23,8 +23,8 @@ namespace ServiceBusAdmin.Tool.Subscription
             var (activeMessageCount, deadLetterMessageCount) =
                 await client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);
 
-            Output.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
-            Output.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");
+            Console.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
+            Console.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");
 
             return SebaResult.Success;
         }

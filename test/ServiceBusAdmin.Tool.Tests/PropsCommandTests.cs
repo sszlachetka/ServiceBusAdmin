@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using McMaster.Extensions.CommandLineUtils;
 using Moq;
 using ServiceBusAdmin.Client;
 using Xunit;
@@ -18,40 +20,45 @@ namespace ServiceBusAdmin.Tool.Tests
                 connectionString == "secretConnectionString"
                     ? client.Object
                     : throw new ArgumentException(connectionString);
-            var outputWriter = new OutputWriterMock();
+            var console = new TestConsole();
             static string? GetEnvironmentVariable(string variableName) =>
                 variableName == "SEBA_CONNECTION_STRING" ? "secretConnectionString" : null;
-            var seba = new Seba(CreateServiceBusClient, outputWriter, GetEnvironmentVariable);
+            var seba = new Seba(CreateServiceBusClient, console, GetEnvironmentVariable);
 
             var result = await seba.Execute(new[] {"props"});
 
+            console.ErrorText.Should().BeEmpty();
             result.Should().Be(SebaResult.Success);
-
-            outputWriter.Output.Should().Be("dsds");
+            console.OutputText.Should().Be("dsds");
         }
     }
 
-    internal class OutputWriterMock : IOutputWriter
+    internal class TestConsole : IConsole
     {
         private readonly StringBuilder _output = new();
         private readonly StringBuilder _error = new();
 
-        public string Output => _output.ToString();
-        public string Error => _error.ToString();
-        
-        public void WriteLine(string message)
+        public string OutputText => _output.ToString();
+        public string ErrorText => _error.ToString();
+
+        public TestConsole()
         {
-            _output.AppendLine(message);
+            Out = new StringWriter(_output);
+            Error = new StringWriter(_error);
         }
 
-        public void WriteLine(string format, params object[] args)
+        public void ResetColor()
         {
-            _output.AppendFormat(format, args);
         }
 
-        public void WriteErrorLine(string message)
-        {
-            _error.AppendLine(message);
-        }
+        public TextWriter Out { get; }
+        public TextWriter Error { get; }
+        public TextReader In => throw new NotImplementedException();
+        public bool IsInputRedirected => throw new NotImplementedException();
+        public bool IsOutputRedirected => true;
+        public bool IsErrorRedirected => true;
+        public ConsoleColor ForegroundColor { get; set; }
+        public ConsoleColor BackgroundColor { get; set; }
+        public event ConsoleCancelEventHandler? CancelKeyPress;
     }
 }

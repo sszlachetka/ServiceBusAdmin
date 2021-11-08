@@ -39,7 +39,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         private MessageHandler CreateMessageHandler()
         {
-            return new (_getOutputFormat(), _getEncodingName(), Output);
+            return new (_getOutputFormat(), _getEncodingName(), Console);
         }
         
         private TopicReceiverOptions CreateTopicReceiverOptions()
@@ -53,18 +53,18 @@ namespace ServiceBusAdmin.Tool.Subscription
         {
             private readonly string _outputFormat;
             private readonly Encoding _encoding;
-            private readonly IOutputWriter _outputWriter;
+            private readonly IConsole _console;
 
-            public MessageHandler(string outputFormat, string encodingName, IOutputWriter outputWriter)
+            public MessageHandler(string outputFormat, string encodingName, IConsole console)
             {
                 _outputFormat = outputFormat;
                 _encoding = Encoding.GetEncoding(encodingName);
-                _outputWriter = outputWriter;
+                _console = console;
             }
 
             public Task Handle(ServiceBusReceivedMessage message)
             {
-                _outputWriter.WriteLine(_outputFormat, 
+                _console.WriteLine(_outputFormat, 
                     _encoding.GetString(message.Body),
                     message.SequenceNumber,
                     message.MessageId,

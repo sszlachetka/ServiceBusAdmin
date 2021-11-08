@@ -1,3 +1,4 @@
+using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Client;
 
 namespace ServiceBusAdmin.Tool
@@ -7,12 +8,12 @@ namespace ServiceBusAdmin.Tool
     public class SebaContext
     {
         public CreateServiceBusClient CreateServiceBusClient { get; }
-        public IOutputWriter OutputWriter { get; }
+        public IConsole Console { get; }
 
-        public SebaContext(CreateServiceBusClient createServiceBusClient, IOutputWriter outputWriter)
+        public SebaContext(CreateServiceBusClient createServiceBusClient, IConsole console)
         {
             CreateServiceBusClient = createServiceBusClient;
-            OutputWriter = outputWriter;
+            Console = console;
         }
     }
 }

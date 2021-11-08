@@ -17,7 +17,7 @@ namespace ServiceBusAdmin.Tool.Topic
             var topicsNames = await client.GetTopicsNames(cancellationToken);
             foreach (var topicName in topicsNames)
             {
-                Output.WriteLine(topicName);
+                Console.WriteLine(topicName);
             }
 
             return SebaResult.Success;

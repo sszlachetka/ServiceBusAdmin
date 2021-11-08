@@ -15,7 +15,7 @@ namespace ServiceBusAdmin.Tool
             var client = CreateClient();
             var name = await client.GetNamespaceName(cancellationToken);
 
-            Output.WriteLine($"Namespace\t{name}");
+            Console.WriteLine($"Namespace\t{name}");
 
             return SebaResult.Success;
         }

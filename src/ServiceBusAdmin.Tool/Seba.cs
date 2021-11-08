@@ -15,24 +15,24 @@ namespace ServiceBusAdmin.Tool
         {
             var seba = new Seba(
                 connectionString => new SebaClient(connectionString),
-                new OutputWriter(),
+                PhysicalConsole.Singleton,
                 Environment.GetEnvironmentVariable);
 
             return (int) await seba.Execute(args);
         }
 
         private readonly CommandLineApplication _app;
-        private readonly IOutputWriter _outputWriter;
+        private readonly IConsole _console;
 
         public Seba(
             CreateServiceBusClientWith createServiceBusClient,
-            IOutputWriter outputWriter,
+            IConsole console,
             GetEnvironmentVariable getEnvironmentVariable)
         {
-            _outputWriter = outputWriter;
-            _app = CreateApplication();
+            _console = console;
+            _app = CreateApplication(console);
             var getConnectionString = _app.ConfigureConnectionStringOption(getEnvironmentVariable);
-            var context = CreateContext(createServiceBusClient, outputWriter, getConnectionString);
+            var context = CreateContext(createServiceBusClient, console, getConnectionString);
             ConfigureCommands(_app, context);
         }
 
@@ -44,15 +44,15 @@ namespace ServiceBusAdmin.Tool
             }
             catch (Exception e)
             {
-                _outputWriter.WriteErrorLine(e.Message);
+                await _console.Error.WriteLineAsync(e.Message);
 
                 return SebaResult.Failure;
             }
         }
 
-        private static CommandLineApplication CreateApplication()
+        private static CommandLineApplication CreateApplication(IConsole console)
         {
-            var app = new CommandLineApplication
+            var app = new CommandLineApplication(console)
             {
                 Name = "seba",
                 Description = "Azure Service Bus administration utility"
@@ -70,12 +70,12 @@ namespace ServiceBusAdmin.Tool
 
         private static SebaContext CreateContext(
             CreateServiceBusClientWith createServiceBusClient, 
-            IOutputWriter outputWriter,
+            IConsole console,
             GetConnectionString getConnectionString)
         {
             IServiceBusClient CreateServiceBusClient() => createServiceBusClient(getConnectionString());
 
-            return new SebaContext(CreateServiceBusClient, outputWriter);
+            return new SebaContext(CreateServiceBusClient, console);
         }
 
         private static void ConfigureCommands(CommandLineApplication app, SebaContext context)

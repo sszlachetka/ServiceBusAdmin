@@ -17,7 +17,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
-            var subscriptions = await CreateClient().GetSubscriptionsNames(_getTopicName(), cancellationToken);
+            var subscriptions = await Client.GetSubscriptionsNames(_getTopicName(), cancellationToken);
             foreach (var subscription in subscriptions)
             {
                 Console.WriteLine(subscription);

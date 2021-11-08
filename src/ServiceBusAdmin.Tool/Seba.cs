@@ -7,7 +7,7 @@ using ServiceBusAdmin.Tool.Topic;
 
 namespace ServiceBusAdmin.Tool
 {
-    public delegate IServiceBusClient CreateServiceBusClientWith(string connectionString);
+    public delegate IServiceBusClient CreateServiceBusClient(string connectionString);
 
     public class Seba
     {
@@ -25,7 +25,7 @@ namespace ServiceBusAdmin.Tool
         private readonly IConsole _console;
 
         public Seba(
-            CreateServiceBusClientWith createServiceBusClient,
+            CreateServiceBusClient createServiceBusClient,
             IConsole console,
             GetEnvironmentVariable getEnvironmentVariable)
         {
@@ -69,7 +69,7 @@ namespace ServiceBusAdmin.Tool
         }
 
         private static SebaContext CreateContext(
-            CreateServiceBusClientWith createServiceBusClient, 
+            CreateServiceBusClient createServiceBusClient, 
             IConsole console,
             GetConnectionString getConnectionString)
         {

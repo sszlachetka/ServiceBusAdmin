@@ -18,10 +18,9 @@ namespace ServiceBusAdmin.Tool.Subscription
         protected override async Task<SebaResult> Execute(CancellationToken cancellationToken)
         {
             var (topic, subscription) = _getFullSubscriptionName();
-            var client = CreateClient();
 
             var (activeMessageCount, deadLetterMessageCount) =
-                await client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);
+                await Client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);
 
             Console.WriteLine($"ActiveMessageCount\t{activeMessageCount}");
             Console.WriteLine($"DeadLetterMessageCount\t{deadLetterMessageCount}");

@@ -1,18 +1,20 @@
+using System;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Client;
 
 namespace ServiceBusAdmin.Tool
 {
-    public delegate IServiceBusClient CreateServiceBusClient();
-
     public class SebaContext
     {
-        public CreateServiceBusClient CreateServiceBusClient { get; }
+        private readonly Func<IServiceBusClient> _createServiceBusClient;
+        private IServiceBusClient? _client;
+
+        public IServiceBusClient Client => _client ??= _createServiceBusClient();
         public IConsole Console { get; }
 
-        public SebaContext(CreateServiceBusClient createServiceBusClient, IConsole console)
+        public SebaContext(Func<IServiceBusClient> createServiceBusClient, IConsole console)
         {
-            CreateServiceBusClient = createServiceBusClient;
+            _createServiceBusClient = createServiceBusClient;
             Console = console;
         }
     }

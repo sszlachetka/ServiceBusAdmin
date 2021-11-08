@@ -25,10 +25,7 @@ namespace ServiceBusAdmin.Tool
             return Task.FromResult(SebaResult.Failure);
         }
 
-        protected IServiceBusClient CreateClient()
-        {
-            return Context.CreateServiceBusClient();
-        }
+        protected IServiceBusClient Client => Context.Client;
 
         protected IConsole Console => Context.Console;
     }

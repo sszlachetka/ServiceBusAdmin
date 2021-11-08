@@ -30,9 +30,8 @@ namespace ServiceBusAdmin.Tool.Subscription
         {
             var messageHandler = CreateMessageHandler();
             var options = CreateTopicReceiverOptions();
-            var client = CreateClient();
 
-            await client.Peek(options, messageHandler.Handle);
+            await Client.Peek(options, messageHandler.Handle);
 
             return SebaResult.Success;
         }

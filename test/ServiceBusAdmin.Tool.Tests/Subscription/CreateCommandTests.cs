@@ -8,16 +8,13 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
 {
     public class CreateCommandTests : SebaCommandTests
     {
-        public CreateCommandTests()
+        [Fact]
+        public async Task Creates_subscription_with_provided_name()
         {
             Client.Setup(x =>
                     x.CreateSubscription(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
-        }
 
-        [Fact]
-        public async Task Creates_subscription_with_provided_name()
-        {
             var result = await Seba().Execute(new[] {"subscription", "create", "topic69/subscription1"});
 
             AssertSuccess(result);
@@ -31,9 +28,6 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var result = await Seba().Execute(new[] {"subscription", "create"});
 
             AssertFailure(result, "The Full subscription name field is required.");
-            Client.Verify(
-                x => x.CreateSubscription(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
-                Times.Never);
         }
         
         [Theory]
@@ -43,9 +37,6 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var result = await Seba().Execute(new[] {"subscription", "create", invalidFullSubscriptionName});
 
             AssertFailure(result, "Full subscription name must be provided in following format <topic name>/<subscription name>");
-            Client.Verify(
-                x => x.CreateSubscription(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
-                Times.Never);
         }
     }
 }

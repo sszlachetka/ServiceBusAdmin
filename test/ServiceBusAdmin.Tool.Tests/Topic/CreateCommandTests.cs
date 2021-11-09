@@ -7,15 +7,12 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
 {
     public class CreateCommandTests : SebaCommandTests
     {
-        public CreateCommandTests()
-        {
-            Client.Setup(x => x.CreateTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-        }
-
         [Fact]
         public async Task Creates_topic_with_provided_name()
         {
+            Client.Setup(x => x.CreateTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
             var result = await Seba().Execute(new[] {"topic", "create", "topic69"});
 
             AssertSuccess(result);
@@ -28,7 +25,6 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
             var result = await Seba().Execute(new[] {"topic", "create"});
 
             AssertFailure(result, "The Topic name field is required.");
-            Client.Verify(x => x.CreateTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

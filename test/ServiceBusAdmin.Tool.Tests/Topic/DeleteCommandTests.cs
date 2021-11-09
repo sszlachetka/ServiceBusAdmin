@@ -7,15 +7,12 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
 {
     public class DeleteCommandTests : SebaCommandTests
     {
-        public DeleteCommandTests()
-        {
-            Client.Setup(x => x.DeleteTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-        }
-
         [Fact]
         public async Task Deletes_topic_with_provided_name()
         {
+            Client.Setup(x => x.DeleteTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+
             var result = await Seba().Execute(new[] {"topic", "delete", "topic69"});
 
             AssertSuccess(result);
@@ -28,7 +25,6 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
             var result = await Seba().Execute(new[] {"topic", "delete"});
 
             AssertFailure(result, "The Topic name field is required.");
-            Client.Verify(x => x.DeleteTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

@@ -74,6 +74,11 @@ namespace ServiceBusAdmin.Client
             }
         }
 
+        public Task CreateTopic(string topicName, CancellationToken cancellationToken)
+        {
+            return AdministrationClient().CreateTopicAsync(topicName, cancellationToken);
+        }
+
         private ServiceBusAdministrationClient AdministrationClient()
         {
             return new (_connectionString);

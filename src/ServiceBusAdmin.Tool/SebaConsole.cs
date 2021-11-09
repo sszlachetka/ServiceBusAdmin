@@ -9,6 +9,8 @@ namespace ServiceBusAdmin.Tool
         private readonly IConsole _console;
         private readonly IsVerboseOutput _isVerboseOutput;
 
+        internal IConsole InternalConsole => _console;
+
         public SebaConsole(IConsole console, IsVerboseOutput isVerboseOutput)
         {
             _console = console;

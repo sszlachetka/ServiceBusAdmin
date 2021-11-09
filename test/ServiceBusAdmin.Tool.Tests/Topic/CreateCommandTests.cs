@@ -1,14 +1,13 @@
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Topic
 {
-    public class TopicCommandTests : SebaCommandTests
+    public class CreateCommandTests : SebaCommandTests
     {
-        public TopicCommandTests()
+        public CreateCommandTests()
         {
             Client.Setup(x => x.CreateTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);

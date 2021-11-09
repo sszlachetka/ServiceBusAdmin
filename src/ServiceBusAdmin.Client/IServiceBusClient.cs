@@ -20,5 +20,7 @@ namespace ServiceBusAdmin.Client
         Task Peek(TopicReceiverOptions options, Func<ServiceBusReceivedMessage, Task> messageHandler);
 
         Task CreateTopic(string topicName, CancellationToken cancellationToken);
+
+        Task DeleteTopic(string topicName, CancellationToken cancellationToken);
     }
 }

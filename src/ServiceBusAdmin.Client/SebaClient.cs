@@ -78,6 +78,11 @@ namespace ServiceBusAdmin.Client
         {
             return AdministrationClient().CreateTopicAsync(topicName, cancellationToken);
         }
+        
+        public Task DeleteTopic(string topicName, CancellationToken cancellationToken)
+        {
+            return AdministrationClient().DeleteTopicAsync(topicName, cancellationToken);
+        }
 
         private ServiceBusAdministrationClient AdministrationClient()
         {

@@ -6,18 +6,18 @@ using ServiceBusAdmin.Tool.Arguments;
 
 namespace ServiceBusAdmin.Tool.Topic
 {
-    public class CreateCommand : SebaCommand
+    public class DeleteCommand : SebaCommand
     {
         private readonly Func<string> _getTopicName;
 
-        public CreateCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
+        public DeleteCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            _getTopicName = Command.ConfigureTopicNameArgument("Name of a topic to create");
+            _getTopicName = Command.ConfigureTopicNameArgument("Name of a topic to delete");
         }
 
         protected override Task Execute(CancellationToken cancellationToken)
         {
-            return Client.CreateTopic(_getTopicName(), cancellationToken);
+            return Client.DeleteTopic(_getTopicName(), cancellationToken);
         }
     }
 }

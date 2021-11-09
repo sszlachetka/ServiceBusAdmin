@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.Tool.Subscription.Arguments;
+using ServiceBusAdmin.Tool.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
 {

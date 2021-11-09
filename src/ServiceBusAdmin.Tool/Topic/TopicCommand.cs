@@ -8,6 +8,7 @@ namespace ServiceBusAdmin.Tool.Topic
         {
             Command.Subcommand(new ListCommand(Context, Command));
             Command.Subcommand(new CreateCommand(Context, Command));
+            Command.Subcommand(new DeleteCommand(Context, Command));
         }
     }
 }

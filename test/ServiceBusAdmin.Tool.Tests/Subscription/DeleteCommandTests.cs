@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+using ServiceBusAdmin.Tool.Tests.TestData;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription
@@ -36,9 +37,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         }
         
         [Theory]
-        [InlineData("topic")]
-        [InlineData("topic/")]
-        [InlineData("/subscription")]
+        [ClassData(typeof(InvalidFullSubscriptionName))]
         public async Task Invalid_full_subscription_name_format_is_rejected(string invalidFullSubscriptionName)
         {
             var result = await Seba().Execute(new[] {"subscription", "create", invalidFullSubscriptionName});

@@ -84,6 +84,18 @@ namespace ServiceBusAdmin.Client
             return AdministrationClient().DeleteTopicAsync(topicName, cancellationToken);
         }
 
+        public Task CreateSubscription(string topicName, string subscriptionName,
+            CancellationToken cancellationToken)
+        {
+            return AdministrationClient().CreateSubscriptionAsync(topicName, subscriptionName, cancellationToken);
+        }
+
+        public Task DeleteSubscription(string topicName, string subscriptionName,
+            CancellationToken cancellationToken)
+        {
+            return AdministrationClient().DeleteSubscriptionAsync(topicName, subscriptionName, cancellationToken);
+        }
+
         private ServiceBusAdministrationClient AdministrationClient()
         {
             return new (_connectionString);

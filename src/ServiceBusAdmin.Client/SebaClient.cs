@@ -96,6 +96,16 @@ namespace ServiceBusAdmin.Client
             return AdministrationClient().DeleteSubscriptionAsync(topicName, subscriptionName, cancellationToken);
         }
 
+        public async Task SendMessage(string queueOrTopicName, string messageBody, CancellationToken cancellationToken)
+        {
+            await using var client = ServiceBusClient();
+            await using var sender = client.CreateSender(queueOrTopicName);
+
+            var message = new ServiceBusMessage(messageBody);
+
+            await sender.SendMessageAsync(message, cancellationToken);
+        }
+
         private ServiceBusAdministrationClient AdministrationClient()
         {
             return new (_connectionString);

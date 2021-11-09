@@ -23,7 +23,7 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
         }
         
         [Fact]
-        public async Task Topic_name_argument_is_mandatory()
+        public async Task Topic_name_argument_is_required()
         {
             var result = await Seba().Execute(new[] {"topic", "create"});
 

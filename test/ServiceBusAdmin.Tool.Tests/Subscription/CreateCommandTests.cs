@@ -26,7 +26,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         }
 
         [Fact]
-        public async Task Full_subscription_name_argument_is_mandatory()
+        public async Task Full_subscription_name_argument_is_required()
         {
             var result = await Seba().Execute(new[] {"subscription", "create"});
 

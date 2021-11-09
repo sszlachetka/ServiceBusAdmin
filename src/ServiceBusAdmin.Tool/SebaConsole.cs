@@ -6,41 +6,40 @@ namespace ServiceBusAdmin.Tool
 {
     public class SebaConsole
     {
-        private readonly IConsole _console;
         private readonly IsVerboseOutput _isVerboseOutput;
 
-        internal IConsole InternalConsole => _console;
+        internal IConsole InternalConsole { get; }
 
         public SebaConsole(IConsole console, IsVerboseOutput isVerboseOutput)
         {
-            _console = console;
+            InternalConsole = console;
             _isVerboseOutput = isVerboseOutput;
         }
 
         public void Info(string message)
         {
-            _console.ResetColor();
-            _console.Out.WriteLine(message);
+            InternalConsole.ResetColor();
+            InternalConsole.Out.WriteLine(message);
         }
 
-        public void Info(string format, params object[] args)
+        public void Info(string format, params object[]? args)
         {
-            _console.ResetColor();
-            _console.Out.WriteLine(string.Format(format, args));
+            InternalConsole.ResetColor();
+            InternalConsole.Out.WriteLine(string.Format(format, args));
         }
 
         public void Error(string message)
         {
-            _console.ForegroundColor = ConsoleColor.Red;
-            _console.Error.WriteLine(message);
+            InternalConsole.ForegroundColor = ConsoleColor.Red;
+            InternalConsole.Error.WriteLine(message);
         }
 
         public void Verbose(string message)
         {
             if (!_isVerboseOutput()) return;
 
-            _console.ResetColor();
-            _console.Out.WriteLine(message);
+            InternalConsole.ResetColor();
+            InternalConsole.Out.WriteLine(message);
         }
     }
 }

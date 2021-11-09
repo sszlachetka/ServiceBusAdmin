@@ -2,7 +2,7 @@ using Azure.Messaging.ServiceBus;
 
 namespace ServiceBusAdmin.Client
 {
-    public class TopicReceiverOptions
+    public record TopicReceiverOptions
     {
         public TopicReceiverOptions(string topic, string subscription, ServiceBusReceiveMode receiveMode, int top)
         {

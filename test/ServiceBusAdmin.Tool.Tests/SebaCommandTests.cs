@@ -19,13 +19,18 @@ namespace ServiceBusAdmin.Tool.Tests
         
         protected void AssertFailure(SebaResult result, params string[] errorLines)
         {
-            Console.ErrorText.Should().StartWith(string.Join(Environment.NewLine, errorLines));
+            Console.ErrorText.Should().Be(ConsoleOutput(errorLines));
             result.Should().Be(SebaResult.Failure);
         }
 
         protected void AssertConsoleOutput(params string[] lines)
         {
-            Console.OutputText.Should().StartWith(string.Join(Environment.NewLine, lines));
+            Console.OutputText.Should().Be(ConsoleOutput(lines));
+        }
+
+        private static string ConsoleOutput(string[] lines)
+        {
+            return string.Join(Environment.NewLine, lines) + Environment.NewLine;
         }
 
         protected Seba Seba()

@@ -58,7 +58,7 @@ namespace ServiceBusAdmin.Client
             return (props.ActiveMessageCount, props.DeadLetterMessageCount);
         }
 
-        public async Task Peek(TopicReceiverOptions options, Func<ServiceBusReceivedMessage, Task> messageHandler)
+        public async Task Peek(TopicReceiverOptions options, ServiceBusMessageHandler messageHandler)
         {
             await using var client = ServiceBusClient();
             await using var receiver = client.CreateReceiver(options.Topic, options.Subscription,
@@ -68,7 +68,7 @@ namespace ServiceBusAdmin.Client
             ServiceBusReceivedMessage message;
             while (peeked < options.Top && (message = await receiver.PeekMessageAsync()) != null)
             {
-                await messageHandler(message);
+                await messageHandler(new ServiceBusReceivedMessageAdapter(message));
 
                 peeked++;
             }

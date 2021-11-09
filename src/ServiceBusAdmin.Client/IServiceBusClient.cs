@@ -17,7 +17,7 @@ namespace ServiceBusAdmin.Client
         Task<(long ActiveMessageCount, long DeadLetterMessageCount)> GetSubscriptionRuntimeProperties(
             string topic, string subscription, CancellationToken cancellationToken);
 
-        Task Peek(TopicReceiverOptions options, Func<ServiceBusReceivedMessage, Task> messageHandler);
+        Task Peek(TopicReceiverOptions options, ServiceBusMessageHandler messageHandler);
 
         Task CreateTopic(string topicName, CancellationToken cancellationToken);
 

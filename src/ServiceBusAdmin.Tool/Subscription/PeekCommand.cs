@@ -14,14 +14,14 @@ namespace ServiceBusAdmin.Tool.Subscription
     public class PeekCommand : SebaCommand
     {
         private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
-        private readonly Func<string> _getOutputFormat;
+        private readonly OutputFormatOption _outputFormat;
         private readonly Func<string> _getEncodingName;
         private readonly Func<int> _getTop;
 
         public PeekCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
-            _getOutputFormat = Command.ConfigureOutputFormatOption();
+            _outputFormat = Command.ConfigureOutputFormatOption();
             _getEncodingName = Command.ConfigureEncodingNameOption();
             _getTop = Command.ConfigureTopOption("Count of messages to peek");
         }
@@ -36,7 +36,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         private MessageHandler CreateMessageHandler()
         {
-            return new (_getOutputFormat(), _getEncodingName(), Console);
+            return new (_outputFormat, _getEncodingName(), Console);
         }
         
         private TopicReceiverOptions CreateTopicReceiverOptions()
@@ -48,24 +48,26 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         private class MessageHandler
         {
-            private readonly string _outputFormat;
+            private readonly OutputFormatOption _outputFormat;
             private readonly Encoding _encoding;
             private readonly SebaConsole _console;
 
-            public MessageHandler(string outputFormat, string encodingName, SebaConsole console)
+            public MessageHandler(OutputFormatOption outputFormat, string encodingName, SebaConsole console)
             {
                 _outputFormat = outputFormat;
                 _encoding = Encoding.GetEncoding(encodingName);
                 _console = console;
             }
 
-            public Task Handle(ServiceBusReceivedMessage message)
+            public Task Handle(IServiceBusMessage message)
             {
-                _console.Info(_outputFormat, 
-                    _encoding.GetString(message.Body),
+                _console.Info(_outputFormat.Value,
+                    _outputFormat.IncludesMessageBody ? _encoding.GetString(message.Body) : string.Empty,
                     message.SequenceNumber,
                     message.MessageId,
-                    JsonSerializer.Serialize(message.ApplicationProperties));
+                    _outputFormat.IncludesApplicationProperties
+                        ? JsonSerializer.Serialize(message.ApplicationProperties)
+                        : string.Empty);
 
                 return Task.CompletedTask;
             }

@@ -59,9 +59,10 @@ namespace ServiceBusAdmin.Client
 
         public async Task Peek(ReceiverOptions options, ServiceBusMessageHandler messageHandler)
         {
+            var entity = options.EntityName;
             await using var client = ServiceBusClient();
             await using var receiver =
-                client.CreateReceiver(options.TopicName, options.SubscriptionName, new ServiceBusReceiverOptions());
+                client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), new ServiceBusReceiverOptions());
 
             var messages = await receiver.PeekMessagesAsync(options.MaxMessages);
             foreach (var message in messages)

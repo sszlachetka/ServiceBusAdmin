@@ -11,7 +11,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Peeks_messages()
         {
-            var options = new ReceiverOptions("topic77", "sub34", 10);
+            var options = new ReceiverOptions(new ReceiverEntityName("topic77", "sub34"), 10);
             Client.SetupPeek(options, handler =>
             {
                 handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
@@ -27,7 +27,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Returns_messages_in_provided_format()
         {
-            var options = new ReceiverOptions("topic56", "sub4", 10);
+            var options = new ReceiverOptions(new ReceiverEntityName("topic56", "sub4"), 10);
             Client.SetupPeek(options, handler =>
             {
                 handler(new TestMessageBuilder()
@@ -56,7 +56,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Supports_max_option()
         {
-            var options = new ReceiverOptions("someTopic", "someSubscription", 101);
+            var options = new ReceiverOptions(new ReceiverEntityName("someTopic", "someSubscription"), 101);
             Client.SetupPeek(options, _ => { });
             
             await Seba().Execute(new[]

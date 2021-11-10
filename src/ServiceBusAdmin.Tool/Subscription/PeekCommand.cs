@@ -42,7 +42,7 @@ namespace ServiceBusAdmin.Tool.Subscription
         {
             var (topic, subscription) = _getFullSubscriptionName();
 
-            return new ReceiverOptions(topic, subscription, _getMaxMessages());
+            return new ReceiverOptions(new ReceiverEntityName(topic, subscription), _getMaxMessages());
         }
 
         private class MessageHandler

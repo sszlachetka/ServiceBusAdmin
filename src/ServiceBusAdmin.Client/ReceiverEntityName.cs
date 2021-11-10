@@ -19,13 +19,18 @@ namespace ServiceBusAdmin.Client
             _subscriptionName = subscriptionName;
         }
 
-        public string QueueName => _queueName ?? throw new InvalidOperationException("Queue name is undefined");
+        public string QueueName() => _queueName ?? throw new InvalidOperationException("Queue name is undefined");
 
-        public string TopicName => _topicName ?? throw new InvalidOperationException("Topic name is undefined");
+        public string TopicName() => _topicName ?? throw new InvalidOperationException("Topic name is undefined");
 
-        public string SubscriptionName =>
+        public string SubscriptionName() =>
             _subscriptionName ?? throw new InvalidOperationException("Subscription name is undefined");
 
         public bool IsQueue => _queueName != null;
+
+        public override string ToString()
+        {
+            return IsQueue ? _queueName! : string.Concat(_topicName, "/", _subscriptionName);
+        }
     }
 }

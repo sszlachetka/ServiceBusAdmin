@@ -22,7 +22,7 @@ namespace ServiceBusAdmin.Tool
             InternalConsole.Out.WriteLine(message);
         }
 
-        public void Info(string format, params object[]? args)
+        public void Info(string format, params object[] args)
         {
             InternalConsole.ResetColor();
             InternalConsole.Out.WriteLine(string.Format(format, args));

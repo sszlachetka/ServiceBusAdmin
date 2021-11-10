@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,19 +57,16 @@ namespace ServiceBusAdmin.Client
             return (props.ActiveMessageCount, props.DeadLetterMessageCount);
         }
 
-        public async Task Peek(TopicReceiverOptions options, ServiceBusMessageHandler messageHandler)
+        public async Task Peek(ReceiverOptions options, ServiceBusMessageHandler messageHandler)
         {
             await using var client = ServiceBusClient();
-            await using var receiver = client.CreateReceiver(options.Topic, options.Subscription,
-                new ServiceBusReceiverOptions {ReceiveMode = options.ReceiveMode});
+            await using var receiver =
+                client.CreateReceiver(options.TopicName, options.SubscriptionName, new ServiceBusReceiverOptions());
 
-            var peeked = 0;
-            ServiceBusReceivedMessage message;
-            while (peeked < options.Top && (message = await receiver.PeekMessageAsync()) != null)
+            var messages = await receiver.PeekMessagesAsync(options.MaxMessages);
+            foreach (var message in messages)
             {
                 await messageHandler(new ServiceBusReceivedMessageAdapter(message));
-
-                peeked++;
             }
         }
 

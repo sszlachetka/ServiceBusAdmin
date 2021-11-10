@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Client;
 using ServiceBusAdmin.Tool.Subscription.Arguments;
@@ -16,14 +15,14 @@ namespace ServiceBusAdmin.Tool.Subscription
         private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
         private readonly OutputFormatOption _outputFormat;
         private readonly Func<string> _getEncodingName;
-        private readonly Func<int> _getTop;
+        private readonly Func<int> _getMaxMessages;
 
         public PeekCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
             _outputFormat = Command.ConfigureOutputFormatOption();
             _getEncodingName = Command.ConfigureEncodingNameOption();
-            _getTop = Command.ConfigureTopOption("Count of messages to peek");
+            _getMaxMessages = Command.ConfigureMaxMessagesOption("Max messages to peek");
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
@@ -39,11 +38,11 @@ namespace ServiceBusAdmin.Tool.Subscription
             return new (_outputFormat, _getEncodingName(), Console);
         }
         
-        private TopicReceiverOptions CreateTopicReceiverOptions()
+        private ReceiverOptions CreateTopicReceiverOptions()
         {
             var (topic, subscription) = _getFullSubscriptionName();
 
-            return new TopicReceiverOptions(topic, subscription, ServiceBusReceiveMode.PeekLock, _getTop());
+            return new ReceiverOptions(topic, subscription, _getMaxMessages());
         }
 
         private class MessageHandler

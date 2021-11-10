@@ -3,12 +3,12 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin.Tool.Subscription.Options
 {
-    public static class Top
+    public static class MaxMessages
     {
-        public static Func<int> ConfigureTopOption(this CommandLineApplication command, string description, int defaultValue = 10)
+        public static Func<int> ConfigureMaxMessagesOption(this CommandLineApplication command, string description, int defaultValue = 10)
         {
             var option = command.Option<int?>(
-                "-t|--top",
+                "-m|--max",
                 description,
                 CommandOptionType.SingleValue);
 

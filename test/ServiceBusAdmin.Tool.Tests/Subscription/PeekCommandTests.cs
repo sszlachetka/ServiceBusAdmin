@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
 using Moq;
 using ServiceBusAdmin.Client;
 using Xunit;
@@ -12,7 +11,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Peeks_messages()
         {
-            var options = new TopicReceiverOptions("topic77", "sub34", ServiceBusReceiveMode.PeekLock, 10);
+            var options = new ReceiverOptions("topic77", "sub34", 10);
             Client.SetupPeek(options, handler =>
             {
                 handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
@@ -28,7 +27,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Returns_messages_in_provided_format()
         {
-            var options = new TopicReceiverOptions("topic56", "sub4", ServiceBusReceiveMode.PeekLock, 10);
+            var options = new ReceiverOptions("topic56", "sub4", 10);
             Client.SetupPeek(options, handler =>
             {
                 handler(new TestMessageBuilder()
@@ -53,15 +52,27 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
 
             AssertFailure(result, "The Full subscription name field is required.");
         }
+
+        [Fact]
+        public async Task Supports_max_option()
+        {
+            var options = new ReceiverOptions("someTopic", "someSubscription", 101);
+            Client.SetupPeek(options, _ => { });
+            
+            await Seba().Execute(new[]
+                {"subscription", "peek", "someTopic/someSubscription", "--max", "101"});
+
+            Client.Verify(x => x.Peek(options, It.IsAny<ServiceBusMessageHandler>()), Times.Once);
+        }
     }
 
     internal static class ServiceBusClientMockExtensions
     {
-        public static void SetupPeek(this Mock<IServiceBusClient> mock, TopicReceiverOptions options,
+        public static void SetupPeek(this Mock<IServiceBusClient> mock, ReceiverOptions options,
             Action<ServiceBusMessageHandler> handlerCallback)
         {
             mock.Setup(x => x.Peek(options, It.IsAny<ServiceBusMessageHandler>()))
-                .Callback((TopicReceiverOptions _, ServiceBusMessageHandler handler) =>
+                .Callback((ReceiverOptions _, ServiceBusMessageHandler handler) =>
                 {
                     handlerCallback(handler);
                 })

@@ -4,29 +4,20 @@ using ServiceBusAdmin.Client;
 using ServiceBusAdmin.Tool.Subscription.Arguments;
 using ServiceBusAdmin.Tool.Subscription.Options;
 
-namespace ServiceBusAdmin.Tool.Subscription
+namespace ServiceBusAdmin.Tool.Subscription.Inputs
 {
-    internal class PrintToConsoleInput
+    public class SubscriptionReceiverInput
     {
         private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
-        private readonly OutputFormatOption _outputFormat;
-        private readonly Func<string> _getEncodingName;
         private readonly Func<int> _getMaxMessages;
-
-        public PrintToConsoleInput(CommandLineApplication command)
+        
+        public SubscriptionReceiverInput(CommandLineApplication command)
         {
             _getFullSubscriptionName = command.ConfigureFullSubscriptionNameArgument();
-            _outputFormat = command.ConfigureOutputFormatOption();
-            _getEncodingName = command.ConfigureEncodingNameOption();
             _getMaxMessages = command.ConfigureMaxMessagesOption();
         }
-
-        public PrintToConsoleMessageHandler CreatePrintToConsoleMessageHandler(SebaConsole console)
-        {
-            return new (_outputFormat, _getEncodingName(), console);
-        }
-
-        public ReceiverOptions CreateTopicReceiverOptions()
+        
+        public ReceiverOptions CreateReceiverOptions()
         {
             var (topic, subscription) = _getFullSubscriptionName();
 

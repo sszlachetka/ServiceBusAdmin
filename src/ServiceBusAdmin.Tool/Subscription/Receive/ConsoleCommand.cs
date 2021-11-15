@@ -3,22 +3,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Client;
+using ServiceBusAdmin.Tool.Subscription.Inputs;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
 {
     public class ConsoleCommand : SebaCommand
     {
-        private readonly PrintToConsoleInput _input;
+        private readonly SubscriptionReceiverInput _subscriptionReceiverInput;
+        private readonly PrintToConsoleInput _printToConsoleInput;
 
         public ConsoleCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            _input = new PrintToConsoleInput(Command);
+            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
+            _printToConsoleInput = new PrintToConsoleInput(Command);
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _input.CreateTopicReceiverOptions();
-            var printToConsole = _input.CreatePrintToConsoleMessageHandler(Console);
+            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var printToConsole = _printToConsoleInput.CreateMessageHandler(Console);
             var completeMessage = new CompleteMessageHandler(printToConsole.Handle);
 
             await Client.Receive(options, completeMessage.Handle);

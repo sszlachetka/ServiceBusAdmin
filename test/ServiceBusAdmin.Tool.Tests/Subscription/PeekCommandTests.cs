@@ -11,7 +11,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Peeks_messages()
         {
-            var options = new ReceiverOptions(new ReceiverEntityName("topic77", "sub34"), 10);
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic77", "sub34"))
+                .Build();
             Client.SetupPeek(options, async handler =>
             {
                 await handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
@@ -27,7 +29,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Returns_messages_in_provided_format()
         {
-            var options = new ReceiverOptions(new ReceiverEntityName("topic56", "sub4"), 10);
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic56", "sub4"))
+                .Build();
             Client.SetupPeek(options, handler =>
                 handler(new TestMessageBuilder()
                     .WithBody("{\"key1\":99}")
@@ -54,13 +58,29 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Supports_max_option()
         {
-            var options = new ReceiverOptions(new ReceiverEntityName("someTopic", "someSubscription"), 101);
+            var options = new ReceiverOptionsBuilder()
+                .WithMaxMessages(101)
+                .Build();
             Client.SetupPeek(options, _ => Task.CompletedTask);
             
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--max", "101"});
 
             Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
+        }
+        
+        [Fact]
+        public async Task Supports_dead_letter_queue_option()
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithIsDeadLetterSubQueue(true)
+                .Build();
+            Client.SetupReceive(options, _ => Task.CompletedTask);
+
+            await Seba().Execute(new[]
+                {"subscription", "receive", "console", "someTopic/someSubscription", "--dead-letter-queue"});
+
+            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler>()), Times.Once);
         }
     }
 }

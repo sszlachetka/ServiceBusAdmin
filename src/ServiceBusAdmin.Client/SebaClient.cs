@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace ServiceBusAdmin.Client
 {
     public class SebaClient : IServiceBusClient
     {
+        private static readonly TimeSpan ReceiveMaxWaitTime = TimeSpan.FromSeconds(3);
         private readonly string _connectionString;
 
         public SebaClient(string connectionString)
@@ -73,8 +75,8 @@ namespace ServiceBusAdmin.Client
         {
             await using var client = ServiceBusClient();
             await using var receiver = ServiceBusReceiver(client, options);
-            
-            var messages = await receiver.ReceiveMessagesAsync(options.MaxMessages);
+
+            var messages = await receiver.ReceiveMessagesAsync(options.MaxMessages, ReceiveMaxWaitTime);
             foreach (var message in messages)
             {
                 await messageHandler(new ReceivedMessageAdapter(message, receiver));
@@ -126,8 +128,12 @@ namespace ServiceBusAdmin.Client
         private static ServiceBusReceiver ServiceBusReceiver(ServiceBusClient client, ReceiverOptions options)
         {
             var entity = options.EntityName;
+            var serviceBusReceiverOptions = new ServiceBusReceiverOptions
+            {
+                SubQueue = options.IsDeadLetterSubQueue ? SubQueue.DeadLetter : SubQueue.None
+            };
 
-            return client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), new ServiceBusReceiverOptions());
+            return client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), serviceBusReceiverOptions);
         }
     }
 }

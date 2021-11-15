@@ -16,7 +16,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
                 new TestMessageBuilder().WithSequenceNumber(5).Build(),
                 new TestMessageBuilder().WithSequenceNumber(12).Build(),
             };
-            var options = new ReceiverOptions(new ReceiverEntityName("topic3", "sub9"), 10);
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic3", "sub9"))
+                .Build();
             Client.SetupReceive(options, async handler =>
             {
                 foreach (var message in messages)
@@ -44,13 +46,24 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         [Fact]
         public async Task Supports_max_option()
         {
-            var options = new ReceiverOptions(new ReceiverEntityName("someTopic", "someSubscription"), 51);
+            var options = new ReceiverOptionsBuilder()
+                .WithMaxMessages(51)
+                .Build();
             Client.SetupReceive(options, _ => Task.CompletedTask);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", "deadletter", "someTopic/someSubscription", "--max", "51"});
 
             Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler>()), Times.Once);
+        }
+        
+        [Fact]
+        public async Task Does_not_support_dead_letter_queue_option()
+        {
+            var result = await Seba().Execute(new[]
+                {"subscription", "receive", "deadletter", "someTopic/someSubscription", "--dead-letter-queue"});
+
+            AssertFailure(result, "Unrecognized option '--dead-letter-queue'");
         }
     }
 }

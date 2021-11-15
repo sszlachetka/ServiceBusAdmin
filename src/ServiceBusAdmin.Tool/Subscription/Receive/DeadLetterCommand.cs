@@ -15,7 +15,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         {
             Command.Description = "Receives messages from specified subscription and moves them to the dead letter queue. " +
                                   "The command prints sequence numbers of dead lettered messages.";
-            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
+            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command, enableDeadLetterSwitch: false);
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)

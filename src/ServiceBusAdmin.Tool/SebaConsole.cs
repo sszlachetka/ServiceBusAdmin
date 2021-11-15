@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Tool.Options;
 
@@ -18,14 +19,23 @@ namespace ServiceBusAdmin.Tool
 
         public void Info(string message)
         {
-            InternalConsole.ResetColor();
-            InternalConsole.Out.WriteLine(message);
+            WithOutput(output => output.WriteLine(message));
         }
 
         public void Info(string format, params object[] args)
         {
+            WithOutput(output => output.WriteLine(string.Format(format, args)));
+        }
+
+        public void Info(long value)
+        {
+            WithOutput(output => output.WriteLine(value));
+        }
+
+        private void WithOutput(Action<TextWriter> action)
+        {
             InternalConsole.ResetColor();
-            InternalConsole.Out.WriteLine(string.Format(format, args));
+            action(InternalConsole.Out);
         }
 
         public void Error(string message)

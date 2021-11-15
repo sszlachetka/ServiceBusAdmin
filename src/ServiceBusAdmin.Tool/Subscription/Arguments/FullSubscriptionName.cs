@@ -6,8 +6,9 @@ namespace ServiceBusAdmin.Tool.Subscription.Arguments
 {
     public static class FullSubscriptionName
     {
-        private const string Name = "Full subscription name";
-        private const string Description = "must be provided in following format <topic name>/<subscription name>";
+        private const string ExpectedFormat = "<topic name>/<subscription name>";
+        private const string Name = "Full subscription name.";
+        private const string Description = "The name must be provided in following format " + ExpectedFormat + ".";
 
         public static Func<(string topic, string subscription)> ConfigureFullSubscriptionNameArgument(
             this CommandLineApplication command)
@@ -45,7 +46,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Arguments
         
         private static SebaCommandParsingException Failure()
         {
-            return new ($"{Name} {Description}");
+            return new ($"{Name} must be provided in following format {ExpectedFormat}");
         }
     }
 }

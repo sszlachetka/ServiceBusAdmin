@@ -6,6 +6,7 @@ namespace ServiceBusAdmin.Client
     public interface IReceivedMessage : IMessage
     {
         Task Complete();
+        Task DeadLetter();
     }
 
     public class ReceivedMessageAdapter : MessageAdapter, IReceivedMessage
@@ -20,6 +21,11 @@ namespace ServiceBusAdmin.Client
         public Task Complete()
         {
             return _receiver.CompleteMessageAsync(Message);
+        }
+
+        public Task DeadLetter()
+        {
+            return _receiver.DeadLetterMessageAsync(Message);
         }
     }
 }

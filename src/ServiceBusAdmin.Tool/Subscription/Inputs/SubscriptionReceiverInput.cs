@@ -10,7 +10,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
     {
         private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
         private readonly Func<int> _getMaxMessages;
-        
+
         public SubscriptionReceiverInput(CommandLineApplication command)
         {
             _getFullSubscriptionName = command.ConfigureFullSubscriptionNameArgument();

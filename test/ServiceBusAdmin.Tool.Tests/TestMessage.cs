@@ -8,6 +8,8 @@ namespace ServiceBusAdmin.Tool.Tests
     public class TestMessage : IReceivedMessage
     {
         private int _completeCallsCount;
+        private int _deadLetterCallsCount;
+
         public TestMessage(BinaryData body, long sequenceNumber, string messageId,
             IReadOnlyDictionary<string, object> applicationProperties)
         {
@@ -21,6 +23,9 @@ namespace ServiceBusAdmin.Tool.Tests
         public long SequenceNumber { get; }
         public string MessageId { get; }
         public IReadOnlyDictionary<string, object> ApplicationProperties { get; }
+        public bool CompletedOnce => _completeCallsCount == 1;
+        public bool DeadLetteredOnce => _deadLetterCallsCount == 1;
+
         public Task Complete()
         {
             _completeCallsCount++;
@@ -28,6 +33,11 @@ namespace ServiceBusAdmin.Tool.Tests
             return Task.CompletedTask;
         }
 
-        public bool CompletedOnce => _completeCallsCount == 1;
+        public Task DeadLetter()
+        {
+            _deadLetterCallsCount++;
+
+            return Task.CompletedTask;
+        }
     }
 }

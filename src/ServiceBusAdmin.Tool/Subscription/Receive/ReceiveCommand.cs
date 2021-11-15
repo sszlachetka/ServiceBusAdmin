@@ -7,6 +7,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         public ReceiveCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             Command.Subcommand(new ConsoleCommand(context, Command));
+            Command.Subcommand(new DeadLetterCommand(context, Command));
         }
     }
 }

@@ -12,6 +12,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public DeleteCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            Command.Description = "Deletes subscription.";
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 

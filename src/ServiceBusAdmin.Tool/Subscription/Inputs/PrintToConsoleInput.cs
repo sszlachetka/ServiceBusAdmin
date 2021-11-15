@@ -10,7 +10,6 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
     {
         private readonly OutputFormatOption _outputFormat;
         private readonly Func<string> _getEncodingName;
-        
 
         public PrintToConsoleInput(CommandLineApplication command)
         {

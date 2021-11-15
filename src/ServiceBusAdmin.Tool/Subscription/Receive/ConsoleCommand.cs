@@ -14,6 +14,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
         public ConsoleCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            Command.Description = "Receives messages from specified subscription and prints them to the console.";
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
             _printToConsoleInput = new PrintToConsoleInput(Command);
         }

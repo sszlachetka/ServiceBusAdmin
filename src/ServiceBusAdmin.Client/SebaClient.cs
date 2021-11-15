@@ -57,17 +57,27 @@ namespace ServiceBusAdmin.Client
             return (props.ActiveMessageCount, props.DeadLetterMessageCount);
         }
 
-        public async Task Peek(ReceiverOptions options, ServiceBusMessageHandler messageHandler)
+        public async Task Peek(ReceiverOptions options, MessageHandler messageHandler)
         {
-            var entity = options.EntityName;
             await using var client = ServiceBusClient();
-            await using var receiver =
-                client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), new ServiceBusReceiverOptions());
+            await using var receiver = ServiceBusReceiver(client, options);
 
             var messages = await receiver.PeekMessagesAsync(options.MaxMessages);
             foreach (var message in messages)
             {
-                await messageHandler(new ServiceBusReceivedMessageAdapter(message));
+                await messageHandler(new MessageAdapter(message));
+            }
+        }
+
+        public async Task Receive(ReceiverOptions options, ReceivedMessageHandler messageHandler)
+        {
+            await using var client = ServiceBusClient();
+            await using var receiver = ServiceBusReceiver(client, options);
+            
+            var messages = await receiver.ReceiveMessagesAsync(options.MaxMessages);
+            foreach (var message in messages)
+            {
+                await messageHandler(new ReceivedMessageAdapter(message, receiver));
             }
         }
 
@@ -111,6 +121,13 @@ namespace ServiceBusAdmin.Client
         private ServiceBusClient ServiceBusClient()
         {
             return new(_connectionString);
+        }
+        
+        private static ServiceBusReceiver ServiceBusReceiver(ServiceBusClient client, ReceiverOptions options)
+        {
+            var entity = options.EntityName;
+
+            return client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), new ServiceBusReceiverOptions());
         }
     }
 }

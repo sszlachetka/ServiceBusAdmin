@@ -12,10 +12,10 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         public async Task Peeks_messages()
         {
             var options = new ReceiverOptions(new ReceiverEntityName("topic77", "sub34"), 10);
-            Client.SetupPeek(options, handler =>
+            Client.SetupPeek(options, async handler =>
             {
-                handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
-                handler(new TestMessageBuilder().WithBody("{\"key2\":45}").Build());
+                await handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
+                await handler(new TestMessageBuilder().WithBody("{\"key2\":45}").Build());
             });
 
             var result = await Seba().Execute(new[] {"subscription", "peek", "topic77/sub34"});
@@ -29,14 +29,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         {
             var options = new ReceiverOptions(new ReceiverEntityName("topic56", "sub4"), 10);
             Client.SetupPeek(options, handler =>
-            {
                 handler(new TestMessageBuilder()
                     .WithBody("{\"key1\":99}")
                     .WithSequenceNumber(89)
                     .WithMessageId("someMessageId")
                     .WithApplicationProperty("prop1", "value1")
-                    .Build());
-            });
+                    .Build()));
 
             var result = await Seba().Execute(new[]
                 {"subscription", "peek", "topic56/sub4", "--output-format", "{0} {1} {2} {3}"});
@@ -57,26 +55,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         public async Task Supports_max_option()
         {
             var options = new ReceiverOptions(new ReceiverEntityName("someTopic", "someSubscription"), 101);
-            Client.SetupPeek(options, _ => { });
+            Client.SetupPeek(options, _ => Task.CompletedTask);
             
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--max", "101"});
 
-            Client.Verify(x => x.Peek(options, It.IsAny<ServiceBusMessageHandler>()), Times.Once);
-        }
-    }
-
-    internal static class ServiceBusClientMockExtensions
-    {
-        public static void SetupPeek(this Mock<IServiceBusClient> mock, ReceiverOptions options,
-            Action<ServiceBusMessageHandler> handlerCallback)
-        {
-            mock.Setup(x => x.Peek(options, It.IsAny<ServiceBusMessageHandler>()))
-                .Callback((ReceiverOptions _, ServiceBusMessageHandler handler) =>
-                {
-                    handlerCallback(handler);
-                })
-                .Returns(Task.CompletedTask);
+            Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
         }
     }
 }

@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using FluentAssertions;
-using Moq;
 using ServiceBusAdmin.Client;
 using Xunit;
 

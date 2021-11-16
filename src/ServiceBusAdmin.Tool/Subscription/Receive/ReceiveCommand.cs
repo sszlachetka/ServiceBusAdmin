@@ -8,6 +8,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         {
             Command.Subcommand(new ConsoleCommand(context, Command));
             Command.Subcommand(new DeadLetterCommand(context, Command));
+            Command.Subcommand(new SendToTopicCommand(context, Command));
         }
     }
 }

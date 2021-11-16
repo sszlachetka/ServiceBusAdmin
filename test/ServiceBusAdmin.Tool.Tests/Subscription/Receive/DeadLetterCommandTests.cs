@@ -19,49 +19,21 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic3", "sub9"))
                 .Build();
-            Client.SetupReceive(options, async handler =>
-            {
-                foreach (var message in messages)
-                {
-                    await handler(message);
-                }
-            });
+            Client.SetupReceive(options, messages);
 
-            var result = await Seba().Execute(new[] {"subscription", "receive", "deadletter", "topic3/sub9"});
+            var result = await Seba().Execute(new[] {"subscription", "receive", "dead-letter", "topic3/sub9"});
 
             AssertSuccess(result);
             AssertConsoleOutput("5", "12");
             messages[0].DeadLetteredOnce.Should().BeTrue();
             messages[1].DeadLetteredOnce.Should().BeTrue();
         }
-        
-        [Fact]
-        public async Task Full_subscription_name_is_required()
-        {
-            var result = await Seba().Execute(new[] {"subscription", "receive", "deadletter"});
 
-            AssertFailure(result, "The Full subscription name field is required.");
-        }
-        
-        [Fact]
-        public async Task Supports_max_option()
-        {
-            var options = new ReceiverOptionsBuilder()
-                .WithMaxMessages(51)
-                .Build();
-            Client.SetupReceive(options, _ => Task.CompletedTask);
-
-            await Seba().Execute(new[]
-                {"subscription", "receive", "deadletter", "someTopic/someSubscription", "--max", "51"});
-
-            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler>()), Times.Once);
-        }
-        
         [Fact]
         public async Task Does_not_support_dead_letter_queue_option()
         {
             var result = await Seba().Execute(new[]
-                {"subscription", "receive", "deadletter", "someTopic/someSubscription", "--dead-letter-queue"});
+                {"subscription", "receive", "dead-letter", "someTopic/someSubscription", "--dead-letter-queue"});
 
             AssertFailure(result, "Unrecognized option '--dead-letter-queue'");
         }

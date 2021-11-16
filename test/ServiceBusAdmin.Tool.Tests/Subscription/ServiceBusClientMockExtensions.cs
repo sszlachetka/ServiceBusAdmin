@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using ServiceBusAdmin.Client;
@@ -26,6 +29,26 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 {
                     await handlerCallback(handler);
                 })
+                .Returns(Task.CompletedTask);
+        }
+        
+        public static void SetupReceive(this Mock<IServiceBusClient> mock, ReceiverOptions options,
+            IEnumerable<IReceivedMessage> messages)
+        {
+            mock.Setup(x => x.Receive(options, It.IsAny<ReceivedMessageHandler>()))
+                .Callback(async (ReceiverOptions _, ReceivedMessageHandler handler) =>
+                {
+                    foreach (var message in messages)
+                    {
+                        await handler(message);
+                    }
+                })
+                .Returns(Task.CompletedTask);
+        }
+
+        public static void SetupSendAnyBinaryDataMessage(this Mock<IServiceBusClient> mock)
+        {
+            mock.Setup(x => x.SendMessage(It.IsAny<string>(), It.IsAny<BinaryData>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
         }
     }

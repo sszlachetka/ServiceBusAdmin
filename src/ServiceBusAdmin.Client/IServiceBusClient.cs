@@ -30,5 +30,7 @@ namespace ServiceBusAdmin.Client
         Task DeleteSubscription(string topicName, string subscriptionName, CancellationToken cancellationToken);
 
         Task SendMessage(string queueOrTopicName, string messageBody, CancellationToken cancellationToken);
+
+        Task SendMessage(string queueOrTopicName, BinaryData messageBody, CancellationToken cancellationToken);
     }
 }

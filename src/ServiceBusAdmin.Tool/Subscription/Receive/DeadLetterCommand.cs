@@ -13,6 +13,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         public DeadLetterCommand(SebaContext context, CommandLineApplication parentCommand) : base(context,
             parentCommand)
         {
+            Command.Name = "dead-letter";
             Command.Description = "Receives messages from specified subscription and moves them to the dead letter queue. " +
                                   "The command prints sequence numbers of dead lettered messages.";
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command, enableDeadLetterSwitch: false);
@@ -37,9 +38,8 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
             public async Task Handle(IReceivedMessage message)
             {
-                _console.Info(message.SequenceNumber);
-
                 await message.DeadLetter();
+                _console.Info(message.SequenceNumber);
             }
         }
     }

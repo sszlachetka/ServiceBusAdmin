@@ -11,6 +11,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
         private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
         private readonly Func<int> _getMaxMessages;
         private readonly Func<bool> _getIsDeadLetterSubQueue;
+        private readonly Func<int> _getMessageHandlingConcurrencyLevel;
 
         public SubscriptionReceiverInput(CommandLineApplication command, bool enableDeadLetterSwitch = true)
         {
@@ -19,6 +20,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
             _getIsDeadLetterSubQueue = enableDeadLetterSwitch
                 ? command.ConfigureIsDeadLetterSubQueue()
                 : () => false;
+            _getMessageHandlingConcurrencyLevel = command.ConfigureMessageHandlingConcurrencyLevel();
         }
         
         public ReceiverOptions CreateReceiverOptions()
@@ -28,7 +30,8 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
             return new ReceiverOptions(
                 new ReceiverEntityName(topic, subscription),
                 _getMaxMessages(),
-                _getIsDeadLetterSubQueue());
+                _getIsDeadLetterSubQueue(),
+                _getMessageHandlingConcurrencyLevel());
         }
     }
 }

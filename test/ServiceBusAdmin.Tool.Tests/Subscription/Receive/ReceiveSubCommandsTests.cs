@@ -33,6 +33,21 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         }
         
         [Theory]
+        [ClassData(typeof(ReceiveSubCommands))]
+        public async Task Supports_message_handling_concurrency_level_option(string subCommand)
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithMessageHandlingConcurrencyLevel(76)
+                .Build();
+            Client.SetupReceive(options, _ => Task.CompletedTask);
+
+            await Seba().Execute(new[]
+                {"subscription", "receive", subCommand, "someTopic/someSubscription", "--message-handling-concurrency-level", "76"});
+
+            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler>()), Times.Once);
+        }
+        
+        [Theory]
         [ClassData(typeof(ReceiveSubCommandsSupportingDlq))]
         public async Task Supports_dead_letter_queue_option(string subCommand)
         {

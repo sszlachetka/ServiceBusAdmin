@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
@@ -64,11 +65,35 @@ namespace ServiceBusAdmin.Client
             await using var client = ServiceBusClient();
             await using var receiver = ServiceBusReceiver(client, options);
 
-            var messages = await receiver.PeekMessagesAsync(options.MaxMessages);
+            var peekedCount = 0;
+            IReadOnlyList<ServiceBusReceivedMessage> messages;
+            do
+            {
+                messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount);
+                peekedCount += messages.Count;
+                var peekedMessages = messages.Select(m => new MessageAdapter(m)).ToList();
+                await HandlePeekedMessages(peekedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
+            } while (messages.Count > 0 && peekedCount < options.MaxMessages);
+        }
+        
+        private static async Task HandlePeekedMessages(
+            IReadOnlyCollection<IMessage> messages,
+            MessageHandler messageHandler,
+            int messageHandlingConcurrencyLevel)
+        {
+            if (messages.Count == 0) return;
+
+            var semaphore = new SemaphoreSlim(messageHandlingConcurrencyLevel);
+            var tasks = new List<Task>();
             foreach (var message in messages)
             {
-                await messageHandler(new MessageAdapter(message));
+                await semaphore.WaitAsync();
+
+                tasks.Add(messageHandler(message)
+                    .ContinueWith(_ => semaphore.Release()));
             }
+            
+            await Task.WhenAll(tasks);
         }
 
         public async Task Receive(ReceiverOptions options, ReceivedMessageHandler messageHandler)
@@ -76,11 +101,35 @@ namespace ServiceBusAdmin.Client
             await using var client = ServiceBusClient();
             await using var receiver = ServiceBusReceiver(client, options);
 
-            var messages = await receiver.ReceiveMessagesAsync(options.MaxMessages, ReceiveMaxWaitTime);
+            var receivedCount = 0;
+            IReadOnlyList<ServiceBusReceivedMessage> messages;
+            do
+            {
+                messages = await receiver.ReceiveMessagesAsync(options.MaxMessages - receivedCount, ReceiveMaxWaitTime);
+                receivedCount += messages.Count;
+                var receivedMessages = messages.Select(m => new ReceivedMessageAdapter(m, receiver)).ToList();
+                await HandleReceivedMessages(receivedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
+            } while (messages.Count > 0 && receivedCount < options.MaxMessages);
+        }
+
+        private static async Task HandleReceivedMessages(
+            IReadOnlyCollection<IReceivedMessage> messages,
+            ReceivedMessageHandler messageHandler,
+            int messageHandlingConcurrencyLevel)
+        {
+            if (messages.Count == 0) return;
+
+            var semaphore = new SemaphoreSlim(messageHandlingConcurrencyLevel);
+            var tasks = new List<Task>();
             foreach (var message in messages)
             {
-                await messageHandler(new ReceivedMessageAdapter(message, receiver));
+                await semaphore.WaitAsync();
+
+                tasks.Add(messageHandler(message)
+                    .ContinueWith(_ => semaphore.Release()));
             }
+            
+            await Task.WhenAll(tasks);
         }
 
         public Task CreateTopic(string topicName, CancellationToken cancellationToken)

@@ -7,6 +7,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         private ReceiverEntityName _receiverEntityName = new ("someTopic", "someSubscription");
         private int _maxMessages = 10;
         private bool _isDeadLetterSubQueue;
+        private int _messageHandlingConcurrencyLevel = 1;
 
         public ReceiverOptionsBuilder WithEntityName(ReceiverEntityName value)
         {
@@ -25,10 +26,16 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             _isDeadLetterSubQueue = value;
             return this;
         }
+        
+        public ReceiverOptionsBuilder WithMessageHandlingConcurrencyLevel(int value)
+        {
+            _messageHandlingConcurrencyLevel = value;
+            return this;
+        }
 
         public ReceiverOptions Build()
         {
-            return new (_receiverEntityName, _maxMessages, _isDeadLetterSubQueue);
+            return new (_receiverEntityName, _maxMessages, _isDeadLetterSubQueue, _messageHandlingConcurrencyLevel);
         }
     }
 }

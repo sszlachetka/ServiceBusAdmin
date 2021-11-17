@@ -75,12 +75,26 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithIsDeadLetterSubQueue(true)
                 .Build();
-            Client.SetupReceive(options, _ => Task.CompletedTask);
+            Client.SetupPeek(options, _ => Task.CompletedTask);
 
             await Seba().Execute(new[]
-                {"subscription", "receive", "console", "someTopic/someSubscription", "--dead-letter-queue"});
+                {"subscription", "peek", "someTopic/someSubscription", "--dead-letter-queue"});
 
-            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler>()), Times.Once);
+            Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
+        }
+        
+        [Fact]
+        public async Task Supports_message_handling_concurrency_level_option()
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithMessageHandlingConcurrencyLevel(21)
+                .Build();
+            Client.SetupPeek(options, _ => Task.CompletedTask);
+
+            await Seba().Execute(new[]
+                {"subscription", "peek", "someTopic/someSubscription", "--message-handling-concurrency-level", "21"});
+
+            Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
         }
     }
 }

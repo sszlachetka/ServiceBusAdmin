@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.Tool.Options;
 
@@ -14,6 +15,11 @@ namespace ServiceBusAdmin.Tool
         {
             _internalConsole = console;
             _isVerboseOutput = isVerboseOutput;
+        }
+
+        public void Info(object value)
+        {
+            WithOutput(output => output.WriteLine(JsonSerializer.Serialize(value)));
         }
 
         public void Info(string message)

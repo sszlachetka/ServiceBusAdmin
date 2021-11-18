@@ -18,14 +18,6 @@ namespace ServiceBusAdmin.Client
             _connectionString = connectionString;
         }
 
-        public async Task<string> GetNamespaceName(CancellationToken cancellationToken)
-        {
-            var response = await AdministrationClient().GetNamespacePropertiesAsync(cancellationToken);
-            var props = response.Value;
-
-            return props.Name;
-        }
-
         public async Task<IReadOnlyCollection<string>> GetTopicsNames(CancellationToken cancellationToken)
         {
             var result = new List<string>();

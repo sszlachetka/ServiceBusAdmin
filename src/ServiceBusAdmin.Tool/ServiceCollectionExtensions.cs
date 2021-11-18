@@ -2,6 +2,7 @@ using System;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBusAdmin.Client;
+using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Options;
 
 namespace ServiceBusAdmin.Tool
@@ -18,7 +19,7 @@ namespace ServiceBusAdmin.Tool
             services.AddCommandLineApplication(console, getEnvironmentVariable);
             services.AddSingleton<CreateServiceBusClient>(sp =>
             {
-                var getConnectionString = sp.GetRequiredService<GetConnectionString>();
+                var getConnectionString = sp.GetRequiredService<GetServiceBusConnectionString>();
                 return () => createServiceBusClient(getConnectionString());
             });
             services.AddSingleton<CreateCommand>(sp =>

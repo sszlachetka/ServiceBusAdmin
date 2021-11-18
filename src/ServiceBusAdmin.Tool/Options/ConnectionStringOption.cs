@@ -1,16 +1,16 @@
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers;
 
 namespace ServiceBusAdmin.Tool.Options
 {
     public delegate string? GetEnvironmentVariable(string variableName);
-    public delegate string GetConnectionString();
 
     public static class ConnectionStringOption
     {
         public const string EnvironmentVariableName = "SEBA_CONNECTION_STRING";
         private const string Template = "-c|--connection-string";
 
-        public static GetConnectionString ConfigureConnectionStringOption(this CommandLineApplication application,
+        public static GetServiceBusConnectionString ConfigureConnectionStringOption(this CommandLineApplication application,
             GetEnvironmentVariable getEnvironmentVariable)
         {
             var connectionStringOption =

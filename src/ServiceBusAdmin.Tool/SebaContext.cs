@@ -1,4 +1,5 @@
 using McMaster.Extensions.CommandLineUtils;
+using MediatR;
 using ServiceBusAdmin.Client;
 
 namespace ServiceBusAdmin.Tool
@@ -14,12 +15,14 @@ namespace ServiceBusAdmin.Tool
         public IServiceBusClient Client => _client ??= _createServiceBusClient();
         public CreateCommand CreateCommand { get; }
         public SebaConsole Console { get; }
+        public IMediator Mediator { get; }
 
-        public SebaContext(CreateServiceBusClient createServiceBusClient, CreateCommand createCommand, SebaConsole console)
+        public SebaContext(CreateServiceBusClient createServiceBusClient, CreateCommand createCommand, SebaConsole console, IMediator mediator)
         {
             _createServiceBusClient = createServiceBusClient;
             CreateCommand = createCommand;
             Console = console;
+            Mediator = mediator;
         }
     }
 }

@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ServiceBusAdmin.Client\ServiceBusAdmin.Client.csproj" />
+      <ProjectReference Include="..\ServiceBusAdmin.CommandHandlers\ServiceBusAdmin.CommandHandlers.csproj" />
     </ItemGroup>
 
 </Project>

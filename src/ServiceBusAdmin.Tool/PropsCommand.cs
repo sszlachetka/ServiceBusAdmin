@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Props;
 
 namespace ServiceBusAdmin.Tool
 {
@@ -13,9 +14,9 @@ namespace ServiceBusAdmin.Tool
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var name = await Client.GetNamespaceName(cancellationToken);
+            var props = await Mediator.Send(new GetNamespaceProps(), cancellationToken);
 
-            Console.Info($"Namespace\t{name}");
+            Console.Info(props);
         }
     }
 }

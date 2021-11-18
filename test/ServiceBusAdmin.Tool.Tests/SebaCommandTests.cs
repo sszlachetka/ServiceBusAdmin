@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using McMaster.Extensions.CommandLineUtils;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ServiceBusAdmin.Client;
@@ -14,10 +15,11 @@ namespace ServiceBusAdmin.Tool.Tests
         private readonly ServiceProvider _serviceProvider;
         protected readonly TestConsole Console = new ();
         protected readonly Mock<IServiceBusClient> Client = new(MockBehavior.Strict);
+        protected readonly Mock<IMediator> Mediator = new(MockBehavior.Strict);
 
         protected SebaCommandTests()
         {
-            var services = ConfigureServices(Console, Client.Object);
+            var services = ConfigureServices(Console, Client.Object, Mediator.Object);
             _serviceProvider = services.BuildServiceProvider();
         }
 
@@ -48,7 +50,7 @@ namespace ServiceBusAdmin.Tool.Tests
             return _serviceProvider.GetRequiredService<Seba>();
         }
 
-        private static IServiceCollection ConfigureServices(IConsole console, IServiceBusClient client)
+        private static IServiceCollection ConfigureServices(IConsole console, IServiceBusClient client, IMediator mediator)
         {
             const string connectionStringValue = "secretConnectionString";
             static string? GetEnvironmentVariable(string variableName) =>
@@ -59,6 +61,7 @@ namespace ServiceBusAdmin.Tool.Tests
                     : throw new ArgumentException(connectionString);
 
             var services = new ServiceCollection();
+            services.AddSingleton(mediator);
             services.AddSeba(console, GetEnvironmentVariable, CreateServiceBusClient);
 
             return services;

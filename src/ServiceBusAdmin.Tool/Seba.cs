@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBusAdmin.Client;
+using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Subscription;
 using ServiceBusAdmin.Tool.Topic;
 
@@ -13,6 +14,7 @@ namespace ServiceBusAdmin.Tool
         public static async Task<int> Main(string[] args)
         {
             var services = new ServiceCollection();
+            services.AddCommandHandlers();
             services.AddSeba(PhysicalConsole.Singleton, Environment.GetEnvironmentVariable,
                 connectionString => new SebaClient(connectionString));
             await using var provider = services.BuildServiceProvider();

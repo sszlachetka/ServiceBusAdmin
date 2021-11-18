@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using MediatR;
 using ServiceBusAdmin.Client;
 
 namespace ServiceBusAdmin.Tool
@@ -35,5 +36,7 @@ namespace ServiceBusAdmin.Tool
         protected IServiceBusClient Client => Context.Client;
 
         protected SebaConsole Console => Context.Console;
+
+        protected IMediator Mediator => Context.Mediator;
     }
 }

@@ -8,8 +8,6 @@ namespace ServiceBusAdmin.Client
 {
     public interface IServiceBusClient
     {
-        Task<string> GetNamespaceName(CancellationToken cancellationToken);
-
         Task<IReadOnlyCollection<string>> GetTopicsNames(CancellationToken cancellationToken);
 
         Task<IReadOnlyCollection<string>> GetSubscriptionsNames(string topicName, CancellationToken cancellationToken);

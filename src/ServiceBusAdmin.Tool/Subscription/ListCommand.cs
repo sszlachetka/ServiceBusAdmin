@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Subscription.List;
 using ServiceBusAdmin.Tool.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
@@ -18,7 +19,8 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var subscriptions = await Client.GetSubscriptionsNames(_getTopicName(), cancellationToken);
+            var listSubscriptions = new ListSubscriptions(_getTopicName());
+            var subscriptions = await Mediator.Send(listSubscriptions, cancellationToken);
             foreach (var subscription in subscriptions)
             {
                 Console.Info(subscription);

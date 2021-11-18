@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+using ServiceBusAdmin.CommandHandlers.Subscription.Props;
 using ServiceBusAdmin.Tool.Tests.TestData;
 using Xunit;
 
@@ -11,13 +12,14 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Returns_subscription_properties()
         {
-            Client.Setup(x => x.GetSubscriptionRuntimeProperties("topic69", "sub1", It.IsAny<CancellationToken>()))
-                .ReturnsAsync((ActiveMessageCount: 34, DeadLetterMessageCount: 78));
+            Mediator.Setup<GetSubscriptionProps, SubscriptionProps>(
+                new SubscriptionProps(activeMessageCount: 34, deadLetterMessageCount: 78));
 
             var result = await Seba().Execute(new[] {"subscription", "props", "topic69/sub1"});
 
             AssertSuccess(result);
-            AssertConsoleOutput("ActiveMessageCount\t34", "DeadLetterMessageCount\t78");
+            AssertConsoleOutput(
+                "{\"ActiveMessageCount\":34,\"DeadLetterMessageCount\":78}");
         }
         
         [Fact]

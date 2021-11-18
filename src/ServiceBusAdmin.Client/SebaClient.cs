@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Azure.Messaging.ServiceBus.Administration;
 
 namespace ServiceBusAdmin.Client
 {
@@ -16,28 +15,6 @@ namespace ServiceBusAdmin.Client
         public SebaClient(string connectionString)
         {
             _connectionString = connectionString;
-        }
-
-        public async Task<IReadOnlyCollection<string>> GetSubscriptionsNames(string topicName, CancellationToken cancellationToken)
-        {
-            var result = new List<string>();
-            var subscriptions = AdministrationClient().GetSubscriptionsAsync(topicName, cancellationToken);
-            await foreach (var subscription in subscriptions)
-            {
-                result.Add(subscription.SubscriptionName);
-            }
-
-            return result;
-        }
-
-        public async Task<(long ActiveMessageCount, long DeadLetterMessageCount)> GetSubscriptionRuntimeProperties(
-            string topic, string subscription, CancellationToken cancellationToken)
-        {
-            var response = await AdministrationClient()
-                .GetSubscriptionRuntimePropertiesAsync(topic, subscription, cancellationToken);
-            var props = response.Value;
-
-            return (props.ActiveMessageCount, props.DeadLetterMessageCount);
         }
 
         public async Task Peek(ReceiverOptions options, MessageHandler messageHandler)
@@ -112,18 +89,6 @@ namespace ServiceBusAdmin.Client
             await Task.WhenAll(tasks);
         }
 
-        public Task CreateSubscription(string topicName, string subscriptionName,
-            CancellationToken cancellationToken)
-        {
-            return AdministrationClient().CreateSubscriptionAsync(topicName, subscriptionName, cancellationToken);
-        }
-
-        public Task DeleteSubscription(string topicName, string subscriptionName,
-            CancellationToken cancellationToken)
-        {
-            return AdministrationClient().DeleteSubscriptionAsync(topicName, subscriptionName, cancellationToken);
-        }
-
         public Task SendMessage(string queueOrTopicName, BinaryData messageBody, CancellationToken cancellationToken)
         {
             return SendMessage(queueOrTopicName, new ServiceBusMessage(messageBody), cancellationToken);
@@ -135,11 +100,6 @@ namespace ServiceBusAdmin.Client
             await using var sender = client.CreateSender(queueOrTopicName);
 
             await sender.SendMessageAsync(message, cancellationToken);
-        }
-
-        private ServiceBusAdministrationClient AdministrationClient()
-        {
-            return new (_connectionString);
         }
 
         private ServiceBusClient ServiceBusClient()

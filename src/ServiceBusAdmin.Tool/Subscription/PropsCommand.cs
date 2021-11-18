@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Subscription.Props;
 using ServiceBusAdmin.Tool.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
@@ -19,12 +20,11 @@ namespace ServiceBusAdmin.Tool.Subscription
         protected override async Task Execute(CancellationToken cancellationToken)
         {
             var (topic, subscription) = _getFullSubscriptionName();
+            var getSubscriptionProperties = new GetSubscriptionProps(topic, subscription);
 
-            var (activeMessageCount, deadLetterMessageCount) =
-                await Client.GetSubscriptionRuntimeProperties(topic, subscription, cancellationToken);
+            var subscriptionProps = await Mediator.Send(getSubscriptionProperties, cancellationToken);
 
-            Console.Info($"ActiveMessageCount\t{activeMessageCount}");
-            Console.Info($"DeadLetterMessageCount\t{deadLetterMessageCount}");
+            Console.Info(subscriptionProps);
         }
     }
 }

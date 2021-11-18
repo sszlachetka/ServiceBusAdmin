@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Subscription.Delete;
 using ServiceBusAdmin.Tool.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
@@ -19,8 +20,9 @@ namespace ServiceBusAdmin.Tool.Subscription
         protected override Task Execute(CancellationToken cancellationToken)
         {
             var (topic, subscription) = _getFullSubscriptionName();
+            var deleteSubscription = new DeleteSubscription(topic, subscription);
 
-            return Client.DeleteSubscription(topic, subscription, cancellationToken);
+            return Mediator.Send(deleteSubscription, cancellationToken);
         }
     }
 }

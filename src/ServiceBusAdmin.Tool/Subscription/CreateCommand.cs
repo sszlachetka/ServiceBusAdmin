@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Subscription.Create;
 using ServiceBusAdmin.Tool.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
@@ -20,7 +21,9 @@ namespace ServiceBusAdmin.Tool.Subscription
         {
             var (topic, subscription) = _getFullSubscriptionName();
 
-            return Client.CreateSubscription(topic, subscription, cancellationToken);
+            var createSubscription = new CreateSubscription(topic, subscription);
+            
+            return Mediator.Send(createSubscription, cancellationToken);
         }
     }
 }

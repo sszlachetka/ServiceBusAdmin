@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+using ServiceBusAdmin.CommandHandlers.Subscription.List;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription
@@ -10,8 +12,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Lists_all_subscriptions()
         {
-            Client.Setup(x => x.GetSubscriptionsNames("topic69", It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new[] {"sub1", "sub2", "sub3", "sub4"});
+            Mediator.Setup<ListSubscriptions, IReadOnlyCollection<string>>(new[] {"sub1", "sub2", "sub3", "sub4"});
 
             var result = await Seba().Execute(new[] {"subscription", "list", "topic69"});
 

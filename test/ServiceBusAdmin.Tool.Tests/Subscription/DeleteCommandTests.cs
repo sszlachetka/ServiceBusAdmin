@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
+using ServiceBusAdmin.CommandHandlers.Subscription.Delete;
 using ServiceBusAdmin.Tool.Tests.TestData;
 using Xunit;
 
@@ -11,15 +12,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Deletes_subscription_with_provided_name()
         {
-            Client.Setup(x =>
-                    x.DeleteSubscription(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+            Mediator.Setup<DeleteSubscription>();
 
             var result = await Seba().Execute(new[] {"subscription", "delete", "topic69/subscription1"});
 
             AssertSuccess(result);
-            Client.Verify(x => x.DeleteSubscription("topic69", "subscription1", It.IsAny<CancellationToken>()),
-                Times.Once);
+            Mediator.VerifyOnce(new DeleteSubscription("topic69", "subscription1"));
         }
 
         [Fact]

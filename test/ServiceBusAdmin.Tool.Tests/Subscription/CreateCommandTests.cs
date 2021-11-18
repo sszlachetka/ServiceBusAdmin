@@ -1,6 +1,5 @@
-using System.Threading;
 using System.Threading.Tasks;
-using Moq;
+using ServiceBusAdmin.CommandHandlers.Subscription.Create;
 using ServiceBusAdmin.Tool.Tests.TestData;
 using Xunit;
 
@@ -11,15 +10,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         [Fact]
         public async Task Creates_subscription_with_provided_name()
         {
-            Client.Setup(x =>
-                    x.CreateSubscription(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+            Mediator.Setup<CreateSubscription>();
 
             var result = await Seba().Execute(new[] {"subscription", "create", "topic69/subscription1"});
 
             AssertSuccess(result);
-            Client.Verify(x => x.CreateSubscription("topic69", "subscription1", It.IsAny<CancellationToken>()),
-                Times.Once);
+            Mediator.VerifyOnce(new CreateSubscription("topic69", "subscription1"));
         }
 
         [Fact]

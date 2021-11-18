@@ -1,6 +1,6 @@
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Moq;
+using ServiceBusAdmin.CommandHandlers.Topic.List;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Topic
@@ -10,8 +10,8 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
         [Fact]
         public async Task Lists_all_topics()
         {
-            Client.Setup(x => x.GetTopicsNames(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new []{"topic1", "topic2", "topic3"});
+            Mediator.Setup<ListTopics, IReadOnlyCollection<string>>(
+                new[] { "topic1", "topic2", "topic3" });
 
             var result = await Seba().Execute(new[] {"topic", "list"});
 

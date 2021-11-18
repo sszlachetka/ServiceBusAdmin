@@ -18,18 +18,6 @@ namespace ServiceBusAdmin.Client
             _connectionString = connectionString;
         }
 
-        public async Task<IReadOnlyCollection<string>> GetTopicsNames(CancellationToken cancellationToken)
-        {
-            var result = new List<string>();
-            var topics = AdministrationClient().GetTopicsAsync(cancellationToken);
-            await foreach (var topic in topics)
-            {
-                result.Add(topic.Name);
-            }
-
-            return result;
-        }
-        
         public async Task<IReadOnlyCollection<string>> GetSubscriptionsNames(string topicName, CancellationToken cancellationToken)
         {
             var result = new List<string>();
@@ -124,11 +112,6 @@ namespace ServiceBusAdmin.Client
             await Task.WhenAll(tasks);
         }
 
-        public Task DeleteTopic(string topicName, CancellationToken cancellationToken)
-        {
-            return AdministrationClient().DeleteTopicAsync(topicName, cancellationToken);
-        }
-
         public Task CreateSubscription(string topicName, string subscriptionName,
             CancellationToken cancellationToken)
         {
@@ -141,11 +124,6 @@ namespace ServiceBusAdmin.Client
             return AdministrationClient().DeleteSubscriptionAsync(topicName, subscriptionName, cancellationToken);
         }
 
-        public Task SendMessage(string queueOrTopicName, string messageBody, CancellationToken cancellationToken)
-        {
-            return SendMessage(queueOrTopicName, new ServiceBusMessage(messageBody), cancellationToken);
-        }
-        
         public Task SendMessage(string queueOrTopicName, BinaryData messageBody, CancellationToken cancellationToken)
         {
             return SendMessage(queueOrTopicName, new ServiceBusMessage(messageBody), cancellationToken);

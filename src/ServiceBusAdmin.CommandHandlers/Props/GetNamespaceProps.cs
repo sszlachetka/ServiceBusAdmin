@@ -2,7 +2,7 @@ using MediatR;
 
 namespace ServiceBusAdmin.CommandHandlers.Props
 {
-    public class GetNamespaceProps : IRequest<NamespaceProps>
+    public record GetNamespaceProps : IRequest<NamespaceProps>
     {
     }
 }

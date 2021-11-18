@@ -1,6 +1,5 @@
-using System.Threading;
 using System.Threading.Tasks;
-using Moq;
+using ServiceBusAdmin.CommandHandlers.Topic.Delete;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Topic
@@ -10,13 +9,12 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
         [Fact]
         public async Task Deletes_topic_with_provided_name()
         {
-            Client.Setup(x => x.DeleteTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+            Mediator.Setup<DeleteTopic>();
 
             var result = await Seba().Execute(new[] {"topic", "delete", "topic69"});
 
             AssertSuccess(result);
-            Client.Verify(x => x.DeleteTopic("topic69", It.IsAny<CancellationToken>()), Times.Once);
+            Mediator.VerifyOnce(new DeleteTopic("topic69"));
         }
         
         [Fact]

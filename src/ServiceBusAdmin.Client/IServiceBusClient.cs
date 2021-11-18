@@ -19,8 +19,6 @@ namespace ServiceBusAdmin.Client
 
         Task Receive(ReceiverOptions options, ReceivedMessageHandler messageHandler);
 
-        Task CreateTopic(string topicName, CancellationToken cancellationToken);
-
         Task DeleteTopic(string topicName, CancellationToken cancellationToken);
 
         Task CreateSubscription(string topicName, string subscriptionName, CancellationToken cancellationToken);

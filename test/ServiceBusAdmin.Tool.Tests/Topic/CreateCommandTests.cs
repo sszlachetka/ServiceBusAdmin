@@ -1,6 +1,5 @@
-using System.Threading;
 using System.Threading.Tasks;
-using Moq;
+using ServiceBusAdmin.CommandHandlers.Topic.Create;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Topic
@@ -10,13 +9,12 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
         [Fact]
         public async Task Creates_topic_with_provided_name()
         {
-            Client.Setup(x => x.CreateTopic(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+            Mediator.Setup<CreateTopic>();
 
             var result = await Seba().Execute(new[] {"topic", "create", "topic69"});
 
             AssertSuccess(result);
-            Client.Verify(x => x.CreateTopic("topic69", It.IsAny<CancellationToken>()), Times.Once);
+            Mediator.VerifyOnce(new CreateTopic("topic69"));
         }
         
         [Fact]

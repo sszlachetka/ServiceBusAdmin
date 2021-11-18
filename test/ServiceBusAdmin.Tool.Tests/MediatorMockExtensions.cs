@@ -12,5 +12,18 @@ namespace ServiceBusAdmin.Tool.Tests
             mock.Setup(x => x.Send(It.IsAny<TRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
         }
+
+        public static void Setup<TRequest>(this Mock<IMediator> mock)
+            where TRequest : IRequest
+        {
+            mock.Setup(x => x.Send(It.IsAny<TRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Unit.Value);
+        }
+
+        public static void VerifyOnce<TRequest>(this Mock<IMediator> mock, TRequest request)
+            where TRequest : IRequest
+        {
+            mock.Verify(x => x.Send(request, It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

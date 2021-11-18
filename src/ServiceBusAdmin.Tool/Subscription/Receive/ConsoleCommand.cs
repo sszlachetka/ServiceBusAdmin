@@ -21,8 +21,8 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _subscriptionReceiverInput.CreateReceiverOptions();
-            var printToConsole = _printToConsoleInput.CreateMessageHandler(Console);
+            var options = _subscriptionReceiverInput.CreateReceiverOptions2();
+            var printToConsole = _printToConsoleInput.CreateMessageHandler2(Console);
             var completeMessage = new CompleteMessageHandler(printToConsole.Handle);
 
             await Client.Receive(options, completeMessage.Handle);
@@ -30,14 +30,14 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
         private class CompleteMessageHandler
         {
-            private readonly Func<IMessage, Task> _innerHandle;
+            private readonly Func<IMessage2, Task> _innerHandle;
 
-            public CompleteMessageHandler(Func<IMessage, Task> innerHandle)
+            public CompleteMessageHandler(Func<IMessage2, Task> innerHandle)
             {
                 _innerHandle = innerHandle;
             }
 
-            public async Task Handle(IReceivedMessage message)
+            public async Task Handle(IReceivedMessage2 message)
             {
                 await _innerHandle(message);
                 await message.Complete();

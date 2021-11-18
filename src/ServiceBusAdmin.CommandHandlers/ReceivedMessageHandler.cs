@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace ServiceBusAdmin.Client
+namespace ServiceBusAdmin.CommandHandlers
 {
     public delegate Task ReceivedMessageHandler(IReceivedMessage message);
 }

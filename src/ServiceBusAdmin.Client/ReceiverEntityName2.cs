@@ -2,18 +2,18 @@ using System;
 
 namespace ServiceBusAdmin.Client
 {
-    public record ReceiverEntityName
+    public record ReceiverEntityName2
     {
         private readonly string? _topicName;
         private readonly string? _subscriptionName;
         private readonly string? _queueName;
 
-        public ReceiverEntityName(string queueName)
+        public ReceiverEntityName2(string queueName)
         {
             _queueName = queueName;
         }
 
-        public ReceiverEntityName(string topicName, string subscriptionName)
+        public ReceiverEntityName2(string topicName, string subscriptionName)
         {
             _topicName = topicName;
             _subscriptionName = subscriptionName;

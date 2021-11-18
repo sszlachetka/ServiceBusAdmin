@@ -17,6 +17,12 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
             _getEncodingName = command.ConfigureEncodingNameOption();
         }
 
+        // TODO: Delete
+        public PrintToConsoleMessageHandler2 CreateMessageHandler2(SebaConsole console)
+        {
+            return new (_outputFormat, _getEncodingName(), console);
+        }
+        
         public PrintToConsoleMessageHandler CreateMessageHandler(SebaConsole console)
         {
             return new (_outputFormat, _getEncodingName(), console);

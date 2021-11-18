@@ -19,7 +19,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var options = _subscriptionReceiverInput.CreateReceiverOptions2();
             var handler = new SendToTopicMessageHandler(options.EntityName.TopicName(), Console, Client);
 
             await Client.Receive(options, handler.Handle);
@@ -38,7 +38,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
                 _client = client;
             }
 
-            public async Task Handle(IReceivedMessage message)
+            public async Task Handle(IReceivedMessage2 message)
             {
                 await _client.SendMessage(_topicName, message.Body, CancellationToken.None);
                 await message.Complete();

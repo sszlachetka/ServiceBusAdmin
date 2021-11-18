@@ -1,7 +1,10 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Moq;
-using ServiceBusAdmin.Client;
+using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Subscription.Peek;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription
@@ -14,7 +17,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic77", "sub34"))
                 .Build();
-            Client.SetupPeek(options, async handler =>
+            Mediator.SetupPeekMessages(options, async handler =>
             {
                 await handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
                 await handler(new TestMessageBuilder().WithBody("{\"key2\":45}").Build());
@@ -32,17 +35,17 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic56", "sub4"))
                 .Build();
-            Client.SetupPeek(options, handler =>
+            Mediator.SetupPeekMessages(options, handler =>
                 handler(new TestMessageBuilder()
                     .WithBody("{\"key1\":99}")
                     .WithSequenceNumber(89)
                     .WithMessageId("someMessageId")
                     .WithApplicationProperty("prop1", "value1")
                     .Build()));
-
+        
             var result = await Seba().Execute(new[]
                 {"subscription", "peek", "topic56/sub4", "--output-format", "{0} {1} {2} {3}"});
-
+        
             AssertSuccess(result);
             AssertConsoleOutput("{\"key1\":99} 89 someMessageId {\"prop1\":\"value1\"}");
         }
@@ -51,22 +54,22 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         public async Task Full_subscription_name_is_required()
         {
             var result = await Seba().Execute(new[] {"subscription", "peek"});
-
+        
             AssertFailure(result, "The Full subscription name field is required.");
         }
-
+        
         [Fact]
         public async Task Supports_max_option()
         {
             var options = new ReceiverOptionsBuilder()
                 .WithMaxMessages(101)
                 .Build();
-            Client.SetupPeek(options, _ => Task.CompletedTask);
+            Mediator.SetupPeekMessages(options, _ => Task.CompletedTask);
             
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--max", "101"});
 
-            Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
+            Mediator.VerifyPeekMessagesOnce(options);
         }
         
         [Fact]
@@ -75,12 +78,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithIsDeadLetterSubQueue(true)
                 .Build();
-            Client.SetupPeek(options, _ => Task.CompletedTask);
-
+            Mediator.SetupPeekMessages(options, _ => Task.CompletedTask);
+        
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--dead-letter-queue"});
-
-            Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
+        
+            Mediator.VerifyPeekMessagesOnce(options);
         }
         
         [Fact]
@@ -89,12 +92,32 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithMessageHandlingConcurrencyLevel(21)
                 .Build();
-            Client.SetupPeek(options, _ => Task.CompletedTask);
-
+            Mediator.SetupPeekMessages(options, _ => Task.CompletedTask);
+        
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--message-handling-concurrency-level", "21"});
-
-            Client.Verify(x => x.Peek(options, It.IsAny<MessageHandler>()), Times.Once);
+        
+            Mediator.VerifyPeekMessagesOnce(options);
+        }
+    }
+    
+    internal static class PeekMessagesMediatorMockExtensions
+    {
+        public static void SetupPeekMessages(this Mock<IMediator> mock, ReceiverOptions options, Func<MessageHandler, Task> callback)
+        {
+            mock.Setup<PeekMessages>(
+                request => request.Options == options,
+                async peekMessages =>
+                {
+                    await callback(peekMessages.Handler);
+                });
+        }
+        
+        public static void VerifyPeekMessagesOnce(this Mock<IMediator> mock, ReceiverOptions options)
+        {
+            mock.Verify(
+                x => x.Send(It.Is<PeekMessages>(request => request.Options == options), It.IsAny<CancellationToken>()),
+                Times.Once);
         }
     }
 }

@@ -12,11 +12,11 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         {
             var messages = new[]
             {
-                new TestMessageBuilder().WithBody("{\"key\":1}").Build(),
-                new TestMessageBuilder().WithBody("{\"key\":2}").Build()
+                new TestMessageBuilder2().WithBody("{\"key\":1}").Build(),
+                new TestMessageBuilder2().WithBody("{\"key\":2}").Build()
             };
-            var options = new ReceiverOptionsBuilder()
-                .WithEntityName(new ReceiverEntityName("topic1", "sub2"))
+            var options = new ReceiverOptionsBuilder2()
+                .WithEntityName(new ReceiverEntityName2("topic1", "sub2"))
                 .Build();
             Client.SetupReceive(options, messages);
 
@@ -31,11 +31,11 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         [Fact]
         public async Task Returns_messages_in_provided_format()
         {
-            var options = new ReceiverOptionsBuilder()
-                .WithEntityName(new ReceiverEntityName("topic23", "sub7"))
+            var options = new ReceiverOptionsBuilder2()
+                .WithEntityName(new ReceiverEntityName2("topic23", "sub7"))
                 .Build();
             Client.SetupReceive(options, handler =>
-                handler(new TestMessageBuilder()
+                handler(new TestMessageBuilder2()
                     .WithBody("{\"key1\":21}")
                     .WithSequenceNumber(9)
                     .WithMessageId("someMessageId")

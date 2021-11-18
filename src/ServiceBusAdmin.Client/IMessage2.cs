@@ -4,7 +4,7 @@ using Azure.Messaging.ServiceBus;
 
 namespace ServiceBusAdmin.Client
 {
-    public interface IMessage
+    public interface IMessage2
     {
         BinaryData Body { get; }
         long SequenceNumber { get; }
@@ -12,11 +12,11 @@ namespace ServiceBusAdmin.Client
         IReadOnlyDictionary<string, object> ApplicationProperties { get; }
     }
 
-    public class MessageAdapter : IMessage
+    public class Message2Adapter : IMessage2
     {
         protected readonly ServiceBusReceivedMessage Message;
 
-        public MessageAdapter(ServiceBusReceivedMessage message)
+        public Message2Adapter(ServiceBusReceivedMessage message)
         {
             Message = message;
         }

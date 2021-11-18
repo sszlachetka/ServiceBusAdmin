@@ -21,7 +21,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var options = _subscriptionReceiverInput.CreateReceiverOptions2();
             var handler = new DeadLetterMessageHandler(Console);
 
             await Client.Receive(options, handler.Handle);
@@ -36,7 +36,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
                 _console = console;
             }
 
-            public async Task Handle(IReceivedMessage message)
+            public async Task Handle(IReceivedMessage2 message)
             {
                 await message.DeadLetter();
                 _console.Info(message.SequenceNumber);

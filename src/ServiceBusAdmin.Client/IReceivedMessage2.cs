@@ -3,17 +3,17 @@ using Azure.Messaging.ServiceBus;
 
 namespace ServiceBusAdmin.Client
 {
-    public interface IReceivedMessage : IMessage
+    public interface IReceivedMessage2 : IMessage2
     {
         Task Complete();
         Task DeadLetter();
     }
 
-    public class ReceivedMessageAdapter : MessageAdapter, IReceivedMessage
+    public class ReceivedMessage2Adapter : Message2Adapter, IReceivedMessage2
     {
         private readonly ServiceBusReceiver _receiver;
 
-        public ReceivedMessageAdapter(ServiceBusReceivedMessage message, ServiceBusReceiver receiver) : base(message)
+        public ReceivedMessage2Adapter(ServiceBusReceivedMessage message, ServiceBusReceiver receiver) : base(message)
         {
             _receiver = receiver;
         }

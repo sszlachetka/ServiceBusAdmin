@@ -14,12 +14,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         {
             var messages = new[]
             {
-                new TestMessageBuilder().WithSequenceNumber(3).Build(),
-                new TestMessageBuilder().WithSequenceNumber(5).Build(),
-                new TestMessageBuilder().WithSequenceNumber(9).Build()
+                new TestMessageBuilder2().WithSequenceNumber(3).Build(),
+                new TestMessageBuilder2().WithSequenceNumber(5).Build(),
+                new TestMessageBuilder2().WithSequenceNumber(9).Build()
             };
-            var options = new ReceiverOptionsBuilder()
-                .WithEntityName(new ReceiverEntityName("topic1", "sub2"))
+            var options = new ReceiverOptionsBuilder2()
+                .WithEntityName(new ReceiverEntityName2("topic1", "sub2"))
                 .Build();
             Client.SetupReceive(options, messages);
             Client.SetupSendAnyBinaryDataMessage();

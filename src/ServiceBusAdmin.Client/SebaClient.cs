@@ -17,43 +17,7 @@ namespace ServiceBusAdmin.Client
             _connectionString = connectionString;
         }
 
-        public async Task Peek(ReceiverOptions options, MessageHandler messageHandler)
-        {
-            await using var client = ServiceBusClient();
-            await using var receiver = ServiceBusReceiver(client, options);
-
-            var peekedCount = 0;
-            IReadOnlyList<ServiceBusReceivedMessage> messages;
-            do
-            {
-                messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount);
-                peekedCount += messages.Count;
-                var peekedMessages = messages.Select(m => new MessageAdapter(m)).ToList();
-                await HandlePeekedMessages(peekedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
-            } while (messages.Count > 0 && peekedCount < options.MaxMessages);
-        }
-        
-        private static async Task HandlePeekedMessages(
-            IReadOnlyCollection<IMessage> messages,
-            MessageHandler messageHandler,
-            int messageHandlingConcurrencyLevel)
-        {
-            if (messages.Count == 0) return;
-
-            var semaphore = new SemaphoreSlim(messageHandlingConcurrencyLevel);
-            var tasks = new List<Task>();
-            foreach (var message in messages)
-            {
-                await semaphore.WaitAsync();
-
-                tasks.Add(messageHandler(message)
-                    .ContinueWith(_ => semaphore.Release()));
-            }
-            
-            await Task.WhenAll(tasks);
-        }
-
-        public async Task Receive(ReceiverOptions options, ReceivedMessageHandler messageHandler)
+        public async Task Receive(ReceiverOptions2 options, ReceivedMessageHandler2 messageHandler)
         {
             await using var client = ServiceBusClient();
             await using var receiver = ServiceBusReceiver(client, options);
@@ -64,14 +28,14 @@ namespace ServiceBusAdmin.Client
             {
                 messages = await receiver.ReceiveMessagesAsync(options.MaxMessages - receivedCount, ReceiveMaxWaitTime);
                 receivedCount += messages.Count;
-                var receivedMessages = messages.Select(m => new ReceivedMessageAdapter(m, receiver)).ToList();
+                var receivedMessages = messages.Select(m => new ReceivedMessage2Adapter(m, receiver)).ToList();
                 await HandleReceivedMessages(receivedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
             } while (messages.Count > 0 && receivedCount < options.MaxMessages);
         }
 
         private static async Task HandleReceivedMessages(
-            IReadOnlyCollection<IReceivedMessage> messages,
-            ReceivedMessageHandler messageHandler,
+            IReadOnlyCollection<IReceivedMessage2> messages,
+            ReceivedMessageHandler2 messageHandler,
             int messageHandlingConcurrencyLevel)
         {
             if (messages.Count == 0) return;
@@ -107,7 +71,7 @@ namespace ServiceBusAdmin.Client
             return new(_connectionString);
         }
         
-        private static ServiceBusReceiver ServiceBusReceiver(ServiceBusClient client, ReceiverOptions options)
+        private static ServiceBusReceiver ServiceBusReceiver(ServiceBusClient client, ReceiverOptions2 options)
         {
             var entity = options.EntityName;
             var serviceBusReceiverOptions = new ServiceBusReceiverOptions

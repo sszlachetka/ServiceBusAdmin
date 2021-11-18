@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Subscription.Peek;
 using ServiceBusAdmin.Tool.Subscription.Inputs;
 
 namespace ServiceBusAdmin.Tool.Subscription
@@ -22,7 +23,9 @@ namespace ServiceBusAdmin.Tool.Subscription
             var options = _subscriptionReceiverInput.CreateReceiverOptions();
             var messageHandler = _printToConsoleInput.CreateMessageHandler(Console);
 
-            await Client.Peek(options, messageHandler.Handle);
+            var peekMessages = new PeekMessages(options, messageHandler.Handle);
+            
+            await Mediator.Send(peekMessages, cancellationToken);
         }
     }
 }

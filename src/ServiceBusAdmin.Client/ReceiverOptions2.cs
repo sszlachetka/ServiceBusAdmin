@@ -1,8 +1,8 @@
 namespace ServiceBusAdmin.Client
 {
-    public record ReceiverOptions
+    public record ReceiverOptions2
     {
-        public ReceiverOptions(ReceiverEntityName entityName, int maxMessages, bool isDeadLetterSubQueue, int messageHandlingConcurrencyLevel)
+        public ReceiverOptions2(ReceiverEntityName2 entityName, int maxMessages, bool isDeadLetterSubQueue, int messageHandlingConcurrencyLevel)
         {
             EntityName = entityName;
             MaxMessages = maxMessages;
@@ -10,7 +10,7 @@ namespace ServiceBusAdmin.Client
             MessageHandlingConcurrencyLevel = messageHandlingConcurrencyLevel;
         }
 
-        public ReceiverEntityName EntityName { get; }
+        public ReceiverEntityName2 EntityName { get; }
         public int MaxMessages { get; }
         public bool IsDeadLetterSubQueue { get; }
         public int MessageHandlingConcurrencyLevel { get; }

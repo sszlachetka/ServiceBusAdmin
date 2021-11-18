@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.Client;
 
 namespace ServiceBusAdmin.Tool.Tests
 {
-    public class TestMessage : IReceivedMessage
+    public class TestMessage2 : IReceivedMessage2
     {
         private int _completeCallsCount;
         private int _deadLetterCallsCount;
 
-        public TestMessage(BinaryData body, long sequenceNumber, string messageId,
+        public TestMessage2(BinaryData body, long sequenceNumber, string messageId,
             IReadOnlyDictionary<string, object> applicationProperties)
         {
             Body = body;

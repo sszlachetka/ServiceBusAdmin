@@ -8,12 +8,11 @@ namespace ServiceBusAdmin.Tool
     public class SebaConsole
     {
         private readonly IsVerboseOutput _isVerboseOutput;
-
-        internal IConsole InternalConsole { get; }
+        private readonly IConsole _internalConsole;
 
         public SebaConsole(IConsole console, IsVerboseOutput isVerboseOutput)
         {
-            InternalConsole = console;
+            _internalConsole = console;
             _isVerboseOutput = isVerboseOutput;
         }
 
@@ -34,22 +33,22 @@ namespace ServiceBusAdmin.Tool
 
         private void WithOutput(Action<TextWriter> action)
         {
-            InternalConsole.ResetColor();
-            action(InternalConsole.Out);
+            _internalConsole.ResetColor();
+            action(_internalConsole.Out);
         }
 
         public void Error(string message)
         {
-            InternalConsole.ForegroundColor = ConsoleColor.Red;
-            InternalConsole.Error.WriteLine(message);
+            _internalConsole.ForegroundColor = ConsoleColor.Red;
+            _internalConsole.Error.WriteLine(message);
         }
 
         public void Verbose(string message)
         {
             if (!_isVerboseOutput()) return;
 
-            InternalConsole.ResetColor();
-            InternalConsole.Out.WriteLine(message);
+            _internalConsole.ResetColor();
+            _internalConsole.Out.WriteLine(message);
         }
     }
 }

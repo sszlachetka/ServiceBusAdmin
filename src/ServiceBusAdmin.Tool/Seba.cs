@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceBusAdmin.Client;
-using ServiceBusAdmin.Tool.Options;
 using ServiceBusAdmin.Tool.Subscription;
 using ServiceBusAdmin.Tool.Topic;
 
 namespace ServiceBusAdmin.Tool
 {
-    public delegate IServiceBusClient CreateServiceBusClient(string connectionString);
-
     public class Seba
     {
         public static async Task<int> Main(string[] args)
         {
-            var seba = new Seba(
-                PhysicalConsole.Singleton,
-                connectionString => new SebaClient(connectionString),
-                Environment.GetEnvironmentVariable);
+            var services = new ServiceCollection();
+            services.AddSeba(PhysicalConsole.Singleton, Environment.GetEnvironmentVariable,
+                connectionString => new SebaClient(connectionString));
+            await using var provider = services.BuildServiceProvider();
+
+            var seba = provider.GetRequiredService<Seba>();
 
             return (int) await seba.Execute(args);
         }
@@ -26,19 +26,11 @@ namespace ServiceBusAdmin.Tool
         private readonly SebaConsole _console;
 
         public Seba(
-            IConsole console,
-            CreateServiceBusClient createServiceBusClient,
-            GetEnvironmentVariable getEnvironmentVariable)
+            CommandLineApplication app,
+            SebaContext context)
         {
-            _app = CreateApplication(console);
-
-            var isVerboseOutput = _app.ConfigureVerboseOption();
-            _console = new SebaConsole(console, isVerboseOutput);
-
-            var getConnectionString = _app.ConfigureConnectionStringOption(getEnvironmentVariable);
-            var context = CreateContext(createServiceBusClient, getConnectionString, _console);
-
-            ConfigureCommands(_app, context);
+            _app = ConfigureApp(app, context);
+            _console = context.Console;
         }
 
         public async Task<SebaResult> Execute(string[] args)
@@ -56,13 +48,10 @@ namespace ServiceBusAdmin.Tool
             }
         }
 
-        private static CommandLineApplication CreateApplication(IConsole console)
+        private static CommandLineApplication ConfigureApp(CommandLineApplication app, SebaContext context)
         {
-            var app = new CommandLineApplication(console)
-            {
-                Name = "seba",
-                Description = "Azure Service Bus administration utility"
-            };
+            app.Name = "seba";
+            app.Description = "Azure Service Bus administration utility";
             app.HelpOption(inherited: true);
             app.VersionOptionFromAssemblyAttributes("-v|--version", typeof(Seba).Assembly);
             app.OnExecute(() =>
@@ -70,25 +59,17 @@ namespace ServiceBusAdmin.Tool
                 app.ShowHelp();
                 return (int) SebaResult.Failure;
             });
-
-            return app;
+            
+            return ConfigureCommands(app, context);
         }
-
-        private static SebaContext CreateContext(
-            CreateServiceBusClient createServiceBusClient,
-            GetConnectionString getConnectionString,
-            SebaConsole console)
-        {
-            IServiceBusClient CreateServiceBusClient() => createServiceBusClient(getConnectionString());
-
-            return new SebaContext(CreateServiceBusClient, console);
-        }
-
-        private static void ConfigureCommands(CommandLineApplication app, SebaContext context)
+        
+        private static CommandLineApplication ConfigureCommands(CommandLineApplication app, SebaContext context)
         {
             app.Subcommand(new PropsCommand(context, app));
             app.Subcommand(new TopicCommand(context, app));
             app.Subcommand(new SubscriptionCommand(context, app));
+
+            return app;
         }
     }
 }

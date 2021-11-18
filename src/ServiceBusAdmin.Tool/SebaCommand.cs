@@ -14,7 +14,7 @@ namespace ServiceBusAdmin.Tool
         protected SebaCommand(SebaContext context, CommandLineApplication parentCommand)
         {
             Context = context;
-            Command = new CommandLineApplication(context.Console.InternalConsole);
+            Command = context.CreateCommand();
             Command.Parent = parentCommand;
             Command.Name = GetType().Name.ToLower().Replace(CommandSuffix, string.Empty);
             Command.OnExecuteAsync(async cancellationToken => (int) await ExecuteInternal(cancellationToken));

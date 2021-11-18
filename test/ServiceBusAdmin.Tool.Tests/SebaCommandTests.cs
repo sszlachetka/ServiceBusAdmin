@@ -1,15 +1,25 @@
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
+using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ServiceBusAdmin.Client;
 using ServiceBusAdmin.Tool.Options;
 
 namespace ServiceBusAdmin.Tool.Tests
 {
-    public abstract class SebaCommandTests
+    public abstract class SebaCommandTests : IAsyncDisposable
     {
+        private readonly ServiceProvider _serviceProvider;
         protected readonly TestConsole Console = new ();
         protected readonly Mock<IServiceBusClient> Client = new(MockBehavior.Strict);
+
+        protected SebaCommandTests()
+        {
+            var services = ConfigureServices(Console, Client.Object);
+            _serviceProvider = services.BuildServiceProvider();
+        }
 
         protected void AssertSuccess(SebaResult result)
         {
@@ -35,15 +45,28 @@ namespace ServiceBusAdmin.Tool.Tests
 
         protected Seba Seba()
         {
+            return _serviceProvider.GetRequiredService<Seba>();
+        }
+
+        private static IServiceCollection ConfigureServices(IConsole console, IServiceBusClient client)
+        {
             const string connectionStringValue = "secretConnectionString";
             static string? GetEnvironmentVariable(string variableName) =>
                 variableName == ConnectionStringOption.EnvironmentVariableName ? connectionStringValue : null;
             IServiceBusClient CreateServiceBusClient(string connectionString) =>
                 connectionString == connectionStringValue
-                    ? Client.Object
+                    ? client
                     : throw new ArgumentException(connectionString);
 
-            return new Seba(Console, CreateServiceBusClient, GetEnvironmentVariable);
+            var services = new ServiceCollection();
+            services.AddSeba(console, GetEnvironmentVariable, CreateServiceBusClient);
+
+            return services;
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            return _serviceProvider.DisposeAsync();
         }
     }
 }

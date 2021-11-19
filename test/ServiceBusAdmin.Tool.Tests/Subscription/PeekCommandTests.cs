@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -12,42 +11,63 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
     public class PeekCommandTests : SebaCommandTests
     {
         [Fact]
-        public async Task Peeks_messages()
+        public async Task Returns_message_metadata_by_default()
         {
+            IMessage[] messages = {
+                new TestMessageBuilder().WithMessageId("M1").WithSequenceNumber(1)
+                    .WithApplicationProperty("Key1", 87).Build(),
+                new TestMessageBuilder().WithMessageId("M2").WithSequenceNumber(2)
+                    .WithApplicationProperty("Key2", "someValue").Build()
+            };
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic77", "sub34"))
                 .Build();
-            Mediator.SetupPeekMessages(options, async handler =>
-            {
-                await handler(new TestMessageBuilder().WithBody("{\"key1\":12}").Build());
-                await handler(new TestMessageBuilder().WithBody("{\"key2\":45}").Build());
-            });
+            Mediator.SetupPeekMessages(options, messages);
 
             var result = await Seba().Execute(new[] {"subscription", "peek", "topic77/sub34"});
 
             AssertSuccess(result);
-            AssertConsoleOutput("{\"key1\":12}", "{\"key2\":45}");
+            AssertConsoleOutput(
+                "{\"SequenceNumber\":1,\"MessageId\":\"M1\",\"ApplicationProperties\":{\"Key1\":87}}", 
+                "{\"SequenceNumber\":2,\"MessageId\":\"M2\",\"ApplicationProperties\":{\"Key2\":\"someValue\"}}");
         }
 
         [Fact]
-        public async Task Returns_messages_in_provided_format()
+        public async Task Returns_message_body_when_requested()
         {
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic56", "sub4"))
                 .Build();
-            Mediator.SetupPeekMessages(options, handler =>
-                handler(new TestMessageBuilder()
-                    .WithBody("{\"key1\":99}")
-                    .WithSequenceNumber(89)
-                    .WithMessageId("someMessageId")
-                    .WithApplicationProperty("prop1", "value1")
-                    .Build()));
+            Mediator.SetupPeekMessages(options, new TestMessageBuilder()
+                .WithBody("{\"key1\":99}")
+                .Build());
         
             var result = await Seba().Execute(new[]
-                {"subscription", "peek", "topic56/sub4", "--output-format", "{0} {1} {2} {3}"});
+                {"subscription", "peek", "topic56/sub4", "--output-content", "body"});
         
             AssertSuccess(result);
-            AssertConsoleOutput("{\"key1\":99} 89 someMessageId {\"prop1\":\"value1\"}");
+            AssertConsoleOutput("{\"key1\":99}");
+        }
+        
+        [Fact]
+        public async Task Returns_message_body_and_metadata_when_requested()
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic56", "sub4"))
+                .Build();
+            Mediator.SetupPeekMessages(options, new TestMessageBuilder()
+                .WithBody("{\"key1\":99}")
+                .WithMessageId("someId")
+                .WithSequenceNumber(99)
+                .WithApplicationProperty("Key1", 87)
+                .Build());
+        
+            var result = await Seba().Execute(new[]
+                {"subscription", "peek", "topic56/sub4", "--output-content", "all"});
+        
+            AssertSuccess(result);
+            AssertConsoleOutput(
+                "{\"Body\":{\"key1\":99},\"SequenceNumber\":99,\"MessageId\":\"someId\",\"ApplicationProperties\":{\"Key1\":87}}");
         }
         
         [Fact]
@@ -64,7 +84,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithMaxMessages(101)
                 .Build();
-            Mediator.SetupPeekMessages(options, _ => Task.CompletedTask);
+            Mediator.SetupPeekMessages(options);
             
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--max", "101"});
@@ -78,7 +98,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithIsDeadLetterSubQueue(true)
                 .Build();
-            Mediator.SetupPeekMessages(options, _ => Task.CompletedTask);
+            Mediator.SetupPeekMessages(options);
         
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--dead-letter-queue"});
@@ -92,7 +112,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithMessageHandlingConcurrencyLevel(21)
                 .Build();
-            Mediator.SetupPeekMessages(options, _ => Task.CompletedTask);
+            Mediator.SetupPeekMessages(options);
         
             await Seba().Execute(new[]
                 {"subscription", "peek", "someTopic/someSubscription", "--message-handling-concurrency-level", "21"});
@@ -103,13 +123,16 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
     
     internal static class PeekMessagesMediatorMockExtensions
     {
-        public static void SetupPeekMessages(this Mock<IMediator> mock, ReceiverOptions options, Func<MessageHandler, Task> callback)
+        public static void SetupPeekMessages(this Mock<IMediator> mock, ReceiverOptions options, params IMessage[] messages)
         {
             mock.Setup<PeekMessages>(
                 request => request.Options == options,
                 async peekMessages =>
                 {
-                    await callback(peekMessages.Handler);
+                    foreach (var message in messages)
+                    {
+                        await peekMessages.Handler(message);
+                    }
                 });
         }
         

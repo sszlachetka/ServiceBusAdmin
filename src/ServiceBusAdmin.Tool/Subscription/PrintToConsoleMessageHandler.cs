@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -8,27 +9,35 @@ namespace ServiceBusAdmin.Tool.Subscription
 {
     public class PrintToConsoleMessageHandler
     {
-        private readonly OutputFormatOption _outputFormat;
+        private readonly OutputContentEnum _outputContent;
         private readonly Encoding _encoding;
         private readonly SebaConsole _console;
 
-        public PrintToConsoleMessageHandler(OutputFormatOption outputFormat, string encodingName, SebaConsole console)
+        public PrintToConsoleMessageHandler(OutputContentEnum outputContent, string encodingName, SebaConsole console)
         {
-            _outputFormat = outputFormat;
+            _outputContent = outputContent;
             _encoding = Encoding.GetEncoding(encodingName);
             _console = console;
         }
 
         public Task Handle(IMessage message)
         {
-            // TODO: Use JSON as output format. How to include body and other message properties in such JSON? What if body is not JSON?
-            _console.Info(_outputFormat.Value,
-                _outputFormat.IncludesMessageBody ? _encoding.GetString(message.Body) : string.Empty,
-                message.SequenceNumber,
-                message.MessageId,
-                _outputFormat.IncludesApplicationProperties
-                    ? JsonSerializer.Serialize(message.ApplicationProperties)
-                    : string.Empty);
+            switch (_outputContent)
+            {
+                case OutputContentEnum.Metadata:
+                    _console.Info(new MessageMetadata(message.SequenceNumber, message.MessageId,
+                        message.ApplicationProperties));
+                    break;
+                case OutputContentEnum.Body:
+                    _console.Info(message.Body.ToString());
+                    break;
+                case OutputContentEnum.All:
+                    _console.Info(new Message(message.SequenceNumber, message.MessageId,
+                        message.ApplicationProperties, JsonSerializer.Deserialize<dynamic>(message.Body.ToString())));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(_outputContent.ToString());
+            }
 
             return Task.CompletedTask;
         }

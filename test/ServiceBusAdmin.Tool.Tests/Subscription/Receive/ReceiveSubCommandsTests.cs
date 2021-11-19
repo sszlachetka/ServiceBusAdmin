@@ -22,7 +22,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             var options = new ReceiverOptionsBuilder()
                 .WithMaxMessages(51)
                 .Build();
-            Mediator.SetupNoReceiveMessages(options);
+            Mediator.SetupReceiveMessages(options);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", subCommand, "someTopic/someSubscription", "--max", "51"});
@@ -37,7 +37,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             var options = new ReceiverOptionsBuilder()
                 .WithMessageHandlingConcurrencyLevel(76)
                 .Build();
-            Mediator.SetupNoReceiveMessages(options);
+            Mediator.SetupReceiveMessages(options);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", subCommand, "someTopic/someSubscription", "--message-handling-concurrency-level", "76"});
@@ -52,7 +52,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             var options = new ReceiverOptionsBuilder()
                 .WithIsDeadLetterSubQueue(true)
                 .Build();
-            Mediator.SetupNoReceiveMessages(options);
+            Mediator.SetupReceiveMessages(options);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", subCommand, "someTopic/someSubscription", "--dead-letter-queue"});

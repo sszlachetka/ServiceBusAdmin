@@ -12,19 +12,8 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
 {
     internal static class ReceiveMessagesMediatorMockExtensions
     {
-        public static void SetupNoReceiveMessages(this Mock<IMediator> mock, ReceiverOptions options)
-        {
-            mock.SetupReceiveMessages(options, Array.Empty<IReceivedMessage>());
-        }
-
         public static void SetupReceiveMessages(this Mock<IMediator> mock, ReceiverOptions options,
-            IReceivedMessage receivedMessage)
-        {
-            mock.SetupReceiveMessages(options, new[] { receivedMessage });
-        }
-
-        public static void SetupReceiveMessages(this Mock<IMediator> mock, ReceiverOptions options,
-            IEnumerable<IReceivedMessage> receivedMessages)
+            params IReceivedMessage[] receivedMessages)
         {
             mock.Setup<ReceiveMessages>(
                 request => request.Options == options,

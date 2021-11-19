@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ServiceBusAdmin.Client;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Subscription.Options;
 
@@ -22,6 +21,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public Task Handle(IMessage message)
         {
+            // TODO: Use JSON as output format. How to include body and other message properties in such JSON? What if body is not JSON?
             _console.Info(_outputFormat.Value,
                 _outputFormat.IncludesMessageBody ? _encoding.GetString(message.Body) : string.Empty,
                 message.SequenceNumber,

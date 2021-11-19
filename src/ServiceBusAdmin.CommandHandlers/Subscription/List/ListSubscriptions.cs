@@ -3,13 +3,5 @@ using MediatR;
 
 namespace ServiceBusAdmin.CommandHandlers.Subscription.List
 {
-    public record ListSubscriptions : IRequest<IReadOnlyCollection<string>>
-    {
-        public ListSubscriptions(string topicName)
-        {
-            TopicName = topicName;
-        }
-
-        public string TopicName { get; }
-    }
+    public record ListSubscriptions(string TopicName) : IRequest<IReadOnlyCollection<string>>;
 }

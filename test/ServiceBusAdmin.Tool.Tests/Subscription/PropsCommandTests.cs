@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         public async Task Returns_subscription_properties()
         {
             Mediator.Setup<GetSubscriptionProps, SubscriptionProps>(
-                new SubscriptionProps(activeMessageCount: 34, deadLetterMessageCount: 78));
+                new SubscriptionProps(ActiveMessageCount: 34, DeadLetterMessageCount: 78));
 
             var result = await Seba().Execute(new[] {"subscription", "props", "topic69/sub1"});
 

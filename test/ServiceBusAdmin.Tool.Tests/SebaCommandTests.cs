@@ -5,7 +5,6 @@ using McMaster.Extensions.CommandLineUtils;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using ServiceBusAdmin.Client;
 using ServiceBusAdmin.Tool.Options;
 
 namespace ServiceBusAdmin.Tool.Tests
@@ -14,12 +13,11 @@ namespace ServiceBusAdmin.Tool.Tests
     {
         private readonly ServiceProvider _serviceProvider;
         protected readonly TestConsole Console = new ();
-        protected readonly Mock<IServiceBusClient> Client = new(MockBehavior.Strict);
         protected readonly Mock<IMediator> Mediator = new(MockBehavior.Strict);
 
         protected SebaCommandTests()
         {
-            var services = ConfigureServices(Console, Client.Object, Mediator.Object);
+            var services = ConfigureServices(Console, Mediator.Object);
             _serviceProvider = services.BuildServiceProvider();
         }
 
@@ -50,19 +48,15 @@ namespace ServiceBusAdmin.Tool.Tests
             return _serviceProvider.GetRequiredService<Seba>();
         }
 
-        private static IServiceCollection ConfigureServices(IConsole console, IServiceBusClient client, IMediator mediator)
+        private static IServiceCollection ConfigureServices(IConsole console, IMediator mediator)
         {
             const string connectionStringValue = "secretConnectionString";
             static string? GetEnvironmentVariable(string variableName) =>
                 variableName == ConnectionStringOption.EnvironmentVariableName ? connectionStringValue : null;
-            IServiceBusClient CreateServiceBusClient(string connectionString) =>
-                connectionString == connectionStringValue
-                    ? client
-                    : throw new ArgumentException(connectionString);
 
             var services = new ServiceCollection();
             services.AddSingleton(mediator);
-            services.AddSeba(console, GetEnvironmentVariable, CreateServiceBusClient);
+            services.AddSeba(console, GetEnvironmentVariable);
 
             return services;
         }

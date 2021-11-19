@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using MediatR;
-using ServiceBusAdmin.Client;
 
 namespace ServiceBusAdmin.Tool
 {
@@ -32,8 +31,6 @@ namespace ServiceBusAdmin.Tool
             Command.ShowHelp();
             return Task.CompletedTask;
         }
-
-        protected IServiceBusClient Client => Context.Client;
 
         protected SebaConsole Console => Context.Console;
 

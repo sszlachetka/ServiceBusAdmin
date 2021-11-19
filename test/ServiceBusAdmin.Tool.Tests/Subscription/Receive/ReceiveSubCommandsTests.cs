@@ -1,7 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Moq;
-using ServiceBusAdmin.Client;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
@@ -21,45 +19,45 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         [ClassData(typeof(ReceiveSubCommands))]
         public async Task Supports_max_option(string subCommand)
         {
-            var options = new ReceiverOptionsBuilder2()
+            var options = new ReceiverOptionsBuilder()
                 .WithMaxMessages(51)
                 .Build();
-            Client.SetupReceive(options, _ => Task.CompletedTask);
+            Mediator.SetupNoReceiveMessages(options);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", subCommand, "someTopic/someSubscription", "--max", "51"});
 
-            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler2>()), Times.Once);
+            Mediator.VerifyReceiveMessagesOnce(options);
         }
         
         [Theory]
         [ClassData(typeof(ReceiveSubCommands))]
         public async Task Supports_message_handling_concurrency_level_option(string subCommand)
         {
-            var options = new ReceiverOptionsBuilder2()
+            var options = new ReceiverOptionsBuilder()
                 .WithMessageHandlingConcurrencyLevel(76)
                 .Build();
-            Client.SetupReceive(options, _ => Task.CompletedTask);
+            Mediator.SetupNoReceiveMessages(options);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", subCommand, "someTopic/someSubscription", "--message-handling-concurrency-level", "76"});
 
-            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler2>()), Times.Once);
+            Mediator.VerifyReceiveMessagesOnce(options);
         }
         
         [Theory]
         [ClassData(typeof(ReceiveSubCommandsSupportingDlq))]
         public async Task Supports_dead_letter_queue_option(string subCommand)
         {
-            var options = new ReceiverOptionsBuilder2()
+            var options = new ReceiverOptionsBuilder()
                 .WithIsDeadLetterSubQueue(true)
                 .Build();
-            Client.SetupReceive(options, _ => Task.CompletedTask);
+            Mediator.SetupNoReceiveMessages(options);
 
             await Seba().Execute(new[]
                 {"subscription", "receive", subCommand, "someTopic/someSubscription", "--dead-letter-queue"});
 
-            Client.Verify(x => x.Receive(options, It.IsAny<ReceivedMessageHandler2>()), Times.Once);
+            Mediator.VerifyReceiveMessagesOnce(options);
         }
     }
 

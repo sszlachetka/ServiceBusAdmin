@@ -1,7 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.Client;
+using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 using ServiceBusAdmin.Tool.Subscription.Inputs;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
@@ -21,10 +22,11 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _subscriptionReceiverInput.CreateReceiverOptions2();
+            var options = _subscriptionReceiverInput.CreateReceiverOptions();
             var handler = new DeadLetterMessageHandler(Console);
+            var receiveMessages = new ReceiveMessages(options, handler.Handle);
 
-            await Client.Receive(options, handler.Handle);
+            await Mediator.Send(receiveMessages, cancellationToken);
         }
 
         private class DeadLetterMessageHandler
@@ -36,7 +38,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
                 _console = console;
             }
 
-            public async Task Handle(IReceivedMessage2 message)
+            public async Task Handle(IReceivedMessage message)
             {
                 await message.DeadLetter();
                 _console.Info(message.SequenceNumber);

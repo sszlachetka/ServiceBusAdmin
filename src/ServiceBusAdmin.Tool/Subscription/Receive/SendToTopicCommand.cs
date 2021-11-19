@@ -1,7 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.Client;
+using MediatR;
+using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Send;
+using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 using ServiceBusAdmin.Tool.Subscription.Inputs;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
@@ -19,28 +22,31 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _subscriptionReceiverInput.CreateReceiverOptions2();
-            var handler = new SendToTopicMessageHandler(options.EntityName.TopicName(), Console, Client);
-
-            await Client.Receive(options, handler.Handle);
+            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var handler = new SendToTopicMessageHandler(options.EntityName.TopicName(), Console, Mediator);
+            var receiveMessages = new ReceiveMessages(options, handler.Handle);
+            
+            await Mediator.Send(receiveMessages, cancellationToken);
         }
 
         private class SendToTopicMessageHandler
         {
             private readonly string _topicName;
             private readonly SebaConsole _console;
-            private readonly IServiceBusClient _client;
+            private readonly IMediator _mediator;
 
-            public SendToTopicMessageHandler(string topicName, SebaConsole console, IServiceBusClient client)
+            public SendToTopicMessageHandler(string topicName, SebaConsole console, IMediator mediator)
             {
                 _topicName = topicName;
                 _console = console;
-                _client = client;
+                _mediator = mediator;
             }
 
-            public async Task Handle(IReceivedMessage2 message)
+            public async Task Handle(IReceivedMessage message)
             {
-                await _client.SendMessage(_topicName, message.Body, CancellationToken.None);
+                var sendMessage = new SendBinaryMessage(_topicName, message.Body);
+
+                await _mediator.Send(sendMessage);
                 await message.Complete();
                 _console.Info(message.SequenceNumber);
             }

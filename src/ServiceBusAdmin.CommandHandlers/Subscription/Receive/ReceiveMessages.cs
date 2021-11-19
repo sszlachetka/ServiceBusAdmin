@@ -2,7 +2,5 @@ using MediatR;
 
 namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
 {
-    public record ReceiveMessages : IRequest
-    {
-    }
+    public record ReceiveMessages(ReceiverOptions Options, ReceivedMessageHandler Handler) : IRequest;
 }

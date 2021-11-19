@@ -18,9 +18,9 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
 
         public async Task<Unit> Handle(PeekMessages request, CancellationToken cancellationToken)
         {
-            var options = request.Options;
+            var (options, messageHandler) = request;
             await using var client = _clientFactory.ServiceBusClient();
-            await using var receiver = ServiceBusReceiver(client, options);
+            await using var receiver = SubscriptionReceiverFactory.Create(client, options);
 
             var peekedCount = 0;
             IReadOnlyList<ServiceBusReceivedMessage> messages;
@@ -29,7 +29,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
                 messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount, null, cancellationToken);
                 peekedCount += messages.Count;
                 var peekedMessages = messages.Select(m => new MessageAdapter(m)).ToList();
-                await HandlePeekedMessages(peekedMessages, request.Handler, options.MessageHandlingConcurrencyLevel);
+                await HandlePeekedMessages(peekedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
             } while (messages.Count > 0 && peekedCount < options.MaxMessages);
 
             return Unit.Value;
@@ -53,17 +53,6 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
             }
             
             await Task.WhenAll(tasks);
-        }
-        
-        private static ServiceBusReceiver ServiceBusReceiver(ServiceBusClient client, ReceiverOptions options)
-        {
-            var entity = options.EntityName;
-            var serviceBusReceiverOptions = new ServiceBusReceiverOptions
-            {
-                SubQueue = options.IsDeadLetterSubQueue ? SubQueue.DeadLetter : SubQueue.None
-            };
-
-            return client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), serviceBusReceiverOptions);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
-using ServiceBusAdmin.Client;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Subscription;
 using ServiceBusAdmin.Tool.Topic;
@@ -15,8 +14,7 @@ namespace ServiceBusAdmin.Tool
         {
             var services = new ServiceCollection();
             services.AddCommandHandlers();
-            services.AddSeba(PhysicalConsole.Singleton, Environment.GetEnvironmentVariable,
-                connectionString => new SebaClient(connectionString));
+            services.AddSeba(PhysicalConsole.Singleton, Environment.GetEnvironmentVariable);
             await using var provider = services.BuildServiceProvider();
 
             var seba = provider.GetRequiredService<Seba>();

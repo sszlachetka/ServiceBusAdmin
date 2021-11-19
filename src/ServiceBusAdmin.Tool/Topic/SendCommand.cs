@@ -21,7 +21,7 @@ namespace ServiceBusAdmin.Tool.Topic
 
         protected override Task Execute(CancellationToken cancellationToken)
         {
-            var sendMessage = new SendMessage(_getTopicName(), _getMessageBody());
+            var sendMessage = new SendStringMessage(_getTopicName(), _getMessageBody());
 
             return Mediator.Send(sendMessage, cancellationToken);
         }

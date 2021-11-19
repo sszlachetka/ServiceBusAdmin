@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using FluentAssertions;
-using ServiceBusAdmin.Client;
+using ServiceBusAdmin.CommandHandlers;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
@@ -12,13 +12,13 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         {
             var messages = new[]
             {
-                new TestMessageBuilder2().WithSequenceNumber(5).Build(),
-                new TestMessageBuilder2().WithSequenceNumber(12).Build(),
+                new TestMessageBuilder().WithSequenceNumber(5).Build(),
+                new TestMessageBuilder().WithSequenceNumber(12).Build(),
             };
-            var options = new ReceiverOptionsBuilder2()
-                .WithEntityName(new ReceiverEntityName2("topic3", "sub9"))
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic3", "sub9"))
                 .Build();
-            Client.SetupReceive(options, messages);
+            Mediator.SetupReceiveMessages(options, messages);
 
             var result = await Seba().Execute(new[] {"subscription", "receive", "dead-letter", "topic3/sub9"});
 

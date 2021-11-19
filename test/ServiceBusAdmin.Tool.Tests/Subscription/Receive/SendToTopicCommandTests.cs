@@ -1,8 +1,7 @@
-using System.Threading;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Moq;
-using ServiceBusAdmin.Client;
+using ServiceBusAdmin.CommandHandlers;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
@@ -14,15 +13,15 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         {
             var messages = new[]
             {
-                new TestMessageBuilder2().WithSequenceNumber(3).Build(),
-                new TestMessageBuilder2().WithSequenceNumber(5).Build(),
-                new TestMessageBuilder2().WithSequenceNumber(9).Build()
+                new TestMessageBuilder().WithSequenceNumber(3).Build(),
+                new TestMessageBuilder().WithSequenceNumber(5).Build(),
+                new TestMessageBuilder().WithSequenceNumber(9).Build()
             };
-            var options = new ReceiverOptionsBuilder2()
-                .WithEntityName(new ReceiverEntityName2("topic1", "sub2"))
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic1", "sub2"))
                 .Build();
-            Client.SetupReceive(options, messages);
-            Client.SetupSendAnyBinaryDataMessage();
+            Mediator.SetupReceiveMessages(options, messages);
+            Mediator.SetupSendAnyBinaryMessage();
 
             var result = await Seba().Execute(new[] {"subscription", "receive", "send-to-topic", "topic1/sub2"});
 
@@ -31,9 +30,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             messages[0].CompletedOnce.Should().BeTrue();
             messages[1].CompletedOnce.Should().BeTrue();
             messages[2].CompletedOnce.Should().BeTrue();
-            Client.Verify(x => x.SendMessage("topic1", messages[0].Body, It.IsAny<CancellationToken>()), Times.Once);
-            Client.Verify(x => x.SendMessage("topic1", messages[1].Body, It.IsAny<CancellationToken>()), Times.Once);
-            Client.Verify(x => x.SendMessage("topic1", messages[2].Body, It.IsAny<CancellationToken>()), Times.Once);
+            Mediator.VerifySendBinaryMessageOnce("topic1", messages[0].Body);
+            Mediator.VerifySendBinaryMessageOnce("topic1", messages[1].Body);
+            Mediator.VerifySendBinaryMessageOnce("topic1", messages[2].Body);
         }
     }
 }

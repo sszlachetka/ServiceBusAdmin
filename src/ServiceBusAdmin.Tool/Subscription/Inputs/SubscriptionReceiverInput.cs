@@ -1,6 +1,5 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.Client;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Subscription.Arguments;
 using ServiceBusAdmin.Tool.Subscription.Options;
@@ -23,19 +22,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
                 : () => false;
             _getMessageHandlingConcurrencyLevel = command.ConfigureMessageHandlingConcurrencyLevel();
         }
-        
-        // TODO: Delete
-        public ReceiverOptions2 CreateReceiverOptions2()
-        {
-            var (topic, subscription) = _getFullSubscriptionName();
 
-            return new ReceiverOptions2(
-                new ReceiverEntityName2(topic, subscription),
-                _getMaxMessages(),
-                _getIsDeadLetterSubQueue(),
-                _getMessageHandlingConcurrencyLevel());
-        }
-        
         public ReceiverOptions CreateReceiverOptions()
         {
             var (topic, subscription) = _getFullSubscriptionName();

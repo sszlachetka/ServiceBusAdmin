@@ -1,8 +1,5 @@
-using System;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
-using ServiceBusAdmin.Client;
-using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Options;
 
 namespace ServiceBusAdmin.Tool
@@ -11,17 +8,11 @@ namespace ServiceBusAdmin.Tool
     {
         public static void AddSeba(this IServiceCollection services, 
             IConsole console,
-            GetEnvironmentVariable getEnvironmentVariable,
-            Func<string, IServiceBusClient> createServiceBusClient)
+            GetEnvironmentVariable getEnvironmentVariable)
         {
             services.AddSingleton(console);
             services.AddSingleton<SebaConsole>();
             services.AddCommandLineApplication(console, getEnvironmentVariable);
-            services.AddSingleton<CreateServiceBusClient>(sp =>
-            {
-                var getConnectionString = sp.GetRequiredService<GetServiceBusConnectionString>();
-                return () => createServiceBusClient(getConnectionString());
-            });
             services.AddSingleton<CreateCommand>(sp =>
                 () => new CommandLineApplication(sp.GetRequiredService<IConsole>()));
             services.AddSingleton<SebaContext>();

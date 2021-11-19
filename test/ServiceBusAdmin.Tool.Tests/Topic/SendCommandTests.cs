@@ -11,12 +11,12 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
         [Fact]
         public async Task Sends_provided_message()
         {
-            Mediator.Setup<SendMessage>();
+            Mediator.Setup<SendStringMessage>();
 
             var result = await Seba().Execute(new[] {"topic", "send", "topic69", "--body", "message-body"});
 
             AssertSuccess(result);
-            Mediator.VerifyOnce(new SendMessage("topic69", "message-body"));
+            Mediator.VerifyOnce(new SendStringMessage("topic69", "message-body"));
         }
         
         [Fact]

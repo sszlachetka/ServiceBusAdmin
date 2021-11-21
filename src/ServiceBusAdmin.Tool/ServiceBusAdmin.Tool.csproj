@@ -8,7 +8,7 @@
         <PackageId>ServiceBusAdmin</PackageId>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>seba</ToolCommandName>
-        <Version>0.1.0</Version>
+        <Version>0.0.1</Version>
         <Authors>sszlachetka</Authors>
         <PackageProjectUrl>https://github.com/sszlachetka/ServiceBusAdmin</PackageProjectUrl>
         <RepositoryUrl>https://github.com/sszlachetka/ServiceBusAdmin</RepositoryUrl>

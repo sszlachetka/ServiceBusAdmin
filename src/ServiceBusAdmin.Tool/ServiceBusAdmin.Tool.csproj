@@ -13,7 +13,7 @@
         <PackageProjectUrl>https://github.com/sszlachetka/ServiceBusAdmin</PackageProjectUrl>
         <RepositoryUrl>https://github.com/sszlachetka/ServiceBusAdmin</RepositoryUrl>
         <RespositoryType>git</RespositoryType>
-        <PackageTags>azure;service bus;admin;administration</PackageTags>
+        <PackageTags>azure;service;bus;admin;administration</PackageTags>
         <PackageDescription>
             Manage your Azure Service Bus namespace with handy CLI. The main purpose of the tool is to peek, receive and
             send messages among your Service Bus entities.

@@ -5,21 +5,29 @@
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
         <AssemblyName>seba</AssemblyName>
+        <Version>0.0.1</Version>
+    </PropertyGroup>
+    
+    <PropertyGroup>
         <PackageId>ServiceBusAdmin</PackageId>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>seba</ToolCommandName>
-        <Version>0.0.1</Version>
         <Authors>sszlachetka</Authors>
         <PackageProjectUrl>https://github.com/sszlachetka/ServiceBusAdmin</PackageProjectUrl>
         <RepositoryUrl>https://github.com/sszlachetka/ServiceBusAdmin</RepositoryUrl>
         <RespositoryType>git</RespositoryType>
         <PackageTags>azure;service;bus;admin;administration</PackageTags>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageDescription>
-            Manage your Azure Service Bus namespace with handy CLI. The main purpose of the tool is to peek, receive and
-            send messages among your Service Bus entities.
+            Manage your Azure Service Bus namespace with handy CLI. Send, peek and receive messages from your Service Bus entities.
         </PackageDescription>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="LICENSE" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />

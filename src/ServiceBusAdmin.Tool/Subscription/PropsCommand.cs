@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public PropsCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Returns subscription properties.";
+            Command.Description = "Return subscription properties.";
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 

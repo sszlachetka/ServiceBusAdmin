@@ -16,7 +16,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         public SendToTopicCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             Command.Name = "send-to-topic";
-            Command.Description = "Receives messages from specified subscription and sends them back to the topic.";
+            Command.Description = "Receive messages from specified subscription and send them back to the topic.";
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
         }
         

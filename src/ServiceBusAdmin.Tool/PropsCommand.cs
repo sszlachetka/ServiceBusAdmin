@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.Tool
     {
         public PropsCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Returns topic properties.";
+            Command.Description = "Return topic properties.";
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)

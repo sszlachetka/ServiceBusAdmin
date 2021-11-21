@@ -15,7 +15,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             parentCommand)
         {
             Command.Name = "dead-letter";
-            Command.Description = "Receives messages from specified subscription and moves them to the dead letter queue. " +
+            Command.Description = "Receive messages from specified subscription and move them to the dead letter queue. " +
                                   "The command prints sequence numbers of dead lettered messages.";
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command, enableDeadLetterSwitch: false);
         }

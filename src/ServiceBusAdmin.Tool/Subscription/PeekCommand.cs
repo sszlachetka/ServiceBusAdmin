@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public PeekCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Peeks messages from specified subscription and prints them to the console.";
+            Command.Description = "Peek messages from specified subscription and print them to the console.";
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
             _printToConsoleInput = new PrintToConsoleInput(Command);
         }

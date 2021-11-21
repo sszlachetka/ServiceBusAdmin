@@ -13,6 +13,7 @@ namespace ServiceBusAdmin.Tool.Topic
 
         public CreateCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            Command.Description = "Create new topic.";
             _getTopicName = Command.ConfigureTopicNameArgument("Name of a topic to create");
         }
 

@@ -15,6 +15,7 @@ namespace ServiceBusAdmin.Tool.Topic
 
         public SendCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
+            Command.Description = "Send new message to a topic.";
             _getTopicName = Command.ConfigureTopicNameArgument();
             _getMessageBody = Command.ConfigureMessageBodyOption();
         }

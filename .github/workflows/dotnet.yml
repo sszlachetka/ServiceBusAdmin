@@ -21,7 +21,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-      
+
   bump-version:
     needs: build
     runs-on: ubuntu-latest
@@ -39,3 +39,21 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
+          
+  publish:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    env:
+      VERSION: ${{ jobs.bump-version.outputs.new_version }}
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Pack
+        run: dotnet pack --configuration Release -p:Version=$VERSION
+      - name: Push
+        run: dotnet nuget push src/ServiceBusAdmin.Tool/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY

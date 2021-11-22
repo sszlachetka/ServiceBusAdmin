@@ -52,7 +52,7 @@ namespace ServiceBusAdmin.Tool.Tests
         {
             const string connectionStringValue = "secretConnectionString";
             static string? GetEnvironmentVariable(string variableName) =>
-                variableName == ConnectionStringOption.EnvironmentVariableName ? connectionStringValue : null;
+                variableName == ConnectionString.EnvironmentVariableName ? connectionStringValue : null;
 
             var services = new ServiceCollection();
             services.AddSingleton(mediator);

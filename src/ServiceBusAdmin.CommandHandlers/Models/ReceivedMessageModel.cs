@@ -1,16 +1,12 @@
 using System.Collections.Generic;
 
-namespace ServiceBusAdmin.Tool
+namespace ServiceBusAdmin.CommandHandlers.Models
 {
-    public record MessageMetadata(
-        long SequenceNumber,
-        string MessageId,
-        IReadOnlyDictionary<string, object> ApplicationProperties);
-
-    public record Message(
+    public record ReceivedMessageModel(
             long SequenceNumber,
             string MessageId,
             IReadOnlyDictionary<string, object> ApplicationProperties,
-            dynamic Body)
+            dynamic Body,
+            MessageBodyFormatEnum BodyFormat = MessageBodyFormatEnum.Json)
         : MessageMetadata(SequenceNumber, MessageId, ApplicationProperties);
 }

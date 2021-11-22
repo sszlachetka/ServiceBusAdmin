@@ -1,5 +1,5 @@
 ## Goal
-Manage your Azure Service Bus namespace with handy CLI. Send, peek and receive messages from your Service Bus entities.
+Manage messages in your Azure Service Bus namespace with handy CLI. Send, peek and receive messages from your Service Bus entities.
 
 ### Quick start
 1. Install ServiceBusAdmin .NET tool from [nuget](https://www.nuget.org/packages/ServiceBusAdmin)

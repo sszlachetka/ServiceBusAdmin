@@ -19,6 +19,7 @@ namespace ServiceBusAdmin.Tool
 
         public void Info(object value)
         {
+            // TODO: Move serialization/deserialization to single component with the same (configurable?) options: naming policy, enum-as-string 
             WithOutput(output => output.WriteLine(JsonSerializer.Serialize(value)));
         }
 

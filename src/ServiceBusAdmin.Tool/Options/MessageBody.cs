@@ -3,7 +3,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace ServiceBusAdmin.Tool.Options
 {
-    public static class MessageBodyOption
+    public static class MessageBody
     {
         public static Func<string> ConfigureMessageBodyOption(this CommandLineApplication application)
         {

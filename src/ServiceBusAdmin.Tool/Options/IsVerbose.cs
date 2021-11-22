@@ -4,7 +4,7 @@ namespace ServiceBusAdmin.Tool.Options
 {
     public delegate bool IsVerboseOutput();
     
-    public static class VerboseOption
+    public static class IsVerbose
     {
         public static IsVerboseOutput ConfigureVerboseOption(this CommandLineApplication application)
         {

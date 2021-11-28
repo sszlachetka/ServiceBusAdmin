@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 using ServiceBusAdmin.Tool.Subscription.Inputs;
 
@@ -41,7 +42,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             public async Task Handle(IReceivedMessage message)
             {
                 await message.DeadLetter();
-                _console.Info(message.SequenceNumber);
+                _console.Info(message.Metadata.SequenceNumber);
             }
         }
     }

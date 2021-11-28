@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Moq;
 using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Subscription.Peek;
 using Xunit;
 
@@ -14,16 +15,8 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         public async Task Returns_message_metadata_by_default()
         {
             IMessage[] messages = {
-                new TestMessageBuilder()
-                    .WithMessageId("M1")
-                    .WithSequenceNumber(1)
-                    .WithApplicationProperty("Key1", 87)
-                    .Build(),
-                new TestMessageBuilder()
-                    .WithMessageId("M2")
-                    .WithSequenceNumber(2)
-                    .WithApplicationProperty("Key2", "someValue")
-                    .Build()
+                new TestMessageBuilder().WithSequenceNumber(32).Build(),
+                new TestMessageBuilder().WithSequenceNumber(99).Build()
             };
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic77", "sub34"))
@@ -34,8 +27,8 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
 
             AssertSuccess(result);
             AssertConsoleOutputContainJsonSubtrees(
-                "{\"sequenceNumber\":1,\"messageId\":\"M1\",\"applicationProperties\":{\"key1\":87}}", 
-                "{\"sequenceNumber\":2,\"messageId\":\"M2\",\"applicationProperties\":{\"key2\":\"someValue\"}}");
+                "{\"sequenceNumber\":32}",
+                "{\"sequenceNumber\":99}");
         }
 
         [Fact]
@@ -61,19 +54,14 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             var options = new ReceiverOptionsBuilder()
                 .WithEntityName(new ReceiverEntityName("topic56", "sub4"))
                 .Build();
-            Mediator.SetupPeekMessages(options, new TestMessageBuilder()
-                .WithBody("{\"key1\":99}")
-                .WithMessageId("someId")
-                .WithSequenceNumber(99)
-                .WithApplicationProperty("Key1", 87)
-                .Build());
+            Mediator.SetupPeekMessages(options, new TestMessageBuilder().Build());
         
             var result = await Seba().Execute(new[]
                 {"subscription", "peek", "topic56/sub4", "--output-content", "all"});
         
             AssertSuccess(result);
-            AssertConsoleOutputContainJsonSubtrees(
-                "{\"body\":{\"key1\":99},\"sequenceNumber\":99,\"messageId\":\"someId\",\"applicationProperties\":{\"key1\":87}}");
+            AssertConsoleOutputEachLineShouldHaveJsonElement("body");
+            AssertConsoleOutputEachLineShouldHaveJsonElement("metadata");
         }
         
         [Fact]

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace ServiceBusAdmin.CommandHandlers
+namespace ServiceBusAdmin.CommandHandlers.Models
 {
     public delegate Task ReceivedMessageCallback(IReceivedMessage message);
 }

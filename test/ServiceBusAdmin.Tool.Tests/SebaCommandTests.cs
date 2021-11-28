@@ -39,7 +39,7 @@ namespace ServiceBusAdmin.Tool.Tests
         {
             Console.OutputText.Should().Be(ConsoleOutput(lines));
         }
-
+        
         protected void AssertConsoleOutputContainJsonSubtrees(params string[] jsonSubTrees)
         {
             var lines = Console.OutputText.Split(Environment.NewLine,
@@ -50,6 +50,24 @@ namespace ServiceBusAdmin.Tool.Tests
             {
                 JToken.Parse(lines[i]).Should().ContainSubtree(JToken.Parse(jsonSubTrees[i]));
             }
+        }
+
+        protected void AssertConsoleOutputEachLine(Action<int, string> assertion)
+        {
+            var lines = Console.OutputText.Split(Environment.NewLine,
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            for (var i = 0; i < lines.Length; i++)
+            {
+                assertion(i + 1, lines[i]);
+            }
+        }
+        
+        protected void AssertConsoleOutputEachLineShouldHaveJsonElement(string elementName)
+        {
+            AssertConsoleOutputEachLine((lineNumber, line) =>
+                JToken.Parse(line).Should()
+                    .HaveElement(elementName, $"line {lineNumber} should have '{elementName}' element"));
         }
 
         private static string ConsoleOutput(string[] lines)

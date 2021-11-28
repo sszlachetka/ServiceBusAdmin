@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using MediatR;
 using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Send;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 using ServiceBusAdmin.Tool.Subscription.Inputs;
@@ -48,7 +49,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
                 await _mediator.Send(sendMessage);
                 await message.Complete();
-                _console.Info(message.SequenceNumber);
+                _console.Info(message.Metadata.SequenceNumber);
             }
         }
     }

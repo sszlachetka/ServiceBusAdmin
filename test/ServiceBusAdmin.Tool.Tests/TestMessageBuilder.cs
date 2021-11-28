@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.Tool.Tests
 {
@@ -9,6 +10,7 @@ namespace ServiceBusAdmin.Tool.Tests
         private long _sequenceNumber = 123;
         private string _messageId = Guid.NewGuid().ToString();
         private DateTimeOffset _enqueuedTime = new(2005, 7, 22, 16, 34, 59, TimeSpan.Zero);
+        private DateTimeOffset _expiresAt = new(2009, 2, 15, 13, 54, 21, TimeSpan.Zero);
         private readonly Dictionary<string, object> _applicationProperties = new();
 
         public TestMessageBuilder WithBody(string value)
@@ -34,6 +36,12 @@ namespace ServiceBusAdmin.Tool.Tests
             _enqueuedTime = value;
             return this;
         }
+        
+        public TestMessageBuilder WithExpiresAt(DateTimeOffset value)
+        {
+            _expiresAt = value;
+            return this;
+        }
 
         public TestMessageBuilder WithApplicationProperty(string key, object value)
         {
@@ -43,7 +51,9 @@ namespace ServiceBusAdmin.Tool.Tests
 
         public TestMessage Build()
         {
-            return new (new BinaryData(_body), _sequenceNumber, _messageId, _enqueuedTime, _applicationProperties);
+            return new(
+                new MessageMetadata(_sequenceNumber, _messageId, _enqueuedTime, _expiresAt, _applicationProperties),
+                new BinaryData(_body));
         }
     }
 }

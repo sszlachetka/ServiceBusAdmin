@@ -1,32 +1,40 @@
 using System;
 using System.Text;
+using Azure.Messaging.ServiceBus;
 
 namespace ServiceBusAdmin.CommandHandlers.Models
 {
     public static class MessageMapperExtensions
     {
-        public static MessageMetadata MapToMetadata(this IMessage message)
+        internal static IMessage MapToPeekedMessage(this ServiceBusReceivedMessage message)
+        {
+            return new Message(message.MapToMetadata(), message.Body);
+        }
+        
+        internal static IReceivedMessage MapToReceivedMessage(this ServiceBusReceivedMessage message, ServiceBusReceiver receiver)
+        {
+            return new ReceivedMessageAdapter(message.MapToMetadata(), message.Body, message, receiver);
+        }
+
+        private static MessageMetadata MapToMetadata(this ServiceBusReceivedMessage message)
         {
             return new MessageMetadata(
                 message.SequenceNumber,
                 message.MessageId,
                 message.EnqueuedTime,
+                message.ExpiresAt,
                 message.ApplicationProperties);
         }
 
-        public static ReceivedMessageModel MapToModel(this IMessage message, Encoding encoding,
-            MessageBodyFormatEnum bodyFormat)
+        public static string GetBodyString(this IMessage message, Encoding encoding)
         {
-            return new ReceivedMessageModel(
-                message.SequenceNumber,
-                message.MessageId,
-                message.EnqueuedTime,
-                message.ApplicationProperties,
-                DeserializeBody(message.GetBodyString(encoding), bodyFormat));
+            return encoding.GetString(message.Body);
         }
 
-        private static dynamic DeserializeBody(string bodyString, MessageBodyFormatEnum bodyFormat)
+        public static object DeserializeBody(this IMessage message, Encoding encoding, MessageBodyFormatEnum bodyFormat)
         {
+            var bodyString = message.GetBodyString(encoding);
+
             if (bodyFormat == MessageBodyFormatEnum.Json)
             {
                 return SebaSerializer.Deserialize<dynamic>(bodyString)
@@ -38,11 +46,6 @@ namespace ServiceBusAdmin.CommandHandlers.Models
             if (bodyFormat == MessageBodyFormatEnum.Text) return bodyString;
 
             throw new ArgumentOutOfRangeException(bodyFormat.ToString());
-        }
-
-        public static string GetBodyString(this IMessage message, Encoding encoding)
-        {
-            return encoding.GetString(message.Body);
         }
     }
 }

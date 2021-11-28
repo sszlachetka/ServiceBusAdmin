@@ -28,8 +28,8 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
 
             AssertSuccess(result);
             AssertConsoleOutput(
-                "{\"SequenceNumber\":1,\"MessageId\":\"M1\",\"ApplicationProperties\":{\"Key1\":87}}", 
-                "{\"SequenceNumber\":2,\"MessageId\":\"M2\",\"ApplicationProperties\":{\"Key2\":\"someValue\"}}");
+                "{\"sequenceNumber\":1,\"messageId\":\"M1\",\"applicationProperties\":{\"key1\":87}}", 
+                "{\"sequenceNumber\":2,\"messageId\":\"M2\",\"applicationProperties\":{\"key2\":\"someValue\"}}");
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         
             AssertSuccess(result);
             AssertConsoleOutput(
-                "{\"Body\":{\"key1\":99},\"SequenceNumber\":99,\"MessageId\":\"someId\",\"ApplicationProperties\":{\"Key1\":87}}");
+                "{\"body\":{\"key1\":99},\"sequenceNumber\":99,\"messageId\":\"someId\",\"applicationProperties\":{\"key1\":87}}");
         }
         
         [Fact]

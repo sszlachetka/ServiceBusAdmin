@@ -10,18 +10,24 @@ namespace ServiceBusAdmin.Tool.Tests
         private int _completeCallsCount;
         private int _deadLetterCallsCount;
 
-        public TestMessage(BinaryData body, long sequenceNumber, string messageId,
+        public TestMessage(
+            BinaryData body,
+            long sequenceNumber,
+            string messageId,
+            DateTimeOffset enqueuedTime,
             IReadOnlyDictionary<string, object> applicationProperties)
         {
             Body = body;
             SequenceNumber = sequenceNumber;
             MessageId = messageId;
+            EnqueuedTime = enqueuedTime;
             ApplicationProperties = applicationProperties;
         }
 
         public BinaryData Body { get; }
         public long SequenceNumber { get; }
         public string MessageId { get; }
+        public DateTimeOffset EnqueuedTime { get; }
         public IReadOnlyDictionary<string, object> ApplicationProperties { get; }
         public bool CompletedOnce => _completeCallsCount == 1;
         public bool DeadLetteredOnce => _deadLetterCallsCount == 1;

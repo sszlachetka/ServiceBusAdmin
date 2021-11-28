@@ -9,6 +9,7 @@ namespace ServiceBusAdmin.CommandHandlers
         BinaryData Body { get; }
         long SequenceNumber { get; }
         string MessageId { get; }
+        DateTimeOffset EnqueuedTime { get; }
         IReadOnlyDictionary<string, object> ApplicationProperties { get; }
     }
 
@@ -24,6 +25,7 @@ namespace ServiceBusAdmin.CommandHandlers
         public BinaryData Body => Message.Body;
         public long SequenceNumber => Message.SequenceNumber;
         public string MessageId => Message.MessageId;
+        public DateTimeOffset EnqueuedTime => Message.EnqueuedTime;
         public IReadOnlyDictionary<string, object> ApplicationProperties => Message.ApplicationProperties;
     }
 }

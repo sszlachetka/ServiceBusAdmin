@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Text.Json;
 
 namespace ServiceBusAdmin.CommandHandlers.Models
 {
@@ -11,6 +10,7 @@ namespace ServiceBusAdmin.CommandHandlers.Models
             return new MessageMetadata(
                 message.SequenceNumber,
                 message.MessageId,
+                message.EnqueuedTime,
                 message.ApplicationProperties);
         }
 
@@ -20,6 +20,7 @@ namespace ServiceBusAdmin.CommandHandlers.Models
             return new ReceivedMessageModel(
                 message.SequenceNumber,
                 message.MessageId,
+                message.EnqueuedTime,
                 message.ApplicationProperties,
                 DeserializeBody(message.GetBodyString(encoding), bodyFormat));
         }

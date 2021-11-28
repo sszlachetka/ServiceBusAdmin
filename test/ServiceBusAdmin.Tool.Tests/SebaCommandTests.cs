@@ -1,10 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Json;
 using McMaster.Extensions.CommandLineUtils;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Newtonsoft.Json.Linq;
 using ServiceBusAdmin.Tool.Options;
 
 namespace ServiceBusAdmin.Tool.Tests
@@ -36,6 +38,18 @@ namespace ServiceBusAdmin.Tool.Tests
         protected void AssertConsoleOutput(params string[] lines)
         {
             Console.OutputText.Should().Be(ConsoleOutput(lines));
+        }
+
+        protected void AssertConsoleOutputContainJsonSubtrees(params string[] jsonSubTrees)
+        {
+            var lines = Console.OutputText.Split(Environment.NewLine,
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            lines.Should().HaveCount(jsonSubTrees.Length);
+
+            for (var i = 0; i < lines.Length; i++)
+            {
+                JToken.Parse(lines[i]).Should().ContainSubtree(JToken.Parse(jsonSubTrees[i]));
+            }
         }
 
         private static string ConsoleOutput(string[] lines)

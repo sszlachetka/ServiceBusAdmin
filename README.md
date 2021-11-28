@@ -26,12 +26,12 @@ Manage messages in your Azure Service Bus namespace with handy CLI. Send, peek a
    ```shell
    seba subscription list <topic_name>
     ```
-6. Peek messages from a subscription dead letter queue
+6. Peek messages from a subscription's dead letter queue
    ```shell
    seba subscription peek <topic_name>/<subscription_name> -dlq --max 20
     ```
    This will return only messages' metadata. If you need their body as well, then use additional option `--output-content all`
-7. Look around and see what else you can do with `seba`
+7. Every command supports `--help` option. Use it to learn about all supported options, arguments and sub-commands.
    ```shell
    seba topic --help
    seba subscription --help

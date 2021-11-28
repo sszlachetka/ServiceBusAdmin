@@ -18,10 +18,10 @@ namespace ServiceBusAdmin.Tool.Subscription.Options
             var option = command.Option<OutputContentEnum?>(
                 "-o|--output-content",
                 "Set content of the output: " +
-                "\"metadata\" - message metadata, " +
-                "\"body\" - message body, " +
-                "\"all\" - message metadata and body. " +
-                "Default value is \"metadata\".",
+                $"\"{OutputContentEnum.Metadata}\" - message metadata, " +
+                $"\"{OutputContentEnum.Body}\" - message body, " +
+                $"\"{OutputContentEnum.All}\" - message metadata and body. " +
+                $"Default value is \"{OutputContentEnum.Metadata}\".",
                 CommandOptionType.SingleValue);
 
             return () => option.ParsedValue ?? defaultValue;

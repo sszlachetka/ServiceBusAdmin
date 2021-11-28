@@ -11,7 +11,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Options
         {
             var option = command.Option<MessageBodyFormatEnum?>(
                 "-f|--message-body-format",
-                "Set format of message body: \"json\" or \"text\".",
+                "Set format of a message body. Default value is Json.",
                 CommandOptionType.SingleValue);
 
             return () => option.ParsedValue ?? defaultValue;

@@ -65,17 +65,21 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
             var message = SebaSerializer.Deserialize<RawInputMessage>(line);
             if (message == null) throw new ApplicationException("Line was deserialized to null.");
 
+            var metadata = new SendMessageMetadataModel(
+                message.Metadata?.MessageId,
+                new Dictionary<string, object>(ParseApplicationProperties(message.Metadata?.ApplicationProperties)));
+
             return new SendMessageModel(
                 message.Body ?? throw new ApplicationException("Message body is null."),
-                message.MessageId,
-                new Dictionary<string, object>(ParseApplicationProperties(message)));
+                metadata);
         }
-        
-        private static IEnumerable<KeyValuePair<string, object>> ParseApplicationProperties(RawInputMessage message)
-        {
-            if (message.ApplicationProperties == null) yield break;
 
-            foreach (var (key, value) in message.ApplicationProperties)
+        private static IEnumerable<KeyValuePair<string, object>> ParseApplicationProperties(
+            IReadOnlyDictionary<string, object>? applicationProperties)
+        {
+            if (applicationProperties == null) yield break;
+
+            foreach (var (key, value) in applicationProperties)
             {
                 yield return new KeyValuePair<string, object>(key,
                     ParseApplicationPropertyValue(key, (JsonElement)value));

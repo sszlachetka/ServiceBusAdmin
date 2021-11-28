@@ -1,6 +1,6 @@
 Filtering by body
 ```shell
-seba subscription peek topic1/sub1 -m 100 -o all | jq -c 'select(.body.key1 > 95 and .body.key2.key22 < 196)'
+seba subscription peek topic1/sub1 -m 100 -o all | jq -c 'select(.body.key1 > 3 and .body.key2.key22 < 10)'
 ```
 
 Filtering by enqueued time between

@@ -20,7 +20,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
             _messageBodyFormat = command.ConfigureMessageBodyFormatOption();
         }
 
-        public PrintToConsoleMessageHandler CreateMessageHandler(SebaConsole console)
+        public PrintMessageCallback CreateMessageCallback(SebaConsole console)
         {
             return new(_messageBodyFormat(), _outputContent(), _getEncoding(), console);
         }

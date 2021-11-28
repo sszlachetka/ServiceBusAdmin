@@ -17,7 +17,7 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
 
         public async Task<Unit> Handle(SendBatchMessages request, CancellationToken cancellationToken)
         {
-            var (queueOrTopicName, encoding, bodyFormat, messages, handler) = request;
+            var (queueOrTopicName, encoding, bodyFormat, messages, callback) = request;
             
             await using var client = _clientFactory.ServiceBusClient();
             await using var sender = client.CreateSender(queueOrTopicName);
@@ -25,22 +25,19 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
             var readNext = await messages.MoveNextAsync();
             do
             {
-                var batchMessages = new List<IMessage>();
+                var batchMessages = new List<SendMessageModel>();
                 using var batch = await sender.CreateMessageBatchAsync(cancellationToken);
                 while (readNext)
                 {
                     var message = messages.Current.MapToServiceBusMessage(encoding, bodyFormat);
                     if (!batch.TryAddMessage(message)) break;
 
-                    batchMessages.Add(new SentMessageAdapter(message));
+                    batchMessages.Add(messages.Current);
                     readNext = await messages.MoveNextAsync();
                 }
 
                 await sender.SendMessagesAsync(batch, cancellationToken);
-                foreach (var batchMessage in batchMessages)
-                {
-                    await handler(batchMessage);
-                }
+                await callback(batchMessages);
             } while (readNext);
 
             return Unit.Value;

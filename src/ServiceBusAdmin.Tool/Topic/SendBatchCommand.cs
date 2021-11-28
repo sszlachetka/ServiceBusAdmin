@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,6 @@ namespace ServiceBusAdmin.Tool.Topic
         private readonly Func<Encoding> _getInputFileEncoding;
         private readonly Func<Encoding> _getSendMessageEncoding;
         private readonly Func<MessageBodyFormatEnum> _messageBodyFormat;
-        
 
         public SendBatchCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
@@ -36,13 +36,36 @@ namespace ServiceBusAdmin.Tool.Topic
             var readMessages = new ReadMessages(_getInputFile(), _getInputFileEncoding());
             var messages = await Mediator.Send(readMessages, cancellationToken);
             await using var messagesEnumerator = messages.GetAsyncEnumerator(cancellationToken);
-            var printHandler = new PrintToConsoleMessageHandler(_messageBodyFormat(), OutputContentEnum.All,
-                _getSendMessageEncoding(), Console);
+            var print = new PrintSentMessagesCallback(Console);
 
             var sendBatchMessages = new SendBatchMessages(_getTopicName(), _getSendMessageEncoding(),
-                _messageBodyFormat(), messagesEnumerator, printHandler.Handle);
+                _messageBodyFormat(), messagesEnumerator, print.Callback);
 
             await Mediator.Send(sendBatchMessages, cancellationToken);
+        }
+        
+        private class PrintSentMessagesCallback
+        {
+            private readonly SebaConsole _console;
+            private int _line;
+
+            public PrintSentMessagesCallback(SebaConsole console)
+            {
+                _console = console;
+            }
+
+            public Task Callback(IReadOnlyCollection<SendMessageModel> messages)
+            {
+                _console.Verbose($"Messages from lines between {_line + 1} and {_line + messages.Count} ({messages.Count}) were sent successfully.");
+                _line += messages.Count;
+
+                foreach (var message in messages)
+                {
+                    _console.Info(message);
+                }
+
+                return Task.CompletedTask;
+            }
         }
     }
 }

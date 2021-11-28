@@ -40,7 +40,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
         
         private static async Task HandleReceivedMessages(
             IReadOnlyCollection<IReceivedMessage> messages,
-            ReceivedMessageHandler messageHandler,
+            ReceivedMessageCallback messageCallback,
             int messageHandlingConcurrencyLevel)
         {
             if (messages.Count == 0) return;
@@ -51,7 +51,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
             {
                 await semaphore.WaitAsync();
 
-                tasks.Add(messageHandler(message)
+                tasks.Add(messageCallback(message)
                     .ContinueWith(_ => semaphore.Release()));
             }
             

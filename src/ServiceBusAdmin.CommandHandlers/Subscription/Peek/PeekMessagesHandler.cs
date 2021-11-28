@@ -37,7 +37,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
 
         private static async Task HandlePeekedMessages(
             IReadOnlyCollection<IMessage> messages,
-            MessageHandler messageHandler,
+            MessageCallback messageCallback,
             int messageHandlingConcurrencyLevel)
         {
             if (messages.Count == 0) return;
@@ -48,7 +48,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
             {
                 await semaphore.WaitAsync();
 
-                tasks.Add(messageHandler(message)
+                tasks.Add(messageCallback(message)
                     .ContinueWith(_ => semaphore.Release()));
             }
             

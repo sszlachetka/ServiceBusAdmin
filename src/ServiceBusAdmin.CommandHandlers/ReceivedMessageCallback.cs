@@ -2,5 +2,5 @@ using System.Threading.Tasks;
 
 namespace ServiceBusAdmin.CommandHandlers
 {
-    public delegate Task MessageHandler(IMessage message);
+    public delegate Task ReceivedMessageCallback(IReceivedMessage message);
 }

@@ -131,7 +131,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 {
                     foreach (var message in messages)
                     {
-                        await peekMessages.Handler(message);
+                        await peekMessages.Callback(message);
                     }
                 });
         }

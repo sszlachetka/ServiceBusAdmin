@@ -21,9 +21,9 @@ namespace ServiceBusAdmin.Tool.Subscription
         protected override async Task Execute(CancellationToken cancellationToken)
         {
             var options = _subscriptionReceiverInput.CreateReceiverOptions();
-            var messageHandler = _printToConsoleInput.CreateMessageHandler(Console);
+            var print = _printToConsoleInput.CreateMessageCallback(Console);
 
-            var peekMessages = new PeekMessages(options, messageHandler.Handle);
+            var peekMessages = new PeekMessages(options, print.Callback);
             
             await Mediator.Send(peekMessages, cancellationToken);
         }

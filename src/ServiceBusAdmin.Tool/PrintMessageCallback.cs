@@ -7,14 +7,14 @@ using ServiceBusAdmin.Tool.Subscription.Options;
 
 namespace ServiceBusAdmin.Tool
 {
-    public class PrintToConsoleMessageHandler
+    public class PrintMessageCallback
     {
         private readonly MessageBodyFormatEnum _messageBodyFormat;
         private readonly OutputContentEnum _outputContent;
         private readonly Encoding _encoding;
         private readonly SebaConsole _console;
 
-        public PrintToConsoleMessageHandler(MessageBodyFormatEnum messageBodyFormat, OutputContentEnum outputContent,
+        public PrintMessageCallback(MessageBodyFormatEnum messageBodyFormat, OutputContentEnum outputContent,
             Encoding encoding, SebaConsole console)
         {
             _messageBodyFormat = messageBodyFormat;
@@ -23,7 +23,7 @@ namespace ServiceBusAdmin.Tool
             _console = console;
         }
 
-        public Task Handle(IMessage message)
+        public Task Callback(IMessage message)
         {
             switch (_outputContent)
             {

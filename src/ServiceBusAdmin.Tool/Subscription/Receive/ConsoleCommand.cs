@@ -23,24 +23,24 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         protected override async Task Execute(CancellationToken cancellationToken)
         {
             var options = _subscriptionReceiverInput.CreateReceiverOptions();
-            var printToConsole = _printToConsoleInput.CreateMessageHandler(Console);
-            var completeMessage = new CompleteMessageHandler(printToConsole.Handle);
+            var printToConsole = _printToConsoleInput.CreateMessageCallback(Console);
+            var completeMessage = new CompleteMessageCallback(printToConsole.Callback);
 
-            var receiveMessages = new ReceiveMessages(options, completeMessage.Handle);
+            var receiveMessages = new ReceiveMessages(options, completeMessage.Callback);
 
             await Mediator.Send(receiveMessages, cancellationToken);
         }
 
-        private class CompleteMessageHandler
+        private class CompleteMessageCallback
         {
             private readonly Func<IMessage, Task> _innerHandle;
 
-            public CompleteMessageHandler(Func<IMessage, Task> innerHandle)
+            public CompleteMessageCallback(Func<IMessage, Task> innerHandle)
             {
                 _innerHandle = innerHandle;
             }
 
-            public async Task Handle(IReceivedMessage message)
+            public async Task Callback(IReceivedMessage message)
             {
                 await _innerHandle(message);
                 await message.Complete();

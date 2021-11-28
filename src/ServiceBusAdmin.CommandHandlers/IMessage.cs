@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Azure.Messaging.ServiceBus;
 
 namespace ServiceBusAdmin.CommandHandlers
@@ -26,22 +25,5 @@ namespace ServiceBusAdmin.CommandHandlers
         public long SequenceNumber => Message.SequenceNumber;
         public string MessageId => Message.MessageId;
         public IReadOnlyDictionary<string, object> ApplicationProperties => Message.ApplicationProperties;
-    }
-
-    public class SentMessageAdapter : IMessage
-    {
-        private readonly ServiceBusMessage _message;
-
-        public SentMessageAdapter(ServiceBusMessage message)
-        {
-            _message = message;
-        }
-
-        public BinaryData Body => _message.Body;
-        public long SequenceNumber => 0;
-        public string MessageId => _message.MessageId;
-
-        public IReadOnlyDictionary<string, object> ApplicationProperties =>
-            new ReadOnlyDictionary<string, object>(_message.ApplicationProperties);
     }
 }

@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using MediatR;
+using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.CommandHandlers.SendBatch
 {
@@ -22,25 +25,82 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
             await using var client = _clientFactory.ServiceBusClient();
             await using var sender = client.CreateSender(queueOrTopicName);
 
+            var batchFactory = new MessageBatchFactory(sender, encoding, bodyFormat);
             var readNext = await messages.MoveNextAsync();
             do
             {
-                var batchMessages = new List<SendMessageModel>();
-                using var batch = await sender.CreateMessageBatchAsync(cancellationToken);
+                using var batch = await batchFactory.CreateBatch(cancellationToken);
                 while (readNext)
                 {
-                    var message = messages.Current.MapToServiceBusMessage(encoding, bodyFormat);
-                    if (!batch.TryAddMessage(message)) break;
+                    if (!batch.TryAddMessage(messages.Current)) break;
 
-                    batchMessages.Add(messages.Current);
                     readNext = await messages.MoveNextAsync();
                 }
 
-                await sender.SendMessagesAsync(batch, cancellationToken);
-                await callback(batchMessages);
+                await batch.Send(cancellationToken);
+                await callback(batch.Messages);
             } while (readNext);
 
             return Unit.Value;
+        }
+
+        private class MessageBatchFactory
+        {
+            private readonly ServiceBusSender _sender;
+            private readonly Encoding _encoding;
+            private readonly MessageBodyFormatEnum _bodyFormat;
+
+            public MessageBatchFactory(ServiceBusSender sender, Encoding encoding, MessageBodyFormatEnum bodyFormat)
+            {
+                _sender = sender;
+                _encoding = encoding;
+                _bodyFormat = bodyFormat;
+            }
+
+            public async Task<MessageBatch> CreateBatch(CancellationToken cancellationToken)
+            {
+                var batch = await _sender.CreateMessageBatchAsync(cancellationToken);
+
+                return new MessageBatch(batch, _sender, _encoding, _bodyFormat);
+            }
+        }
+
+        private class MessageBatch : IDisposable
+        {
+            private readonly ServiceBusMessageBatch _batch;
+            private readonly ServiceBusSender _sender;
+            private readonly Encoding _encoding;
+            private readonly MessageBodyFormatEnum _bodyFormat;
+            private readonly List<SendMessageModel> _batchMessages;
+
+            public MessageBatch(ServiceBusMessageBatch batch, ServiceBusSender sender, Encoding encoding, MessageBodyFormatEnum bodyFormat)
+            {
+                _batch = batch;
+                _sender = sender;
+                _encoding = encoding;
+                _bodyFormat = bodyFormat;
+                _batchMessages = new List<SendMessageModel>();
+            }
+
+            public bool TryAddMessage(SendMessageModel message)
+            {
+                var added = _batch.TryAddMessage(message.MapToServiceBusMessage(_encoding, _bodyFormat));
+                if (added) _batchMessages.Add(message);
+
+                return added;
+            }
+
+            public Task Send(CancellationToken cancellationToken)
+            {
+                return _sender.SendMessagesAsync(_batch, cancellationToken);
+            }
+
+            public IReadOnlyCollection<SendMessageModel> Messages => _batchMessages;
+
+            public void Dispose()
+            {
+                _batch.Dispose();
+            }
         }
     }
 }

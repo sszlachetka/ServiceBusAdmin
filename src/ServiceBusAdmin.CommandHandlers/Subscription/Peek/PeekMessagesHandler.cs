@@ -28,7 +28,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
             {
                 messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount, null, cancellationToken);
                 peekedCount += messages.Count;
-                var peekedMessages = messages.Select(m => new MessageAdapter(m)).ToList();
+                var peekedMessages = messages.Select(m => new PeekedMessageAdapter(m)).ToList();
                 await HandlePeekedMessages(peekedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
             } while (messages.Count > 0 && peekedCount < options.MaxMessages);
 

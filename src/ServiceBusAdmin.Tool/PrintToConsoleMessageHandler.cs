@@ -5,7 +5,7 @@ using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.Tool.Subscription.Options;
 
-namespace ServiceBusAdmin.Tool.Subscription
+namespace ServiceBusAdmin.Tool
 {
     public class PrintToConsoleMessageHandler
     {

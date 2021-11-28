@@ -1,15 +1,13 @@
 using System;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.CommandHandlers.Files;
 using ServiceBusAdmin.CommandHandlers.Models;
-using ServiceBusAdmin.CommandHandlers.ParseBatch;
 using ServiceBusAdmin.CommandHandlers.SendBatch;
 using ServiceBusAdmin.Tool.Arguments;
 using ServiceBusAdmin.Tool.Options;
+using ServiceBusAdmin.Tool.Subscription.Options;
 
 namespace ServiceBusAdmin.Tool.Topic
 {
@@ -19,6 +17,7 @@ namespace ServiceBusAdmin.Tool.Topic
         private readonly Func<string> _getInputFile;
         private readonly Func<Encoding> _getInputFileEncoding;
         private readonly Func<Encoding> _getSendMessageEncoding;
+        private readonly Func<MessageBodyFormatEnum> _messageBodyFormat;
         
 
         public SendBatchCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
@@ -29,14 +28,19 @@ namespace ServiceBusAdmin.Tool.Topic
             _getInputFile = Command.ConfigureInputFileOption();
             _getInputFileEncoding = Command.ConfigureEncodingNameOption("Input file encoding", "--input-file-encoding");
             _getSendMessageEncoding = Command.ConfigureEncodingNameOption("Send message encoding", "--send-message-encoding");
+            _messageBodyFormat = Command.ConfigureMessageBodyFormatOption();
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var readFile = new ReadFile(_getInputFile(), _getInputFileEncoding());
-            var fileContent = await Mediator.Send(readFile, cancellationToken);
-            var messages = await Mediator.Send(new ParseMessageBatch(fileContent), cancellationToken);
-            var sendBatchMessages = new SendBatchMessages(_getTopicName(), _getSendMessageEncoding(), messages);
+            var readMessages = new ReadMessages(_getInputFile(), _getInputFileEncoding());
+            var messages = await Mediator.Send(readMessages, cancellationToken);
+            await using var messagesEnumerator = messages.GetAsyncEnumerator(cancellationToken);
+            var printHandler = new PrintToConsoleMessageHandler(_messageBodyFormat(), OutputContentEnum.All,
+                _getSendMessageEncoding(), Console);
+
+            var sendBatchMessages = new SendBatchMessages(_getTopicName(), _getSendMessageEncoding(),
+                _messageBodyFormat(), messagesEnumerator, printHandler.Handle);
 
             await Mediator.Send(sendBatchMessages, cancellationToken);
         }

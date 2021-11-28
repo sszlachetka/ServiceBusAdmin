@@ -1,9 +1,8 @@
-using System;
-using System.Text.Json;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using MediatR;
-using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.CommandHandlers.SendBatch
 {
@@ -18,25 +17,31 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
 
         public async Task<Unit> Handle(SendBatchMessages request, CancellationToken cancellationToken)
         {
-            var (queueOrTopicName, encoding, messages) = request;
+            var (queueOrTopicName, encoding, bodyFormat, messages, handler) = request;
             
             await using var client = _clientFactory.ServiceBusClient();
             await using var sender = client.CreateSender(queueOrTopicName);
 
-            var index = 0;
+            var readNext = await messages.MoveNextAsync();
             do
             {
-                var batch = await sender.CreateMessageBatchAsync(cancellationToken);
-                var startBatchIndex = index;
-                while (index < messages.Length && batch.TryAddMessage(messages[index].MapToServiceBusMessage(encoding))) index++;
-                if (startBatchIndex == index)
+                var batchMessages = new List<IMessage>();
+                using var batch = await sender.CreateMessageBatchAsync(cancellationToken);
+                while (readNext)
                 {
-                    throw new ApplicationException(
-                        $"Failed to create message batch with message {JsonSerializer.Serialize(messages[index])}");
+                    var message = messages.Current.MapToServiceBusMessage(encoding, bodyFormat);
+                    if (!batch.TryAddMessage(message)) break;
+
+                    batchMessages.Add(new SentMessageAdapter(message));
+                    readNext = await messages.MoveNextAsync();
                 }
 
                 await sender.SendMessagesAsync(batch, cancellationToken);
-            } while (index < messages.Length);
+                foreach (var batchMessage in batchMessages)
+                {
+                    await handler(batchMessage);
+                }
+            } while (readNext);
 
             return Unit.Value;
         }

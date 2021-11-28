@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.CommandHandlers
         Task DeadLetter();
     }
 
-    public class ReceivedMessageAdapter : MessageAdapter, IReceivedMessage
+    public class ReceivedMessageAdapter : PeekedMessageAdapter, IReceivedMessage
     {
         private readonly ServiceBusReceiver _receiver;
 

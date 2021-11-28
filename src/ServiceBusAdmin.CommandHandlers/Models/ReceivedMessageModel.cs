@@ -6,7 +6,6 @@ namespace ServiceBusAdmin.CommandHandlers.Models
             long SequenceNumber,
             string MessageId,
             IReadOnlyDictionary<string, object> ApplicationProperties,
-            dynamic Body,
-            MessageBodyFormatEnum BodyFormat = MessageBodyFormatEnum.Json)
+            dynamic Body)
         : MessageMetadata(SequenceNumber, MessageId, ApplicationProperties);
 }

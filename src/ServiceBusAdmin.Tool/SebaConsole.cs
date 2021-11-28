@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Options;
 
 namespace ServiceBusAdmin.Tool
@@ -19,8 +20,7 @@ namespace ServiceBusAdmin.Tool
 
         public void Info(object value)
         {
-            // TODO: Move serialization/deserialization to single component with the same (configurable?) options: naming policy, enum-as-string 
-            WithOutput(output => output.WriteLine(JsonSerializer.Serialize(value)));
+            WithOutput(output => output.WriteLine(SebaSerializer.Serialize(value)));
         }
 
         public void Info(string message)

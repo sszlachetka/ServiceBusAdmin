@@ -15,7 +15,10 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
             var body = encoding.GetBytes(bodyString);
 
             var message = new ServiceBusMessage(body);
-            message.MessageId = model.Metadata.MessageId;
+            var metadata = model.Metadata;
+            if (!string.IsNullOrWhiteSpace(metadata.MessageId))
+                message.MessageId = metadata.MessageId;
+
             foreach (var (key, value) in model.Metadata.ApplicationProperties)
             {
                 message.ApplicationProperties.Add(key, value);

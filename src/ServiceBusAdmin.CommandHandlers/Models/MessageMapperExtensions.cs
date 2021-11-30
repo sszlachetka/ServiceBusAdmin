@@ -37,7 +37,7 @@ namespace ServiceBusAdmin.CommandHandlers.Models
 
             if (bodyFormat == MessageBodyFormatEnum.Json)
             {
-                return SebaSerializer.Deserialize<dynamic>(bodyString)
+                return SebaSerializer.Deserialize<object>(bodyString)
                        ?? throw new InvalidOperationException(
                            "Message was not parsed successfully. " +
                            $"Expected format of message body '{bodyString}' was {bodyFormat}.");

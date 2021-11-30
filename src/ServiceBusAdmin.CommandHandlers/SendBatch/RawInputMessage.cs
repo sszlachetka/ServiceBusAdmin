@@ -4,7 +4,7 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
 {
     internal class RawInputMessage
     {
-        public dynamic? Body { get; set; }
+        public object? Body { get; set; }
         public RawInputMessageMetadata? Metadata { get; set; }
     }
 

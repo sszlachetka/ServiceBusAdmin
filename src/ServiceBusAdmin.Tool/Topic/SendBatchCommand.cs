@@ -18,7 +18,7 @@ namespace ServiceBusAdmin.Tool.Topic
         private readonly Func<string> _getInputFile;
         private readonly Func<Encoding> _getInputFileEncoding;
         private readonly Func<Encoding> _getSendMessageEncoding;
-        private readonly Func<MessageBodyFormatEnum> _messageBodyFormat;
+        private readonly Func<MessageBodyFormatEnum> _getMessageBodyFormat;
 
         public SendBatchCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
@@ -28,7 +28,7 @@ namespace ServiceBusAdmin.Tool.Topic
             _getInputFile = Command.ConfigureInputFileOption();
             _getInputFileEncoding = Command.ConfigureEncodingNameOption("Input file encoding", "--input-file-encoding");
             _getSendMessageEncoding = Command.ConfigureEncodingNameOption("Send message encoding", "--send-message-encoding");
-            _messageBodyFormat = Command.ConfigureMessageBodyFormatOption();
+            _getMessageBodyFormat = Command.ConfigureMessageBodyFormatOption();
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
@@ -39,7 +39,7 @@ namespace ServiceBusAdmin.Tool.Topic
             var print = new PrintSentMessagesCallback(Console);
 
             var sendBatchMessages = new SendBatchMessages(_getTopicName(), _getSendMessageEncoding(),
-                _messageBodyFormat(), messagesEnumerator, print.Callback);
+                _getMessageBodyFormat(), messagesEnumerator, print.Callback);
 
             await Mediator.Send(sendBatchMessages, cancellationToken);
         }

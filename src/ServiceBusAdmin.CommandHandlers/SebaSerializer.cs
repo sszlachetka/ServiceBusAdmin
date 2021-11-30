@@ -1,3 +1,4 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace ServiceBusAdmin.CommandHandlers
@@ -6,6 +7,7 @@ namespace ServiceBusAdmin.CommandHandlers
     {
         private static readonly JsonSerializerOptions Options = new ()
         {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             PropertyNameCaseInsensitive = true,

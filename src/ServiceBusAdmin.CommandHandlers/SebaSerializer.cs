@@ -5,7 +5,7 @@ namespace ServiceBusAdmin.CommandHandlers
 {
     public static class SebaSerializer
     {
-        private static readonly JsonSerializerOptions Options = new ()
+        public static readonly JsonSerializerOptions Options = new ()
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,

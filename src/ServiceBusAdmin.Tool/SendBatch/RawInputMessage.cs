@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using System.Text.Json;
 
-namespace ServiceBusAdmin.CommandHandlers.SendBatch
+namespace ServiceBusAdmin.Tool.SendBatch
 {
     internal class RawInputMessage
     {
-        public object? Body { get; set; }
+        public JsonElement Body { get; set; }
         public RawInputMessageMetadata? Metadata { get; set; }
     }
 
     internal class RawInputMessageMetadata
     {
         public string? MessageId { get; set; }
-        public IReadOnlyDictionary<string, object>? ApplicationProperties { get; set; }
+        public IReadOnlyDictionary<string, JsonElement>? ApplicationProperties { get; set; }
     }
 }

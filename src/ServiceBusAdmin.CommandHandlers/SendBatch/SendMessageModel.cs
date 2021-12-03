@@ -1,18 +1,23 @@
+using System;
 using System.Collections.Generic;
+using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.CommandHandlers.SendBatch
 {
     public class SendMessageModel
     {
         public SendMessageModel(
-            object body,
+            BinaryData body,
+            MessageBodyFormatEnum bodyFormat,
             SendMessageMetadataModel metadata)
         {
             Body = body;
+            BodyFormat = bodyFormat;
             Metadata = metadata;
         }
         
-        public object Body { get; }
+        public BinaryData Body { get; }
+        public MessageBodyFormatEnum BodyFormat { get; }
         public SendMessageMetadataModel Metadata { get; }
     }
 

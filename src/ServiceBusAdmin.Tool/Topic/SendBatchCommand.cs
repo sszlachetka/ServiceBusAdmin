@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.CommandHandlers.FilesAccess;
 using ServiceBusAdmin.CommandHandlers.SendBatch;
 using ServiceBusAdmin.Tool.Arguments;
 using ServiceBusAdmin.Tool.Options;
-using ServiceBusAdmin.Tool.Subscription.Options;
+using ServiceBusAdmin.Tool.SendBatch;
+using ServiceBusAdmin.Tool.Serialization;
 
 namespace ServiceBusAdmin.Tool.Topic
 {
@@ -18,7 +20,6 @@ namespace ServiceBusAdmin.Tool.Topic
         private readonly Func<string> _getInputFile;
         private readonly Func<Encoding> _getInputFileEncoding;
         private readonly Func<Encoding> _getSendMessageEncoding;
-        private readonly Func<MessageBodyFormatEnum> _getMessageBodyFormat;
 
         public SendBatchCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
@@ -28,18 +29,16 @@ namespace ServiceBusAdmin.Tool.Topic
             _getInputFile = Command.ConfigureInputFileOption();
             _getInputFileEncoding = Command.ConfigureEncodingNameOption("Input file encoding", "--input-file-encoding");
             _getSendMessageEncoding = Command.ConfigureEncodingNameOption("Send message encoding", "--send-message-encoding");
-            _getMessageBodyFormat = Command.ConfigureMessageBodyFormatOption();
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var readMessages = new ReadMessages(_getInputFile(), _getInputFileEncoding());
-            var messages = await Mediator.Send(readMessages, cancellationToken);
-            await using var messagesEnumerator = messages.GetAsyncEnumerator(cancellationToken);
+            await using var fileStream = await Mediator.Send(new ReadFile(_getInputFile()), cancellationToken);
+            var enumerator = new SendMessageEnumerator(new StreamReader(fileStream, _getInputFileEncoding()),
+                new SendMessageParser(_getSendMessageEncoding()));
             var print = new PrintSentMessagesCallback(Console);
 
-            var sendBatchMessages = new SendBatchMessages(_getTopicName(), _getSendMessageEncoding(),
-                _getMessageBodyFormat(), messagesEnumerator, print.Callback);
+            var sendBatchMessages = new SendBatchMessages(_getTopicName(), enumerator, print.Callback);
 
             await Mediator.Send(sendBatchMessages, cancellationToken);
         }
@@ -61,10 +60,20 @@ namespace ServiceBusAdmin.Tool.Topic
 
                 foreach (var message in messages)
                 {
-                    _console.Info(message);
+                    _console.Info(
+                        new
+                        {
+                            Body = ToMessageBody(message),
+                            message.Metadata
+                        });
                 }
 
                 return Task.CompletedTask;
+            }
+
+            private static object ToMessageBody(SendMessageModel message)
+            {
+                return message.Body.ToMessageBody(message.BodyFormat);
             }
         }
     }

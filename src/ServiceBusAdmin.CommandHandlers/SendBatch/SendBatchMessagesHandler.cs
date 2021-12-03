@@ -20,12 +20,12 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
 
         public async Task<Unit> Handle(SendBatchMessages request, CancellationToken cancellationToken)
         {
-            var (queueOrTopicName, encoding, bodyFormat, messages, callback) = request;
+            var (queueOrTopicName, messages, callback) = request;
             
             await using var client = _clientFactory.ServiceBusClient();
             await using var sender = client.CreateSender(queueOrTopicName);
 
-            var batchFactory = new MessageBatchFactory(sender, encoding, bodyFormat);
+            var batchFactory = new MessageBatchFactory(sender);
             var readNext = await messages.MoveNextAsync();
             do
             {
@@ -47,21 +47,17 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
         private class MessageBatchFactory
         {
             private readonly ServiceBusSender _sender;
-            private readonly Encoding _encoding;
-            private readonly MessageBodyFormatEnum _bodyFormat;
 
-            public MessageBatchFactory(ServiceBusSender sender, Encoding encoding, MessageBodyFormatEnum bodyFormat)
+            public MessageBatchFactory(ServiceBusSender sender)
             {
                 _sender = sender;
-                _encoding = encoding;
-                _bodyFormat = bodyFormat;
             }
 
             public async Task<MessageBatch> CreateBatch(CancellationToken cancellationToken)
             {
                 var batch = await _sender.CreateMessageBatchAsync(cancellationToken);
 
-                return new MessageBatch(batch, _sender, _encoding, _bodyFormat);
+                return new MessageBatch(batch, _sender);
             }
         }
 
@@ -69,22 +65,18 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
         {
             private readonly ServiceBusMessageBatch _batch;
             private readonly ServiceBusSender _sender;
-            private readonly Encoding _encoding;
-            private readonly MessageBodyFormatEnum _bodyFormat;
             private readonly List<SendMessageModel> _batchMessages;
 
-            public MessageBatch(ServiceBusMessageBatch batch, ServiceBusSender sender, Encoding encoding, MessageBodyFormatEnum bodyFormat)
+            public MessageBatch(ServiceBusMessageBatch batch, ServiceBusSender sender)
             {
                 _batch = batch;
                 _sender = sender;
-                _encoding = encoding;
-                _bodyFormat = bodyFormat;
                 _batchMessages = new List<SendMessageModel>();
             }
 
             public bool TryAddMessage(SendMessageModel message)
             {
-                var added = _batch.TryAddMessage(message.MapToServiceBusMessage(_encoding, _bodyFormat));
+                var added = _batch.TryAddMessage(message.MapToServiceBusMessage());
                 if (added) _batchMessages.Add(message);
 
                 return added;

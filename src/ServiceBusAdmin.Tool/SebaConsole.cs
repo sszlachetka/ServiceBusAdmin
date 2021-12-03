@@ -4,6 +4,7 @@ using System.Text.Json;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Options;
+using ServiceBusAdmin.Tool.Serialization;
 
 namespace ServiceBusAdmin.Tool
 {

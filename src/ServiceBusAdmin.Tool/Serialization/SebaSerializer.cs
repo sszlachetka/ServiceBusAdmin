@@ -1,17 +1,18 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
-namespace ServiceBusAdmin.CommandHandlers
+namespace ServiceBusAdmin.Tool.Serialization
 {
     public static class SebaSerializer
     {
-        public static readonly JsonSerializerOptions Options = new ()
+        private static readonly JsonSerializerOptions Options = new ()
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             PropertyNameCaseInsensitive = true,
-            AllowTrailingCommas = true
+            AllowTrailingCommas = true,
+            IgnoreNullValues = true
         };
 
         public static T? Deserialize<T>(string json)

@@ -36,7 +36,7 @@ namespace ServiceBusAdmin.Tool.Topic
             await using var fileStream = await Mediator.Send(new ReadFile(_getInputFile()), cancellationToken);
             var enumerator = new SendMessageEnumerator(new StreamReader(fileStream, _getInputFileEncoding()),
                 new SendMessageParser(_getSendMessageEncoding()));
-            var print = new PrintSentMessagesCallback(Console);
+            var print = new PrintSentMessagesCallback(Console, _getSendMessageEncoding());
 
             var sendBatchMessages = new SendBatchMessages(_getTopicName(), enumerator, print.Callback);
 
@@ -46,11 +46,13 @@ namespace ServiceBusAdmin.Tool.Topic
         private class PrintSentMessagesCallback
         {
             private readonly SebaConsole _console;
+            private readonly Encoding _encoding;
             private int _line;
 
-            public PrintSentMessagesCallback(SebaConsole console)
+            public PrintSentMessagesCallback(SebaConsole console, Encoding encoding)
             {
                 _console = console;
+                _encoding = encoding;
             }
 
             public Task Callback(IReadOnlyCollection<SendMessageModel> messages)
@@ -71,9 +73,9 @@ namespace ServiceBusAdmin.Tool.Topic
                 return Task.CompletedTask;
             }
 
-            private static object ToMessageBody(SendMessageModel message)
+            private object ToMessageBody(SendMessageModel message)
             {
-                return message.Body.ToMessageBody(message.BodyFormat);
+                return message.Body.ToMessageBody(_encoding, message.BodyFormat);
             }
         }
     }

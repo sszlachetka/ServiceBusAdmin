@@ -39,6 +39,7 @@ Each message has following format
 ```shell
 seba topic send-batch topic1 -i input.json
 ```
+JSON schema of messages (lines in input file provided to `send-batch` command) can be found [here](send-batch-input-schema.json).
 
 ### 2. Filtering peeked messages
 Please note that filtering takes place on your machine. Seba peeks requested number of messages (controlled with `-m` option) and then they are being filtered with `jq` tool in your shell. Therefore, if you are processing large number of messages, it's recommended to write them to a file first and then process the file.

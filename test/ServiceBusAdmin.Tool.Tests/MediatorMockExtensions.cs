@@ -39,5 +39,11 @@ namespace ServiceBusAdmin.Tool.Tests
         {
             mock.Verify(x => x.Send(request, It.IsAny<CancellationToken>()), Times.Once);
         }
+        
+        public static void VerifyOnce<TRequest>(this Mock<IMediator> mock, Expression<Func<TRequest, bool>> requestMatch)
+            where TRequest : IRequest
+        {
+            mock.Verify(x => x.Send(It.Is<TRequest>(requestMatch), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

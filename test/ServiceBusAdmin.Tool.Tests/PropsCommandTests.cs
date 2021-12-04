@@ -20,7 +20,7 @@ namespace ServiceBusAdmin.Tool.Tests
 
             AssertSuccess(result);
             AssertConsoleOutput(
-                "{\"NamespaceName\":\"test-namespace\",\"CreatedTime\":\"2021-10-15T05:30:21+00:00\",\"ModifiedTime\":\"2021-09-17T03:20:59+01:00\"}");
+                "{\"namespaceName\":\"test-namespace\",\"createdTime\":\"2021-10-15T05:30:21+00:00\",\"modifiedTime\":\"2021-09-17T03:20:59+01:00\"}");
         }
     }
 }

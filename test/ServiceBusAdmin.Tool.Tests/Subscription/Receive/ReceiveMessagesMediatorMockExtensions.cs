@@ -5,6 +5,7 @@ using System.Threading;
 using MediatR;
 using Moq;
 using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Send;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 
@@ -21,7 +22,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
                 {
                     foreach (var message in receivedMessages)
                     {
-                        await receiveMessages.Handler(message);
+                        await receiveMessages.Callback(message);
                     }
                 });
         }

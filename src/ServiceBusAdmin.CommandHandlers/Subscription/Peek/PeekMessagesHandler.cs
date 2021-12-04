@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using MediatR;
+using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
 {
@@ -28,7 +29,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
             {
                 messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount, null, cancellationToken);
                 peekedCount += messages.Count;
-                var peekedMessages = messages.Select(m => new MessageAdapter(m)).ToList();
+                var peekedMessages = messages.Select(m => m.MapToPeekedMessage()).ToList();
                 await HandlePeekedMessages(peekedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);
             } while (messages.Count > 0 && peekedCount < options.MaxMessages);
 
@@ -37,7 +38,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
 
         private static async Task HandlePeekedMessages(
             IReadOnlyCollection<IMessage> messages,
-            MessageHandler messageHandler,
+            MessageCallback messageCallback,
             int messageHandlingConcurrencyLevel)
         {
             if (messages.Count == 0) return;
@@ -48,7 +49,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
             {
                 await semaphore.WaitAsync();
 
-                tasks.Add(messageHandler(message)
+                tasks.Add(messageCallback(message)
                     .ContinueWith(_ => semaphore.Release()));
             }
             

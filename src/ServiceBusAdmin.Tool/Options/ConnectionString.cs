@@ -5,7 +5,7 @@ namespace ServiceBusAdmin.Tool.Options
 {
     public delegate string? GetEnvironmentVariable(string variableName);
 
-    public static class ConnectionStringOption
+    public static class ConnectionString
     {
         public const string EnvironmentVariableName = "SEBA_CONNECTION_STRING";
         private const string Template = "-c|--connection-string";

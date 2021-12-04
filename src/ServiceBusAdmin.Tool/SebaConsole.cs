@@ -2,7 +2,9 @@ using System;
 using System.IO;
 using System.Text.Json;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Options;
+using ServiceBusAdmin.Tool.Serialization;
 
 namespace ServiceBusAdmin.Tool
 {
@@ -19,7 +21,7 @@ namespace ServiceBusAdmin.Tool
 
         public void Info(object value)
         {
-            WithOutput(output => output.WriteLine(JsonSerializer.Serialize(value)));
+            WithOutput(output => output.WriteLine(SebaSerializer.Serialize(value)));
         }
 
         public void Info(string message)

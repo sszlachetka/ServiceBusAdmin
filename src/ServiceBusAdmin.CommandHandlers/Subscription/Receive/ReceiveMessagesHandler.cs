@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using MediatR;
+using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
 {
@@ -31,7 +32,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
                 messages = await receiver.ReceiveMessagesAsync(options.MaxMessages - receivedCount,
                     ReceiveMaxWaitTime, cancellationToken);
                 receivedCount += messages.Count;
-                var receivedMessages = messages.Select(m => new ReceivedMessageAdapter(m, receiver)).ToList();
+                var receivedMessages = messages.Select(m => m.MapToReceivedMessage(receiver)).ToList();
                 await HandleReceivedMessages(receivedMessages, receivedMessageHandler, options.MessageHandlingConcurrencyLevel);
             } while (messages.Count > 0 && receivedCount < options.MaxMessages);
             
@@ -40,7 +41,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
         
         private static async Task HandleReceivedMessages(
             IReadOnlyCollection<IReceivedMessage> messages,
-            ReceivedMessageHandler messageHandler,
+            ReceivedMessageCallback messageCallback,
             int messageHandlingConcurrencyLevel)
         {
             if (messages.Count == 0) return;
@@ -51,7 +52,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
             {
                 await semaphore.WaitAsync();
 
-                tasks.Add(messageHandler(message)
+                tasks.Add(messageCallback(message)
                     .ContinueWith(_ => semaphore.Release()));
             }
             

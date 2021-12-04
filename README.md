@@ -1,5 +1,7 @@
 ## Goal
-Manage your Azure Service Bus namespace with handy CLI. Send, peek and receive messages from your Service Bus entities.
+Manage messages in your Azure Service Bus namespace with handy CLI. Send, peek and receive messages from your Service Bus entities.
+
+Output format of ServiceBusAdmin is JSON so peeked messages can be easily filtered and transformed with tools like [jq](https://stedolan.github.io/jq/). Once you find messages that you were looking for, you can resend them to given Service Bus entity by either using their unique sequence numbers or by exporting them to a file and sending in batch mode. It's possible because input format of ServiceBusAdmin is JSON as well.
 
 ### Quick start
 1. Install ServiceBusAdmin .NET tool from [nuget](https://www.nuget.org/packages/ServiceBusAdmin)
@@ -26,14 +28,15 @@ Manage your Azure Service Bus namespace with handy CLI. Send, peek and receive m
    ```shell
    seba subscription list <topic_name>
     ```
-6. Peek messages from a subscription dead letter queue
+6. Peek messages from a subscription's dead letter queue
    ```shell
    seba subscription peek <topic_name>/<subscription_name> -dlq --max 20
     ```
    This will return only messages' metadata. If you need their body as well, then use additional option `--output-content all`
-7. Look around and see what else you can do with `seba`
+7. Every command supports `--help` option. Use it to find out more about all supported options, arguments and sub-commands.
    ```shell
    seba topic --help
    seba subscription --help
    seba subscription receive --help
     ```
+8. [Here](https://github.com/sszlachetka/ServiceBusAdmin/blob/master/docs/advanced-usage-scenarios.md) you can find advanced usage scenarios.

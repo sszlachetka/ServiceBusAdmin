@@ -19,7 +19,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
 
             AssertSuccess(result);
             AssertConsoleOutput(
-                "{\"ActiveMessageCount\":34,\"DeadLetterMessageCount\":78}");
+                "{\"activeMessageCount\":34,\"deadLetterMessageCount\":78}");
         }
         
         [Fact]

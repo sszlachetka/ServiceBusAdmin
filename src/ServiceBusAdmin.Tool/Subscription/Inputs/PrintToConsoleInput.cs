@@ -1,23 +1,28 @@
 using System;
+using System.Text;
 using McMaster.Extensions.CommandLineUtils;
+using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.Tool.Options;
 using ServiceBusAdmin.Tool.Subscription.Options;
 
 namespace ServiceBusAdmin.Tool.Subscription.Inputs
 {
     internal class PrintToConsoleInput
     {
+        private readonly Func<MessageBodyFormatEnum> _messageBodyFormat;
         private readonly Func<OutputContentEnum> _outputContent;
-        private readonly Func<string> _getEncodingName;
+        private readonly Func<Encoding> _getEncoding;
 
         public PrintToConsoleInput(CommandLineApplication command)
         {
             _outputContent = command.ConfigureOutputContentOption();
-            _getEncodingName = command.ConfigureEncodingNameOption();
+            _getEncoding = command.ConfigureEncodingNameOption("Name of encoding used to encode message body.");
+            _messageBodyFormat = command.ConfigureMessageBodyFormatOption();
         }
 
-        public PrintToConsoleMessageHandler CreateMessageHandler(SebaConsole console)
+        public PrintMessageCallback CreateMessageCallback(SebaConsole console)
         {
-            return new (_outputContent(), _getEncodingName(), console);
+            return new(_messageBodyFormat(), _outputContent(), _getEncoding(), console);
         }
     }
 }

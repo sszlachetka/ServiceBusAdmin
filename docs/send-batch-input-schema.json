@@ -13,7 +13,7 @@
           "type": "object",
           "patternProperties": {
             ".+": {
-              "type": ["string", "number", "integer", "null"]
+              "type": ["string", "number", "integer", "null", "boolean"]
             }
           }
         }

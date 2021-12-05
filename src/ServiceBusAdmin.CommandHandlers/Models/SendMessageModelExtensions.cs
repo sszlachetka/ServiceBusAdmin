@@ -1,6 +1,6 @@
 using Azure.Messaging.ServiceBus;
 
-namespace ServiceBusAdmin.CommandHandlers.SendBatch
+namespace ServiceBusAdmin.CommandHandlers.Models
 {
     internal static class SendMessageModelExtensions
     {

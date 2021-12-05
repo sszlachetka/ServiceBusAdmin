@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
-using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
-using ServiceBusAdmin.CommandHandlers.SendBatch;
 using ServiceBusAdmin.Tool.Serialization;
 
-namespace ServiceBusAdmin.Tool.SendBatch
+namespace ServiceBusAdmin.Tool.MessageParsing
 {
     internal class SendMessageParser
     {

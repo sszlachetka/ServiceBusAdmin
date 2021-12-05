@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sszlachetka/ServiceBusAdmin/tree/master/docs/send-batch-input-schema.json",
+  "$id": "https://github.com/sszlachetka/ServiceBusAdmin/tree/master/docs/input-message-schema.json",
   "type": "object",
   "properties": {
     "metadata": {

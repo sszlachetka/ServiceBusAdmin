@@ -36,14 +36,14 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
 
         public static void SetupSendAnyBinaryMessage(this Mock<IMediator> mock)
         {
-            mock.Setup(x => x.Send(It.IsAny<SendBinaryMessage>(), It.IsAny<CancellationToken>()))
+            mock.Setup(x => x.Send(It.IsAny<SendMessage>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Unit.Value);
         }
         
         public static void VerifySendBinaryMessageOnce(this Mock<IMediator> mock, string topicName, BinaryData messageBody)
         {
-            Expression<Func<SendBinaryMessage,bool>> match = message =>
-                message.QueueOrTopicName == topicName && ReferenceEquals(message.MessageBody, messageBody);
+            Expression<Func<SendMessage,bool>> match = command =>
+                command.QueueOrTopicName == topicName && ReferenceEquals(command.Message.Body, messageBody);
 
             mock.Verify(x => x.Send(It.Is(match), It.IsAny<CancellationToken>()), Times.Once);
         }

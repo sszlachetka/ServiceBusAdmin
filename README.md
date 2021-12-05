@@ -39,4 +39,4 @@ Output format of ServiceBusAdmin is JSON so peeked messages can be easily filter
    seba subscription --help
    seba subscription receive --help
     ```
-8. [Here](https://github.com/sszlachetka/ServiceBusAdmin/blob/master/docs/advanced-usage-scenarios.md) you can find advanced usage scenarios.
+8. Advanced usage scenarios can be found in this [documentation page](https://github.com/sszlachetka/ServiceBusAdmin/blob/master/docs/advanced-usage-scenarios.md).

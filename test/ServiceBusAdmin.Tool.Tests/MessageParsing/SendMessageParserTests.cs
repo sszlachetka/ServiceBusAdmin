@@ -3,10 +3,10 @@ using System.Text;
 using FluentAssertions;
 using FluentAssertions.Json;
 using Newtonsoft.Json.Linq;
-using ServiceBusAdmin.Tool.SendBatch;
+using ServiceBusAdmin.Tool.MessageParsing;
 using Xunit;
 
-namespace ServiceBusAdmin.Tool.Tests.SendBatch
+namespace ServiceBusAdmin.Tool.Tests.MessageParsing
 {
     public class SendMessageParserTests
     {

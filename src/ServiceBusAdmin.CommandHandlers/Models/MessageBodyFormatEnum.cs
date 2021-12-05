@@ -2,7 +2,8 @@ namespace ServiceBusAdmin.CommandHandlers.Models
 {
     public enum MessageBodyFormatEnum
     {
-        Json,
-        Text
+        Unknown = 0,
+        Json = 1,
+        Text = 2
     }
 }

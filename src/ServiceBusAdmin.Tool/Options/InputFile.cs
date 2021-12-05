@@ -8,7 +8,9 @@ namespace ServiceBusAdmin.Tool.Options
         public static Func<string> ConfigureInputFileOption(this CommandLineApplication application)
         {
             var messageBodyOption = application
-                .Option<string>("-i|--input-file", "Input file", CommandOptionType.SingleValue)
+                .Option<string>("-i|--input-file",
+                    $"Input file with messages to be send. Each input line must conform to JSON schema {Urls.InputMessageJsonSchema}",
+                    CommandOptionType.SingleValue)
                 .IsRequired();
 
             return () => messageBodyOption.ParsedValue;

@@ -43,13 +43,16 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
                 _mediator = mediator;
             }
 
-            public async Task Handle(IReceivedMessage message)
+            public async Task Handle(IReceivedMessage receivedMessage)
             {
-                var sendMessage = new SendBinaryMessage(_topicName, message.Body);
+                var messageMetadata = receivedMessage.Metadata.ConvertToSendMessage();
+                var message = new SendMessageModel(receivedMessage.Body, messageMetadata);
+                var sendMessage = new SendMessage(_topicName, message);
 
                 await _mediator.Send(sendMessage);
-                await message.Complete();
-                _console.Info(message.Metadata.SequenceNumber);
+                await receivedMessage.Complete();
+
+                _console.Info(receivedMessage.Metadata.SequenceNumber);
             }
         }
     }

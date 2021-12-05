@@ -11,28 +11,31 @@ namespace ServiceBusAdmin.Tool.Tests.Topic
         [Fact]
         public async Task Sends_provided_message()
         {
-            Mediator.Setup<SendStringMessage>();
-
-            var result = await Seba().Execute(new[] {"topic", "send", "topic69", "--body", "message-body"});
+            Mediator.Setup<SendMessage>();
+            const string message = "{\"body\":{\"someKey\":\"someValue\"}}";
+            
+            var result = await Seba().Execute(new[] {"topic", "send", "topic69", "--message", message});
 
             AssertSuccess(result);
-            Mediator.VerifyOnce(new SendStringMessage("topic69", "message-body"));
+            Mediator.VerifyOnce<SendMessage>(request => 
+                request.QueueOrTopicName == "topic69" &&
+                request.Message.Body.ToString() == "{\"someKey\":\"someValue\"}");
         }
         
         [Fact]
         public async Task Topic_argument_is_required()
         {
-            var result = await Seba().Execute(new[] {"topic", "send", "--body", "message-body"});
+            var result = await Seba().Execute(new[] {"topic", "send", "--message", "someMessage"});
 
             AssertFailure(result, "The Topic name field is required.");
         }
         
         [Fact]
-        public async Task Message_body_option_is_required()
+        public async Task Message_option_is_required()
         {
             var result = await Seba().Execute(new[] {"topic", "send", "topic69"});
 
-            AssertFailure(result, "The --body field is required.");
+            AssertFailure(result, "The --message field is required.");
         }
     }
 }

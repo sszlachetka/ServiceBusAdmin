@@ -15,8 +15,8 @@ seba subscription create topic1/sub1
 ## Table of contents
 1. [Send single message to a topic](#1-send-single-message-to-a-topic)
 2. [Send messages in batch mode](#2-send-messages-in-batch-mode)
-3. [Peek messages from a subscription](#3-peeking-messages-from-a-subscription)
-4. [Filter peeked messages](#3-filter-peeked-messages)
+3. [Peek messages from a subscription](#3-peek-messages-from-a-subscription)
+4. [Filter peeked messages](#4-filter-peeked-messages)
 5. [Move messages to subscription's dead letter queue](#5-move-messages-to-subscriptions-dead-letter-queue)
 6. [Move messages from subscription's dead letter queue to a topic](#6-move-messages-from-subscriptions-dead-letter-queue-to-a-topic)
 

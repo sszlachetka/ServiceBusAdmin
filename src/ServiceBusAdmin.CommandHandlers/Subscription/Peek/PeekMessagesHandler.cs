@@ -19,15 +19,21 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
 
         public async Task<Unit> Handle(PeekMessages request, CancellationToken cancellationToken)
         {
-            var (options, messageHandler) = request;
+            var (options, messageHandler, fromSequenceNumber) = request;
             await using var client = _clientFactory.ServiceBusClient();
             await using var receiver = SubscriptionReceiverFactory.Create(client, options);
 
             var peekedCount = 0;
             IReadOnlyList<ServiceBusReceivedMessage> messages;
+            var fromSeq = fromSequenceNumber;
             do
             {
-                messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount, null, cancellationToken);
+                messages = await receiver.PeekMessagesAsync(options.MaxMessages - peekedCount, fromSeq,
+                    cancellationToken);
+
+                if (messages.Count == 0) continue;
+
+                fromSeq = messages[^1].SequenceNumber + 1;
                 peekedCount += messages.Count;
                 var peekedMessages = messages.Select(m => m.MapToPeekedMessage()).ToList();
                 await HandlePeekedMessages(peekedMessages, messageHandler, options.MessageHandlingConcurrencyLevel);

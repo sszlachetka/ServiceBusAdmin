@@ -113,6 +113,18 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         
             Mediator.VerifyPeekMessagesOnce(options);
         }
+        
+        [Fact]
+        public async Task Supports_from_sequence_number_option()
+        {
+            var options = new ReceiverOptionsBuilder().Build();
+            Mediator.SetupPeekMessages(options);
+        
+            await Seba().Execute(new[]
+                {"subscription", "peek", "someTopic/someSubscription", "--from-sequence-number", "101"});
+        
+            Mediator.VerifyPeekMessagesOnce(options, fromSequenceNumber: 101);
+        }
     }
     
     internal static class PeekMessagesMediatorMockExtensions
@@ -130,10 +142,14 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 });
         }
         
-        public static void VerifyPeekMessagesOnce(this Mock<IMediator> mock, ReceiverOptions options)
+        public static void VerifyPeekMessagesOnce(this Mock<IMediator> mock, ReceiverOptions options, long? fromSequenceNumber = null)
         {
             mock.Verify(
-                x => x.Send(It.Is<PeekMessages>(request => request.Options == options), It.IsAny<CancellationToken>()),
+                x => x.Send(
+                    It.Is<PeekMessages>(request => 
+                        request.Options == options &&
+                        request.FromSequenceNumber == fromSequenceNumber),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
         }
     }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace ServiceBusAdmin.Tool.SendBatch
+namespace ServiceBusAdmin.Tool.MessageParsing
 {
     internal class RawInputMessage
     {

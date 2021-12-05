@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Options
         {
             var option = command.Option<string?>(
                 template,
-                $"{description} Supported values https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding?view=net-5.0",
+                $"{description} Supported values {Urls.SupportedEncodingNames}",
                 CommandOptionType.SingleValue);
 
             return () => Encoding.GetEncoding(option.ParsedValue ?? defaultValue);

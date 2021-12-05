@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
-using ServiceBusAdmin.CommandHandlers.Models;
 
-namespace ServiceBusAdmin.CommandHandlers.SendBatch
+namespace ServiceBusAdmin.CommandHandlers.Models
 {
     public class SendMessageModel
     {
+        public SendMessageModel(
+            BinaryData body,
+            SendMessageMetadataModel metadata)
+            : this(body, MessageBodyFormatEnum.Unknown, metadata)
+        {
+        }
+
         public SendMessageModel(
             BinaryData body,
             MessageBodyFormatEnum bodyFormat,
@@ -15,7 +21,7 @@ namespace ServiceBusAdmin.CommandHandlers.SendBatch
             BodyFormat = bodyFormat;
             Metadata = metadata;
         }
-        
+
         public BinaryData Body { get; }
         public MessageBodyFormatEnum BodyFormat { get; }
         public SendMessageMetadataModel Metadata { get; }

@@ -6,10 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.FilesAccess;
+using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.SendBatch;
 using ServiceBusAdmin.Tool.Arguments;
+using ServiceBusAdmin.Tool.MessageParsing;
 using ServiceBusAdmin.Tool.Options;
-using ServiceBusAdmin.Tool.SendBatch;
 using ServiceBusAdmin.Tool.Serialization;
 
 namespace ServiceBusAdmin.Tool.Topic

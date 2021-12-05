@@ -1,11 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
 using MediatR;
+using ServiceBusAdmin.CommandHandlers.Models;
 
 namespace ServiceBusAdmin.CommandHandlers.Send
 {
-    internal class SendMessageHandler : IRequestHandler<SendStringMessage>, IRequestHandler<SendBinaryMessage>
+    internal class SendMessageHandler : IRequestHandler<SendMessage>
     {
         private readonly ServiceBusClientFactory _clientFactory;
 
@@ -14,27 +14,14 @@ namespace ServiceBusAdmin.CommandHandlers.Send
             _clientFactory = clientFactory;
         }
 
-        public Task<Unit> Handle(SendStringMessage request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SendMessage request, CancellationToken cancellationToken)
         {
-            var (queueOrTopicName, messageBody) = request;
-
-            return Send(queueOrTopicName, new ServiceBusMessage(messageBody), cancellationToken);
-        }
-
-        public Task<Unit> Handle(SendBinaryMessage request, CancellationToken cancellationToken)
-        {
-            var (queueOrTopicName, messageBody) = request;
-
-            return Send(queueOrTopicName, new ServiceBusMessage(messageBody), cancellationToken);
-        }
-
-        private async Task<Unit> Send(string queueOrTopicName, ServiceBusMessage message,
-            CancellationToken cancellationToken)
-        {
+            var (queueOrTopicName, message) = request;
+            
             await using var client = _clientFactory.ServiceBusClient();
             await using var sender = client.CreateSender(queueOrTopicName);
 
-            await sender.SendMessageAsync(message, cancellationToken);
+            await sender.SendMessageAsync(message.MapToServiceBusMessage(), cancellationToken);
 
             return Unit.Value;
         }

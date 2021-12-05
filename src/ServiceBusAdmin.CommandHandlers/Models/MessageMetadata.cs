@@ -23,5 +23,10 @@ namespace ServiceBusAdmin.CommandHandlers.Models
         public DateTimeOffset EnqueuedTime { get; }
         public DateTimeOffset ExpiresAt { get; }
         public IReadOnlyDictionary<string, object> ApplicationProperties { get; }
+
+        public SendMessageMetadataModel ConvertToSendMessage()
+        {
+            return new SendMessageMetadataModel(MessageId, ApplicationProperties);
+        }
     }
 }

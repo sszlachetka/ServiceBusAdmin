@@ -65,9 +65,9 @@ Peek first 20 messages and return only metadata
 seba subscription peek topic1/sub1 -m 20 -o metadata
 ```
 
-To peek messages from specific sequence number use `-s|--from-sequence-number` option
+To peek messages from specific sequence number use `-fs|--from-sequence-number` option
 ```shell
-seba subscription peek topic1/sub1 -s 9988
+seba subscription peek topic1/sub1 -fs 9988
 ```
 
 ### 4. Filter peeked messages

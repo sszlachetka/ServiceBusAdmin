@@ -8,6 +8,7 @@ namespace ServiceBusAdmin.CommandHandlers.Models
     {
         Task Complete();
         Task DeadLetter();
+        Task Abandon();
     }
 
     internal class ReceivedMessageAdapter : IReceivedMessage
@@ -35,6 +36,11 @@ namespace ServiceBusAdmin.CommandHandlers.Models
         public Task DeadLetter()
         {
             return _receiver.DeadLetterMessageAsync(_message);
+        }
+        
+        public Task Abandon()
+        {
+            return _receiver.AbandonMessageAsync(_message);
         }
 
         public MessageMetadata Metadata { get; }

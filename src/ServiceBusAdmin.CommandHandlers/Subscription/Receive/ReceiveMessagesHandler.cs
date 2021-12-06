@@ -31,6 +31,9 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
             {
                 messages = await receiver.ReceiveMessagesAsync(options.MaxMessages - receivedCount,
                     ReceiveMaxWaitTime, cancellationToken);
+                
+                if (messages.Count == 0) continue;
+
                 receivedCount += messages.Count;
                 var receivedMessages = messages.Select(m => m.MapToReceivedMessage(receiver)).ToList();
                 await HandleReceivedMessages(receivedMessages, receivedMessageHandler, options.MessageHandlingConcurrencyLevel);

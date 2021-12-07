@@ -6,15 +6,14 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive.Options
 {
     public static class HandleSequenceNumbers
     {
-        public const string Template = "-hs|--handle-sequence-numbers";
+        private const string Template = "-hs|--handle-sequence-numbers";
 
         public static Func<long[]> ConfigureHandleSequenceNumbers(this CommandLineApplication command)
         {
             var option = command.Option<string?>(
                 Template,
-                $"Handle messages with provided sequence numbers. Expected format of sequence numbers are comma-separated values. Only messages with given sequence numbers are completed. All other messages are received but not completed. Messages are received in peek-lock mode, which means that not completed messages are locked for configured time duration (by default 1 minute). If not completed messages must be explicitly abandoned, then use {AbandonUnhandledMessages.Template} option. If sequence numbers are not provided, then all messages are handled (completed).",
-                CommandOptionType.SingleValue,
-                inherited: true);
+                $"Handle messages with sequence numbers provided in form of comma-separated values. Only messages with given sequence numbers are completed. All other messages are received but not completed. Messages are received in peek-lock mode which locks them for configured lock duration (by default 1 minute). Please note that when lock is released then messages again become available for receive operation. The command will fail when particular message is received more than once. Use this option with caution when receiving messages that are not dead lettered because every receive attempt that is not completed increments delivery attempts counter and when the counter exceeds threshold then message is dead lettered. If sequence numbers are not provided, then all received messages are handled (completed).",
+                CommandOptionType.SingleValue);
 
             return () => Convert(option.ParsedValue);
         }

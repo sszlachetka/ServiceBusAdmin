@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
@@ -13,15 +14,15 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 {
     public class SendToTopicCommand : SebaCommand
     {
-        private readonly ReceiveOptions _receiveOptions;
+        private readonly Func<long[]> _handleSequenceNumbers;
         private readonly SubscriptionReceiverInput _subscriptionReceiverInput;
 
         public SendToTopicCommand(SebaContext context,
             CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             Command.Name = "send-to-topic";
-            Command.Description = "Receive messages from specified subscription and send them back to the topic.";
-            _receiveOptions = Command.ConfigureReceiveOptions();
+            Command.Description = "Receive messages from given subscription and send them back to the topic.";
+            _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
         }
         
@@ -29,7 +30,11 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         {
             var options = _subscriptionReceiverInput.CreateReceiverOptions();
             var sendToTopic = CreateSendToTopicCallback(options);
-            var receiveMessages = new ReceiveMessages(options, sendToTopic.Callback);
+            var handleSequenceNumbersDecorator =
+                new HandleSequenceNumbersDecorator(Console, _handleSequenceNumbers(), sendToTopic.Callback);
+            var validateDecorator = new ValidateUniqueSequenceNumberDecorator(handleSequenceNumbersDecorator.Callback);
+
+            var receiveMessages = new ReceiveMessages(options, validateDecorator.Callback);
             
             await Mediator.Send(receiveMessages, cancellationToken);
         }
@@ -39,8 +44,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             return new SendToTopicMessageCallback(
                 options.EntityName.TopicName(),
                 Console,
-                Mediator,
-                _receiveOptions.CreateMessageHandlingPolicy(Console));
+                Mediator);
         }
 
         private class SendToTopicMessageCallback
@@ -48,27 +52,19 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             private readonly string _topicName;
             private readonly SebaConsole _console;
             private readonly IMediator _mediator;
-            private readonly ReceivedMessageHandlingPolicy _handlingPolicy;
 
             public SendToTopicMessageCallback(
                 string topicName,
                 SebaConsole console,
-                IMediator mediator,
-                ReceivedMessageHandlingPolicy handlingPolicy)
+                IMediator mediator)
             {
                 _topicName = topicName;
                 _console = console;
                 _mediator = mediator;
-                _handlingPolicy = handlingPolicy;
             }
 
             public async Task Callback(IReceivedMessage receivedMessage)
             {
-                if (!await _handlingPolicy.CanHandle(receivedMessage))
-                {
-                    return;
-                }
-                
                 var messageMetadata = receivedMessage.Metadata.ConvertToSendMessage();
                 var message = new SendMessageModel(receivedMessage.Body, messageMetadata);
                 var sendMessage = new SendMessage(_topicName, message);

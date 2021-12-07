@@ -10,7 +10,6 @@ namespace ServiceBusAdmin.Tool.Tests
     {
         private int _completeCallsCount;
         private int _deadLetterCallsCount;
-        private int _abandonCallsCount;
 
         public TestMessage(MessageMetadata metadata, BinaryData body)
         {
@@ -22,7 +21,6 @@ namespace ServiceBusAdmin.Tool.Tests
         public BinaryData Body { get; }
         public bool CompletedOnce => _completeCallsCount == 1;
         public bool DeadLetteredOnce => _deadLetterCallsCount == 1;
-        public bool AbandonedOnce => _abandonCallsCount == 1;
 
         public Task Complete()
         {
@@ -35,13 +33,6 @@ namespace ServiceBusAdmin.Tool.Tests
         {
             _deadLetterCallsCount++;
 
-            return Task.CompletedTask;
-        }
-
-        public Task Abandon()
-        {
-            _abandonCallsCount++;
-            
             return Task.CompletedTask;
         }
     }

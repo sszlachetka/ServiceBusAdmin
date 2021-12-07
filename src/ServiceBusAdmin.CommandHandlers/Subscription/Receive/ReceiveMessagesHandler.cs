@@ -41,7 +41,7 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
             
             return Unit.Value;
         }
-        
+
         private static async Task HandleReceivedMessages(
             IReadOnlyCollection<IReceivedMessage> messages,
             ReceivedMessageCallback messageCallback,

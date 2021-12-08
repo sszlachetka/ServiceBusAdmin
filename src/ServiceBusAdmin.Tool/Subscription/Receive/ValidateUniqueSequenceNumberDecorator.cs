@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 using ServiceBusAdmin.CommandHandlers.Models;
 
@@ -30,6 +31,17 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             {
                 throw new ApplicationException($"Message with sequence number {sequenceNumber} was received more than once. Message peek-lock was released and the message again became available for receive operation. Please try processing less messages at once or settling messages with lower sequence numbers first. In general, total execution time of receive command cannot exceed lock duration configured for given Service Bus entity.");
             }
+        }
+
+        public void VerifyAllReceived(long[] expectedSequenceNumbers)
+        {
+            if (expectedSequenceNumbers.Length == 0) return;
+
+            var notReceived = expectedSequenceNumbers.Except(_receivedSequenceNumbers.Keys).ToArray();
+            if (notReceived.Length == 0) return;
+
+            throw new ApplicationException("Following sequence numbers were not received: " +
+                                           string.Join(", ", notReceived));
         }
     }
 }

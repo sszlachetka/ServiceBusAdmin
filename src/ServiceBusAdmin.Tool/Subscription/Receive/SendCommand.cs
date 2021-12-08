@@ -36,6 +36,8 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             var receiveMessages = new ReceiveMessages(options, validateDecorator.Callback);
             
             await Mediator.Send(receiveMessages, cancellationToken);
+            
+            validateDecorator.VerifyAllReceived(_handleSequenceNumbers());
         }
 
         private SendMessageCallback CreateSendToTopicCallback(ReceiverOptions options)

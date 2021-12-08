@@ -13,34 +13,49 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
 {
     internal static class ReceiveMessagesMediatorMockExtensions
     {
-        public static void SetupReceiveMessages(this Mock<IMediator> mock, ReceiverOptions options,
+        public static IReadOnlyCollection<Exception> SetupReceiveMessages(this Mock<IMediator> mock, ReceiverOptions options,
             params IReceivedMessage[] receivedMessages)
         {
+            var exceptions = new List<Exception>();
             mock.Setup<ReceiveMessages>(
                 request => request.Options == options,
                 async receiveMessages =>
                 {
-                    foreach (var message in receivedMessages)
+                    try
                     {
-                        await receiveMessages.Callback(message);
+                        foreach (var message in receivedMessages)
+                        {
+                            await receiveMessages.Callback(message);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // Exceptions thrown by callback supplied to mock's setup
+                        // are swallowed by Moq but some of the tests must assert
+                        // them. Setup callback is calling ReceivedMessageCallback
+                        // on each message, which executes code that is being tested.
+                        exceptions.Add(e);
                     }
                 });
+
+            return exceptions;
         }
 
         public static void VerifyReceiveMessagesOnce(this Mock<IMediator> mock, ReceiverOptions options)
         {
-            mock.Verify(
-                x => x.Send(It.Is<ReceiveMessages>(request => request.Options == options), It.IsAny<CancellationToken>()),
+            mock.Verify(x => x.Send(
+                    It.Is<ReceiveMessages>(request => request.Options == options),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
-        public static void SetupSendAnyBinaryMessage(this Mock<IMediator> mock)
+        public static void SetupSendAnyMessage(this Mock<IMediator> mock)
         {
             mock.Setup(x => x.Send(It.IsAny<SendMessage>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Unit.Value);
         }
         
-        public static void VerifySendBinaryMessageOnce(this Mock<IMediator> mock, string topicName, BinaryData messageBody)
+        public static void VerifySendMessageOnce(this Mock<IMediator> mock, string topicName, BinaryData messageBody)
         {
             Expression<Func<SendMessage,bool>> match = command =>
                 command.QueueOrTopicName == topicName && ReferenceEquals(command.Message.Body, messageBody);

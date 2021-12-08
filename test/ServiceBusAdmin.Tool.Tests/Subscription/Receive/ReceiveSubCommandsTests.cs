@@ -66,7 +66,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         public ReceiveSubCommandsSupportingDlq()
         {
             Add("console");
-            Add("send-to-topic");
+            Add("send");
         }
     }
 

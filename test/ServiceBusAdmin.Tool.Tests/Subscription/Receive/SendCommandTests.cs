@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
 {
-    public class SendToTopicCommandTests : SebaCommandTests
+    public class SendCommandTests : SebaCommandTests
     {
         [Fact]
         public async Task Sends_received_messages_back_to_the_topic()
@@ -23,7 +23,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupReceiveMessages(options, messages);
             Mediator.SetupSendAnyBinaryMessage();
 
-            var result = await Seba().Execute(new[] {"subscription", "receive", "send-to-topic", "topic1/sub2"});
+            var result = await Seba().Execute(new[] {"subscription", "receive", "send", "topic1/sub2"});
 
             AssertSuccess(result);
             AssertConsoleOutput("3", "5", "9");

@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             Command.Description = "Receive messages from given subscription and handle them with a sub-command.";
             Command.Subcommand(new ConsoleCommand(context, Command));
             Command.Subcommand(new DeadLetterCommand(context, Command));
-            Command.Subcommand(new SendToTopicCommand(context, Command));
+            Command.Subcommand(new SendCommand(context, Command));
         }
     }
 }

@@ -12,15 +12,14 @@ using ServiceBusAdmin.Tool.Subscription.Receive.Options;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
 {
-    public class SendToTopicCommand : SebaCommand
+    public class SendCommand : SebaCommand
     {
         private readonly Func<long[]> _handleSequenceNumbers;
         private readonly SubscriptionReceiverInput _subscriptionReceiverInput;
 
-        public SendToTopicCommand(SebaContext context,
+        public SendCommand(SebaContext context,
             CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Name = "send-to-topic";
             Command.Description = "Receive messages from given subscription and send them back to the topic.";
             _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
             _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
@@ -39,21 +38,21 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             await Mediator.Send(receiveMessages, cancellationToken);
         }
 
-        private SendToTopicMessageCallback CreateSendToTopicCallback(ReceiverOptions options)
+        private SendMessageCallback CreateSendToTopicCallback(ReceiverOptions options)
         {
-            return new SendToTopicMessageCallback(
+            return new SendMessageCallback(
                 options.EntityName.TopicName(),
                 Console,
                 Mediator);
         }
 
-        private class SendToTopicMessageCallback
+        private class SendMessageCallback
         {
             private readonly string _topicName;
             private readonly SebaConsole _console;
             private readonly IMediator _mediator;
 
-            public SendToTopicMessageCallback(
+            public SendMessageCallback(
                 string topicName,
                 SebaConsole console,
                 IMediator mediator)

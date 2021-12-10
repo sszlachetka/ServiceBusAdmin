@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public ListCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "List subscriptions for provided topic.";
+            Command.Description = "List subscriptions for given topic.";
             _getTopicName = Command.ConfigureTopicNameArgument();
         }
 

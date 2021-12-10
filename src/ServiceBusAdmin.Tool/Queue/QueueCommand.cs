@@ -9,6 +9,7 @@ namespace ServiceBusAdmin.Tool.Queue
             Command.Description = "Manage your queues.";
             // Command.Subcommand(new PropsCommand(context, Command));
             Command.Subcommand(new CreateCommand(context, Command));
+            Command.Subcommand(new ListCommand(context, Command));
         }
     }
 }

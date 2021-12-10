@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.Tool.Queue
     {
         public ListCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "List Queues.";
+            Command.Description = "List queues.";
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)

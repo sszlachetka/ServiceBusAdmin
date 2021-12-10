@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public CreateCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Create new subscription.";
+            Command.Description = "Create a subscription.";
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 

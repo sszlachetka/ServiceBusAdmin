@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.Tool.Topic
     {
         public ListCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "List all topics";
+            Command.Description = "List topics.";
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)

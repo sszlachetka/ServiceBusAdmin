@@ -13,7 +13,7 @@ namespace ServiceBusAdmin.Tool.Topic
 
         public DeleteCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Delete a topic.";
+            Command.Description = "Delete given topic.";
             _getTopicName = Command.ConfigureTopicNameArgument("Name of a topic to delete");
         }
 

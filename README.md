@@ -1,7 +1,7 @@
 ## Goal
 Manage messages in your Azure Service Bus namespace with handy CLI. Send, peek and receive messages from your Service Bus entities.
 
-Output format of ServiceBusAdmin is JSON so peeked messages can be easily filtered and transformed with tools like [jq](https://stedolan.github.io/jq/). Once you find messages that you were looking for, you can resend them to given Service Bus entity by either using their unique sequence numbers or by exporting them to a file and sending in batch mode. It's possible because input format of ServiceBusAdmin is JSON as well.
+Output format of ServiceBusAdmin is JSON so peeked messages can be easily filtered and transformed with tools like [jq](https://stedolan.github.io/jq/). Once you find messages that you were looking for, you can resend them to given Service Bus entity by either using their unique sequence numbers or by exporting them to a file and sending in batch mode.
 
 ### Quick start
 1. Install ServiceBusAdmin .NET tool from [nuget](https://www.nuget.org/packages/ServiceBusAdmin)

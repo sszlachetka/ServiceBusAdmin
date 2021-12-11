@@ -10,17 +10,15 @@ namespace ServiceBusAdmin.Tool.Tests
 {
     public class SendBatchCommandTests : SebaCommandTests
     {
-        [Theory]
-        [InlineData("queue")]
-        [InlineData("topic")]
-        public async Task Sends_provided_messages_and_prints_them_to_console(string parentCommand)
+        [Fact]
+        public async Task Sends_provided_messages_and_prints_them_to_console()
         {
             GivenReadFileReturns(
                 "{\"metadata\":{\"messageId\":\"M1\"},\"body\":{\"key1\":13}}",
                 "{\"metadata\":{\"messageId\":\"M2\"},\"body\":\"<some><xml>value</xml></some>\"}");
             GivenSendBatchHandlesEntity("entity69");
 
-            var result = await Seba().Execute(new[] {parentCommand, "send-batch", "entity69", "-i", "someFile"});
+            var result = await Seba().Execute(new[] {"send-batch", "entity69", "-i", "someFile"});
 
             AssertSuccess(result);
             AssertConsoleOutputContainJsonSubtrees(
@@ -28,22 +26,18 @@ namespace ServiceBusAdmin.Tool.Tests
                 "{\"body\":\"<some><xml>value</xml></some>\",\"metadata\":{\"messageId\":\"M2\"}}");
         }
 
-        [Theory]
-        [InlineData("queue", "Queue")]
-        [InlineData("topic", "Topic")]
-        public async Task Entity_argument_is_required(string parentCommand, string argumentName)
+        [Fact]
+        public async Task Entity_argument_is_required()
         {
-            var result = await Seba().Execute(new[] { parentCommand, "send-batch", "-i", "someFile" });
+            var result = await Seba().Execute(new[] { "send-batch", "-i", "someFile" });
 
-            AssertFailure(result, $"The {argumentName} name field is required.");
+            AssertFailure(result, "The Queue or topic name field is required.");
         }
         
-        [Theory]
-        [InlineData("queue")]
-        [InlineData("topic")]
-        public async Task Input_file_option_is_required(string parentCommand)
+        [Fact]
+        public async Task Input_file_option_is_required()
         {
-            var result = await Seba().Execute(new[] {parentCommand, "send-batch", "entity69"});
+            var result = await Seba().Execute(new[] { "send-batch", "entity69" });
 
             AssertFailure(result, "The --input-file field is required.");
         }

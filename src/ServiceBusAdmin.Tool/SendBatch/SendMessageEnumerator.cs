@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.Tool.MessageParsing;
 
-namespace ServiceBusAdmin.Tool.MessageParsing
+namespace ServiceBusAdmin.Tool.SendBatch
 {
     internal class SendMessageEnumerator : IAsyncEnumerator<SendMessageModel>
     {

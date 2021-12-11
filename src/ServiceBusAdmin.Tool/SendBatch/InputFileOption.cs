@@ -1,9 +1,9 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool.Options
+namespace ServiceBusAdmin.Tool.SendBatch
 {
-    public static class InputFile
+    public static class InputFileOption
     {
         public static Func<string> ConfigureInputFileOption(this CommandLineApplication application)
         {

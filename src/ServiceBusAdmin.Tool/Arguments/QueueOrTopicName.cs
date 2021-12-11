@@ -1,9 +1,9 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool.Send
+namespace ServiceBusAdmin.Tool.Arguments
 {
-    public static class QueueOrTopicNameArgument
+    public static class QueueOrTopicName
     {
         public static Func<string> ConfigureQueueOrTopicNameArgument(
             this CommandLineApplication command)

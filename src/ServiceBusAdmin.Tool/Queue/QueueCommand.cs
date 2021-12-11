@@ -12,6 +12,7 @@ namespace ServiceBusAdmin.Tool.Queue
             Command.Subcommand(new ListCommand(context, Command));
             Command.Subcommand(new PropsCommand(context, Command));
             Command.Subcommand(new SendCommand(context, Command));
+            Command.Subcommand(new SendBatchCommand(context, Command));
         }
     }
 }

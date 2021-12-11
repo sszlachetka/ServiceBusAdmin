@@ -1,24 +1,24 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.Tool.Arguments;
+using ServiceBusAdmin.Tool.Queue.Arguments;
 using ServiceBusAdmin.Tool.SendBatch;
 
-namespace ServiceBusAdmin.Tool.Topic
+namespace ServiceBusAdmin.Tool.Queue
 {
     public class SendBatchCommand : SendBatchCommandBase
     {
-        private readonly Func<string> _getTopicName;
+        private readonly Func<string> _getQueueName;
 
         public SendBatchCommand(SebaContext context, CommandLineApplication parentCommand) : base(context,
             parentCommand)
         {
-            Command.Description = "Send batch of messages to a topic.";
-            _getTopicName = Command.ConfigureTopicNameArgument();
+            Command.Description = "Send batch of messages to a queue.";
+            _getQueueName = Command.ConfigureQueueNameArgument();
         }
 
         protected override string GetEntityName()
         {
-            return _getTopicName();
+            return _getQueueName();
         }
     }
 }

@@ -6,22 +6,32 @@ export SEBA_CONNECTION_STRING="<your_connection_string>"
 
 Examples below use Service Bus test entities that can be created with following commands
 ```shell
+seba queue create queue1
+```
+
+```shell
 seba topic create topic1
 ```
+
 ```shell
 seba subscription create topic1/sub1
 ```
 
 ## Table of contents
-1. [Send single message to a topic](#1-send-single-message-to-a-topic)
+1. [Send a single message](#1-send-a-single-message)
 2. [Send messages in batch mode](#2-send-messages-in-batch-mode)
 3. [Peek messages](#3-peek-messages)
 4. [Filter peeked messages](#4-filter-peeked-messages)
 5. [Receive messages](#5-receive-messages)
 
-### 1. Send single message to a topic
+### 1. Send a single message
+A massage can be send to a queue or topic
 ```shell
-seba topic send topic1 -m '{"body":{"someKey":69},"metadata":{"applicationProperties":{"key1":"value1"}}}'
+seba send queue1 -m '{"body":{"someKey":69},"metadata":{"applicationProperties":{"key1":"value1"}}}'
+```
+
+```shell
+seba send topic1 -m '{"body":{"someKey":69},"metadata":{"applicationProperties":{"key1":"value1"}}}'
 ```
 JSON schema of the message can be found [here](input-message-schema.json).
 

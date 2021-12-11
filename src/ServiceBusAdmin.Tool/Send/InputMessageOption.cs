@@ -1,9 +1,9 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool.Options
+namespace ServiceBusAdmin.Tool.Send
 {
-    public static class InputMessage
+    public static class InputMessageOption
     {
         public static Func<string> ConfigureInputMessageOption(this CommandLineApplication application)
         {

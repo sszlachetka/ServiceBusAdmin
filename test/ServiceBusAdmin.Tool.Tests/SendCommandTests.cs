@@ -6,15 +6,13 @@ namespace ServiceBusAdmin.Tool.Tests
 {
     public class SendCommandTests : SebaCommandTests
     {
-        [Theory]
-        [InlineData("queue")]
-        [InlineData("topic")]
-        public async Task Sends_provided_message(string parentCommand)
+        [Fact]
+        public async Task Sends_provided_message()
         {
             Mediator.Setup<SendMessage>();
             const string message = "{\"body\":{\"someKey\":\"someValue\"}}";
-            
-            var result = await Seba().Execute(new[] {parentCommand, "send", "entity69", "--message", message});
+
+            var result = await Seba().Execute(new[] { "send", "entity69", "--message", message });
 
             AssertSuccess(result);
             Mediator.VerifyOnce<SendMessage>(request => 
@@ -22,22 +20,18 @@ namespace ServiceBusAdmin.Tool.Tests
                 request.Message.Body.ToString() == "{\"someKey\":\"someValue\"}");
         }
         
-        [Theory]
-        [InlineData("queue", "Queue")]
-        [InlineData("topic", "Topic")]
-        public async Task Entity_name_argument_is_required(string parentCommand, string argumentName)
+        [Fact]
+        public async Task Entity_name_argument_is_required()
         {
-            var result = await Seba().Execute(new[] {parentCommand, "send", "--message", "someMessage"});
+            var result = await Seba().Execute(new[] {"send", "--message", "someMessage"});
 
-            AssertFailure(result, $"The {argumentName} name field is required.");
+            AssertFailure(result, "The Queue or topic name field is required.");
         }
         
-        [Theory]
-        [InlineData("queue")]
-        [InlineData("topic")]
-        public async Task Message_option_is_required(string parentCommand)
+        [Fact]
+        public async Task Message_option_is_required()
         {
-            var result = await Seba().Execute(new[] {parentCommand, "send", "entity69"});
+            var result = await Seba().Execute(new[] {"send", "entity69"});
 
             AssertFailure(result, "The --message field is required.");
         }

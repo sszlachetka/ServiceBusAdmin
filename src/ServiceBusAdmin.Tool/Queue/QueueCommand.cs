@@ -11,6 +11,7 @@ namespace ServiceBusAdmin.Tool.Queue
             Command.Subcommand(new DeleteCommand(context, Command));
             Command.Subcommand(new ListCommand(context, Command));
             Command.Subcommand(new PropsCommand(context, Command));
+            Command.Subcommand(new SendCommand(context, Command));
         }
     }
 }

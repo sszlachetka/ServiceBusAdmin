@@ -9,7 +9,8 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription
             var entity = options.EntityName;
             var serviceBusReceiverOptions = new ServiceBusReceiverOptions
             {
-                SubQueue = options.IsDeadLetterSubQueue ? SubQueue.DeadLetter : SubQueue.None
+                SubQueue = options.IsDeadLetterSubQueue ? SubQueue.DeadLetter : SubQueue.None,
+                PrefetchCount = options.IsDeadLetterSubQueue ? default : 100
             };
 
             return client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), serviceBusReceiverOptions);

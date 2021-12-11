@@ -8,7 +8,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Options
         public static Func<long?> ConfigureFromSequenceNumber(this CommandLineApplication command)
         {
             var option = command.Option<long?>(
-                "-s|--from-sequence-number",
+                "-fs|--from-sequence-number",
                 "Fetch messages from specific sequence number.",
                 CommandOptionType.SingleValue);
 

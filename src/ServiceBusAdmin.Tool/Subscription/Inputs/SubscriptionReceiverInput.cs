@@ -13,10 +13,13 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
         private readonly Func<bool> _getIsDeadLetterSubQueue;
         private readonly Func<int> _getMessageHandlingConcurrencyLevel;
 
-        public SubscriptionReceiverInput(CommandLineApplication command, bool enableDeadLetterSwitch = true)
+        public SubscriptionReceiverInput(
+            CommandLineApplication command,
+            string? maxMessagesDescription = null, 
+            bool enableDeadLetterSwitch = true)
         {
             _getFullSubscriptionName = command.ConfigureFullSubscriptionNameArgument();
-            _getMaxMessages = command.ConfigureMaxMessagesOption();
+            _getMaxMessages = command.ConfigureMaxMessagesOption(description: maxMessagesDescription);
             _getIsDeadLetterSubQueue = enableDeadLetterSwitch
                 ? command.ConfigureIsDeadLetterSubQueue()
                 : () => false;

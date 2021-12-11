@@ -16,8 +16,9 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public PeekCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Peek messages from specified subscription and print them to the console.";
-            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
+            Command.Description = "Peek messages from given subscription and print them to the console.";
+            _subscriptionReceiverInput =
+                new SubscriptionReceiverInput(Command, "Maximum number of messages that can be peeked.");
             _printToConsoleInput = new PrintToConsoleInput(Command);
             _getFromSequenceNumber = Command.ConfigureFromSequenceNumber();
         }

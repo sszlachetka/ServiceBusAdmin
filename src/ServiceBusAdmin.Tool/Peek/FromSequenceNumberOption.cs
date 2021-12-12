@@ -1,9 +1,9 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool.Subscription.Options
+namespace ServiceBusAdmin.Tool.Peek
 {
-    public static class FromSequenceNumber
+    public static class FromSequenceNumberOption
     {
         public static Func<long?> ConfigureFromSequenceNumber(this CommandLineApplication command)
         {

@@ -8,9 +8,10 @@ using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Send;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 using ServiceBusAdmin.Tool.Input;
-using ServiceBusAdmin.Tool.Subscription.Receive.Options;
+using ServiceBusAdmin.Tool.Options;
+using ServiceBusAdmin.Tool.Subscription.Options;
 
-namespace ServiceBusAdmin.Tool.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Receive
 {
     public class SendCommand : SebaCommand
     {
@@ -20,7 +21,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         public SendCommand(SebaContext context,
             CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Receive messages from given subscription and send them back to the topic.";
+            Command.Description = $"Receive messages from given entity and send them back to the entity of origin. Main use case of this command is to receive messages from DLQ (use {IsDeadLetterSubQueue.Template} option for this purpose) and send them back to the queue or topic.";
             _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
             _receiverInput = new ReceiverInput(Command);
         }
@@ -42,24 +43,26 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
 
         private SendMessageCallback CreateSendToTopicCallback(ReceiverOptions options)
         {
+            var entityName = options.EntityName;
+            
             return new SendMessageCallback(
-                options.EntityName.TopicName(),
+                entityName.IsQueue ? entityName.QueueName() : entityName.TopicName(),
                 Console,
                 Mediator);
         }
 
         private class SendMessageCallback
         {
-            private readonly string _topicName;
+            private readonly string _queueOrTopicName;
             private readonly SebaConsole _console;
             private readonly IMediator _mediator;
 
             public SendMessageCallback(
-                string topicName,
+                string queueOrTopicName,
                 SebaConsole console,
                 IMediator mediator)
             {
-                _topicName = topicName;
+                _queueOrTopicName = queueOrTopicName;
                 _console = console;
                 _mediator = mediator;
             }
@@ -68,7 +71,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             {
                 var messageMetadata = receivedMessage.Metadata.ConvertToSendMessage();
                 var message = new SendMessageModel(receivedMessage.Body, messageMetadata);
-                var sendMessage = new SendMessage(_topicName, message);
+                var sendMessage = new SendMessage(_queueOrTopicName, message);
 
                 await _mediator.Send(sendMessage);
                 await receivedMessage.Complete();

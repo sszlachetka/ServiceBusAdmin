@@ -5,31 +5,31 @@ using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 using ServiceBusAdmin.Tool.Input;
-using ServiceBusAdmin.Tool.Subscription.Receive.Options;
 
-namespace ServiceBusAdmin.Tool.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Receive
 {
-    public class DeadLetterCommand : SebaCommand
+    public class ConsoleCommand : SebaCommand
     {
         private readonly Func<long[]> _handleSequenceNumbers;
         private readonly ReceiverInput _receiverInput;
+        private readonly PrintToConsoleInput _printToConsoleInput;
 
-        public DeadLetterCommand(SebaContext context,
-            CommandLineApplication parentCommand) : base(context,
-            parentCommand)
+        public ConsoleCommand(
+            SebaContext context,
+            CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Name = "dead-letter";
-            Command.Description = "Receive messages from given subscription and move them to the dead letter queue. " +
-                                  "The command prints sequence numbers of dead lettered messages.";
+            Command.Description = "Receive messages from given entity and print them to the console.";
             _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
-            _receiverInput = new ReceiverInput(Command, enableDeadLetterSwitch: false);
+            _receiverInput = new ReceiverInput(Command);
+            _printToConsoleInput = new PrintToConsoleInput(Command);
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var deadLetterMessage = new DeadLetterMessageCallback(Console);
+            var printToConsole = _printToConsoleInput.CreateMessageCallback(Console);
+            var completeMessageDecorator = new CompleteMessageDecorator(printToConsole.Callback);
             var handleSequenceNumbersDecorator =
-                new HandleSequenceNumbersDecorator(Console, _handleSequenceNumbers(), deadLetterMessage.Callback);
+                new HandleSequenceNumbersDecorator(Console, _handleSequenceNumbers(), completeMessageDecorator.Callback);
             var validateDecorator = new ValidateUniqueSequenceNumberDecorator(handleSequenceNumbersDecorator.Callback);
 
             var options = _receiverInput.CreateReceiverOptions();
@@ -40,19 +40,19 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             validateDecorator.VerifyAllReceived(_handleSequenceNumbers());
         }
 
-        private class DeadLetterMessageCallback
+        private class CompleteMessageDecorator
         {
-            private readonly SebaConsole _console;
+            private readonly Func<IMessage, Task> _innerCallback;
 
-            public DeadLetterMessageCallback(SebaConsole console)
+            public CompleteMessageDecorator(Func<IMessage, Task> innerCallback)
             {
-                _console = console;
+                _innerCallback = innerCallback;
             }
 
             public async Task Callback(IReceivedMessage message)
             {
-                await message.DeadLetter();
-                _console.Info(message.Metadata.SequenceNumber);
+                await _innerCallback(message);
+                await message.Complete();
             }
         }
     }

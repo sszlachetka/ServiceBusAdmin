@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ServiceBusAdmin.CommandHandlers.Models;
 
-namespace ServiceBusAdmin.Tool.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Receive
 {
     internal class ValidateUniqueSequenceNumberDecorator
     {

@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Peek;
 using ServiceBusAdmin.Tool.Input;
-using ServiceBusAdmin.Tool.Subscription.Options;
 
-namespace ServiceBusAdmin.Tool
+namespace ServiceBusAdmin.Tool.Peek
 {
     public class PeekCommand : SebaCommand
     {

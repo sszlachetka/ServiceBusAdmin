@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool.Subscription.Arguments
+namespace ServiceBusAdmin.Tool.Subscription
 {
-    public static class FullSubscriptionName
+    public static class FullSubscriptionNameArgument
     {
         public const string ExpectedFormat = "<topic name>/<subscription name>";
         private const string Name = "Full subscription name";

@@ -2,18 +2,54 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.Tool.Tests.Subscription;
 using Xunit;
 
-namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Tests.Receive
 {
     public class ReceiveSubCommandsTests : SebaCommandTests
     {
         [Theory]
         [ClassData(typeof(ReceiveSubCommands))]
+        public async Task Receives_messages_from_queue(string subCommand)
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("queue1"))
+                .Build();
+            Mediator.SetupReceiveMessages(options);
+            Mediator.SetupSendAnyMessage();
+
+            var result = await Seba().Execute(new[]
+                { "receive", subCommand, "queue1" });
+
+            AssertSuccess(result);
+            Mediator.VerifyReceiveMessagesOnce(options);
+        }
+        
+        [Theory]
+        [ClassData(typeof(ReceiveSubCommands))]
+        public async Task Receives_messages_from_subscription(string subCommand)
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic1", "sub1"))
+                .Build();
+            Mediator.SetupReceiveMessages(options);
+            Mediator.SetupSendAnyMessage();
+
+            var result = await Seba().Execute(new[]
+                { "receive", subCommand, "topic1/sub1" });
+
+            AssertSuccess(result);
+            Mediator.VerifyReceiveMessagesOnce(options);
+        }
+
+        [Theory]
+        [ClassData(typeof(ReceiveSubCommands))]
         public async Task Queue_or_full_subscription_name_is_required(string subCommand)
         {
-            var result = await Seba().Execute(new[] {"subscription", "receive", subCommand});
+            var result = await Seba().Execute(new[] {"receive", subCommand});
 
             AssertFailure(result, "The Queue or full subscription name field is required.");
         }
@@ -28,7 +64,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupReceiveMessages(options);
 
             await Seba().Execute(new[]
-                {"subscription", "receive", subCommand, "someTopic/someSubscription", "--max", "51"});
+                {"receive", subCommand, "someTopic/someSubscription", "--max", "51"});
 
             Mediator.VerifyReceiveMessagesOnce(options);
         }
@@ -43,7 +79,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupReceiveMessages(options);
 
             await Seba().Execute(new[]
-                {"subscription", "receive", subCommand, "someTopic/someSubscription", "--message-handling-concurrency-level", "76"});
+                {"receive", subCommand, "someTopic/someSubscription", "--message-handling-concurrency-level", "76"});
 
             Mediator.VerifyReceiveMessagesOnce(options);
         }
@@ -65,7 +101,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupSendAnyMessage();
 
             var result = await Seba().Execute(new[]
-                {"subscription", "receive", subCommand, "someTopic/someSubscription", "--handle-sequence-numbers", "3,5,7"});
+                {"receive", subCommand, "someTopic/someSubscription", "--handle-sequence-numbers", "3,5,7"});
 
             AssertSuccess(result);
             CompletedOrDeadLetteredOnce(messages[0], subCommand).Should().BeTrue();
@@ -90,7 +126,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupSendAnyMessage();
 
             var result = await Seba().Execute(new[]
-                {"subscription", "receive", subCommand, "someTopic/someSubscription", "--handle-sequence-numbers", "3,5,7"});
+                {"receive", subCommand, "someTopic/someSubscription", "--handle-sequence-numbers", "3,5,7"});
 
             AssertFailure(result, "Following sequence numbers were not received: 5, 7");
         }
@@ -117,7 +153,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupSendAnyMessage();
 
             await Seba().Execute(new[]
-                {"subscription", "receive", subCommand, "someTopic/someSubscription"});
+                {"receive", subCommand, "someTopic/someSubscription"});
 
             exceptions.Should().HaveCount(1).And
                 .Subject.Single().Should().BeOfType<ApplicationException>().Which
@@ -134,7 +170,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupReceiveMessages(options);
 
             await Seba().Execute(new[]
-                {"subscription", "receive", subCommand, "someTopic/someSubscription", "--dead-letter-queue"});
+                {"receive", subCommand, "someTopic/someSubscription", "--dead-letter-queue"});
 
             Mediator.VerifyReceiveMessagesOnce(options);
         }

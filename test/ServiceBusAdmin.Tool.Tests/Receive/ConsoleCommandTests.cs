@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.Tool.Tests.Subscription;
 using Xunit;
 
-namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Tests.Receive
 {
     public class ConsoleCommandTests : SebaCommandTests
     {
@@ -21,7 +22,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
                 .Build();
             Mediator.SetupReceiveMessages(options, messages.Cast<IReceivedMessage>().ToArray());
 
-            var result = await Seba().Execute(new[] {"subscription", "receive", "console", "topic77/sub34"});
+            var result = await Seba().Execute(new[] { "receive", "console", "topic77/sub34" });
 
             AssertSuccess(result);
             AssertConsoleOutputContainJsonSubtrees(
@@ -42,7 +43,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
                 .Build());
         
             var result = await Seba().Execute(new[]
-                {"subscription", "receive", "console", "topic56/sub4", "--output-content", "body"});
+                {"receive", "console", "topic56/sub4", "--output-content", "body"});
         
             AssertSuccess(result);
             AssertConsoleOutput("{\"key1\":99}");
@@ -57,7 +58,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             Mediator.SetupReceiveMessages(options, new TestMessageBuilder().Build());
         
             var result = await Seba().Execute(new[]
-                {"subscription", "receive", "console", "topic56/sub4", "--output-content", "all"});
+                {"receive", "console", "topic56/sub4", "--output-content", "all"});
         
             AssertSuccess(result);
             AssertConsoleOutputEachLineShouldHaveJsonElement("body");

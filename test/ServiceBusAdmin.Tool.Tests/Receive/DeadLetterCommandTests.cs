@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.Tool.Tests.Subscription;
 using Xunit;
 
-namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Tests.Receive
 {
     public class DeadLetterCommandTests : SebaCommandTests
     {
@@ -22,7 +23,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
                 .Build();
             Mediator.SetupReceiveMessages(options, messages.Cast<IReceivedMessage>().ToArray());
 
-            var result = await Seba().Execute(new[] {"subscription", "receive", "dead-letter", "topic3/sub9"});
+            var result = await Seba().Execute(new[] {"receive", "dead-letter", "topic3/sub9"});
 
             AssertSuccess(result);
             AssertConsoleOutput("5", "12");
@@ -34,7 +35,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
         public async Task Does_not_support_dead_letter_queue_option()
         {
             var result = await Seba().Execute(new[]
-                {"subscription", "receive", "dead-letter", "someTopic/someSubscription", "--dead-letter-queue"});
+                {"receive", "dead-letter", "someTopic/someSubscription", "--dead-letter-queue"});
 
             AssertFailure(result, "Unrecognized option '--dead-letter-queue'");
         }

@@ -2,7 +2,7 @@ using System;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Models;
 
-namespace ServiceBusAdmin.Tool.Subscription.Options
+namespace ServiceBusAdmin.Tool.Options
 {
     public static class MessageBodyFormat
     {

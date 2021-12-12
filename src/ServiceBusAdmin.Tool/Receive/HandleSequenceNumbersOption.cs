@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace ServiceBusAdmin.Tool.Subscription.Receive.Options
+namespace ServiceBusAdmin.Tool.Receive
 {
-    public static class HandleSequenceNumbers
+    public static class HandleSequenceNumbersOption
     {
         private const string Template = "-hs|--handle-sequence-numbers";
 

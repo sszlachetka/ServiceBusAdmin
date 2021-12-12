@@ -9,7 +9,7 @@ using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Send;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 
-namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
+namespace ServiceBusAdmin.Tool.Tests.Receive
 {
     internal static class ReceiveMessagesMediatorMockExtensions
     {
@@ -54,11 +54,12 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
             mock.Setup(x => x.Send(It.IsAny<SendMessage>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Unit.Value);
         }
-        
-        public static void VerifySendMessageOnce(this Mock<IMediator> mock, string topicName, BinaryData messageBody)
+
+        public static void VerifySendMessageOnce(this Mock<IMediator> mock, string queueOrTopicName,
+            BinaryData messageBody)
         {
-            Expression<Func<SendMessage,bool>> match = command =>
-                command.QueueOrTopicName == topicName && ReferenceEquals(command.Message.Body, messageBody);
+            Expression<Func<SendMessage, bool>> match = command =>
+                command.QueueOrTopicName == queueOrTopicName && ReferenceEquals(command.Message.Body, messageBody);
 
             mock.Verify(x => x.Send(It.Is(match), It.IsAny<CancellationToken>()), Times.Once);
         }

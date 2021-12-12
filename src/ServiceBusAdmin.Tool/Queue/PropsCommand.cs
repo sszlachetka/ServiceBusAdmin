@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Queue.Props;
-using ServiceBusAdmin.Tool.Queue.Arguments;
 
 namespace ServiceBusAdmin.Tool.Queue
 {

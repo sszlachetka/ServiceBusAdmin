@@ -138,7 +138,7 @@ cat output.json | jq -c 'select(.metadata.messageId == "777")'
 ```
 
 ### 5. Receive messages
-Messages are received in [peek-lock mode](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock). `receive` command supports following sub-commands, which you can use to decide what will happen with received messages
+Messages are received in [peek-lock mode](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock). `receive` command supports following sub-commands (which you can use to decide what will happen with a received message):
 - `console` - print message to the console and complete the message
 - `dead-letter` - move message to dead-letter queue
 - `send` - send copy of a message back to the topic and complete the original message from DLQ

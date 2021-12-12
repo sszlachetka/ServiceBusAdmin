@@ -4,10 +4,11 @@ using MediatR;
 using Moq;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
-using ServiceBusAdmin.CommandHandlers.Subscription.Peek;
+using ServiceBusAdmin.CommandHandlers.Peek;
+using ServiceBusAdmin.Tool.Tests.Subscription;
 using Xunit;
 
-namespace ServiceBusAdmin.Tool.Tests.Subscription
+namespace ServiceBusAdmin.Tool.Tests
 {
     public class PeekCommandTests : SebaCommandTests
     {
@@ -23,7 +24,7 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 .Build();
             Mediator.SetupPeekMessages(options, messages);
 
-            var result = await Seba().Execute(new[] {"subscription", "peek", "topic77/sub34"});
+            var result = await Seba().Execute(new[] { "peek", "topic77/sub34" });
 
             AssertSuccess(result);
             AssertConsoleOutputContainJsonSubtrees(
@@ -40,9 +41,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
             Mediator.SetupPeekMessages(options, new TestMessageBuilder()
                 .WithBody("{\"key1\":99}")
                 .Build());
-        
+
             var result = await Seba().Execute(new[]
-                {"subscription", "peek", "topic56/sub4", "--output-content", "body"});
+                { "peek", "topic56/sub4", "--output-content", "body" });
         
             AssertSuccess(result);
             AssertConsoleOutput("{\"key1\":99}");
@@ -55,21 +56,45 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 .WithEntityName(new ReceiverEntityName("topic56", "sub4"))
                 .Build();
             Mediator.SetupPeekMessages(options, new TestMessageBuilder().Build());
-        
+
             var result = await Seba().Execute(new[]
-                {"subscription", "peek", "topic56/sub4", "--output-content", "all"});
+                { "peek", "topic56/sub4", "--output-content", "all" });
         
             AssertSuccess(result);
             AssertConsoleOutputEachLineShouldHaveJsonElement("body");
             AssertConsoleOutputEachLineShouldHaveJsonElement("metadata");
         }
+
+        [Fact] public async Task Peeks_messages_from_queue()
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("queue1"))
+                .Build();
+            Mediator.SetupPeekMessages(options, new TestMessageBuilder().Build());
+
+            var result = await Seba().Execute(new[] { "peek", "queue1" });
+        
+            AssertSuccess(result);
+        }
+        
+        [Fact] public async Task Peeks_messages_from_subscription()
+        {
+            var options = new ReceiverOptionsBuilder()
+                .WithEntityName(new ReceiverEntityName("topic21", "sub7"))
+                .Build();
+            Mediator.SetupPeekMessages(options, new TestMessageBuilder().Build());
+
+            var result = await Seba().Execute(new[] { "peek", "topic21/sub7" });
+        
+            AssertSuccess(result);
+        }
         
         [Fact]
-        public async Task Full_subscription_name_is_required()
+        public async Task Queue_or_full_subscription_name_is_required()
         {
-            var result = await Seba().Execute(new[] {"subscription", "peek"});
+            var result = await Seba().Execute(new[] { "peek" });
         
-            AssertFailure(result, "The Full subscription name field is required.");
+            AssertFailure(result, "The Queue or full subscription name field is required.");
         }
         
         [Fact]
@@ -79,9 +104,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 .WithMaxMessages(101)
                 .Build();
             Mediator.SetupPeekMessages(options);
-            
+
             await Seba().Execute(new[]
-                {"subscription", "peek", "someTopic/someSubscription", "--max", "101"});
+                { "peek", "someTopic/someSubscription", "--max", "101" });
 
             Mediator.VerifyPeekMessagesOnce(options);
         }
@@ -93,9 +118,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 .WithIsDeadLetterSubQueue(true)
                 .Build();
             Mediator.SetupPeekMessages(options);
-        
+
             await Seba().Execute(new[]
-                {"subscription", "peek", "someTopic/someSubscription", "--dead-letter-queue"});
+                { "peek", "someTopic/someSubscription", "--dead-letter-queue" });
         
             Mediator.VerifyPeekMessagesOnce(options);
         }
@@ -107,9 +132,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
                 .WithMessageHandlingConcurrencyLevel(21)
                 .Build();
             Mediator.SetupPeekMessages(options);
-        
+
             await Seba().Execute(new[]
-                {"subscription", "peek", "someTopic/someSubscription", "--message-handling-concurrency-level", "21"});
+                { "peek", "someTopic/someSubscription", "--message-handling-concurrency-level", "21" });
         
             Mediator.VerifyPeekMessagesOnce(options);
         }
@@ -119,9 +144,9 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription
         {
             var options = new ReceiverOptionsBuilder().Build();
             Mediator.SetupPeekMessages(options);
-        
+
             await Seba().Execute(new[]
-                {"subscription", "peek", "someTopic/someSubscription", "--from-sequence-number", "101"});
+                { "peek", "someTopic/someSubscription", "--from-sequence-number", "101" });
         
             Mediator.VerifyPeekMessagesOnce(options, fromSequenceNumber: 101);
         }

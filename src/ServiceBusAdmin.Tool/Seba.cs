@@ -68,6 +68,7 @@ namespace ServiceBusAdmin.Tool
         
         private static CommandLineApplication ConfigureCommands(CommandLineApplication app, SebaContext context)
         {
+            app.Subcommand(new PeekCommand(context, app));
             app.Subcommand(new PropsCommand(context, app));
             app.Subcommand(new QueueCommand(context, app));
             app.Subcommand(new SendCommand(context, app));

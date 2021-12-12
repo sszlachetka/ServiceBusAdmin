@@ -1,7 +1,7 @@
 using MediatR;
 using ServiceBusAdmin.CommandHandlers.Models;
 
-namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
+namespace ServiceBusAdmin.CommandHandlers.Peek
 {
     public record PeekMessages(ReceiverOptions Options, MessageCallback Callback, long? FromSequenceNumber) : IRequest;
 }

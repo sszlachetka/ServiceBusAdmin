@@ -7,7 +7,7 @@ using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Send;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
-using ServiceBusAdmin.Tool.Subscription.Inputs;
+using ServiceBusAdmin.Tool.Input;
 using ServiceBusAdmin.Tool.Subscription.Receive.Options;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
@@ -15,19 +15,19 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
     public class SendCommand : SebaCommand
     {
         private readonly Func<long[]> _handleSequenceNumbers;
-        private readonly SubscriptionReceiverInput _subscriptionReceiverInput;
+        private readonly ReceiverInput _receiverInput;
 
         public SendCommand(SebaContext context,
             CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             Command.Description = "Receive messages from given subscription and send them back to the topic.";
             _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
-            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
+            _receiverInput = new ReceiverInput(Command);
         }
         
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var options = _receiverInput.CreateReceiverOptions();
             var sendToTopic = CreateSendToTopicCallback(options);
             var handleSequenceNumbersDecorator =
                 new HandleSequenceNumbersDecorator(Console, _handleSequenceNumbers(), sendToTopic.Callback);

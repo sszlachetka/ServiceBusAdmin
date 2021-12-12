@@ -11,7 +11,6 @@ namespace ServiceBusAdmin.Tool.Subscription
             Command.Subcommand(new PropsCommand(context, Command));
             Command.Subcommand(new CreateCommand(context, Command));
             Command.Subcommand(new DeleteCommand(context, Command));
-            Command.Subcommand(new PeekCommand(context, Command));
             Command.Subcommand(new ListCommand(context, Command));
             Command.Subcommand(new ReceiveCommand(context, Command));
         }

@@ -86,16 +86,21 @@ seba subscription props topic1/sub1
 ```
 
 ### 3. Peek messages
-Number of peeked messages can be controlled with `-m|--max` option (by default it's 10). You can peek message body, metadata or both at a time. This is controlled with `-o|--output-content` option, which can take one of following values: `metadata`, `body`, `all`.
+Messages can be peeked from a queue or a subscription. Number of peeked messages can be controlled with `-m|--max` option (by default it's 10). You can peek message body, metadata or both at a time. This is controlled with `-o|--output-content` option, which can take one of following values: `metadata`, `body`, `all`. By default only message metadata is peeked.
 
-Peek first 20 messages and return only metadata
+Peek metadata of first 10 messages from a queue
 ```shell
-seba subscription peek topic1/sub1 -m 20 -o metadata
+seba peek queue1
+```
+
+Peek body of first 20 messages from a subscription. Full subscription name must be provided in following format <topic name>/<subscription name>.
+```shell
+seba peek topic1/sub1 -m 20 -o body
 ```
 
 To peek messages from specific sequence number use `-fs|--from-sequence-number` option
 ```shell
-seba subscription peek topic1/sub1 -fs 1995
+seba peek topic1/sub1 -fs 1995
 ```
 
 ### 4. Filter peeked messages
@@ -103,7 +108,7 @@ Please note that filtering takes place on your machine. ServiceBusAdmin peeks re
 
 Peek and write messages to `output.json` file
 ```shell
-seba subscription peek topic1/sub1 -m 2001 -o all > output.json
+seba peek topic1/sub1 -m 2001 -o all > output.json
 ```
 Filtering scenarios described below use data from `output.json` file.
 

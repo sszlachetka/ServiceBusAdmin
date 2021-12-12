@@ -11,11 +11,11 @@ namespace ServiceBusAdmin.Tool.Tests.Subscription.Receive
     {
         [Theory]
         [ClassData(typeof(ReceiveSubCommands))]
-        public async Task Full_subscription_name_is_required(string subCommand)
+        public async Task Queue_or_full_subscription_name_is_required(string subCommand)
         {
             var result = await Seba().Execute(new[] {"subscription", "receive", subCommand});
 
-            AssertFailure(result, "The Full subscription name field is required.");
+            AssertFailure(result, "The Queue or full subscription name field is required.");
         }
         
         [Theory]

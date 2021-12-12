@@ -6,14 +6,16 @@ namespace ServiceBusAdmin.CommandHandlers.Subscription
     {
         public static ServiceBusReceiver Create(ServiceBusClient client, ReceiverOptions options)
         {
-            var entity = options.EntityName;
+            var entityName = options.EntityName;
             var serviceBusReceiverOptions = new ServiceBusReceiverOptions
             {
                 SubQueue = options.IsDeadLetterSubQueue ? SubQueue.DeadLetter : SubQueue.None,
                 PrefetchCount = options.IsDeadLetterSubQueue ? default : 100
             };
 
-            return client.CreateReceiver(entity.TopicName(), entity.SubscriptionName(), serviceBusReceiverOptions);
+            return entityName.IsQueue 
+                ? client.CreateReceiver(entityName.QueueName(), serviceBusReceiverOptions) 
+                : client.CreateReceiver(entityName.TopicName(), entityName.SubscriptionName(), serviceBusReceiverOptions);
         }
     }
 }

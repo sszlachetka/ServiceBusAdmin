@@ -5,7 +5,7 @@ using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.Tool.Options;
 using ServiceBusAdmin.Tool.Subscription.Options;
 
-namespace ServiceBusAdmin.Tool.Subscription.Inputs
+namespace ServiceBusAdmin.Tool.Input
 {
     internal class PrintToConsoleInput
     {

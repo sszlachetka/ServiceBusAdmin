@@ -1,24 +1,24 @@
 using System;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers;
-using ServiceBusAdmin.Tool.Subscription.Arguments;
+using ServiceBusAdmin.Tool.Arguments;
 using ServiceBusAdmin.Tool.Subscription.Options;
 
-namespace ServiceBusAdmin.Tool.Subscription.Inputs
+namespace ServiceBusAdmin.Tool.Input
 {
-    public class SubscriptionReceiverInput
+    public class ReceiverInput
     {
-        private readonly Func<(string topic, string subscription)> _getFullSubscriptionName;
+        private readonly Func<ReceiverEntityName> _getReceiverEntityName;
         private readonly Func<int> _getMaxMessages;
         private readonly Func<bool> _getIsDeadLetterSubQueue;
         private readonly Func<int> _getMessageHandlingConcurrencyLevel;
 
-        public SubscriptionReceiverInput(
+        public ReceiverInput(
             CommandLineApplication command,
             string? maxMessagesDescription = null, 
             bool enableDeadLetterSwitch = true)
         {
-            _getFullSubscriptionName = command.ConfigureFullSubscriptionNameArgument();
+            _getReceiverEntityName = command.ConfigureReceiverEntityNameArgument();
             _getMaxMessages = command.ConfigureMaxMessagesOption(description: maxMessagesDescription);
             _getIsDeadLetterSubQueue = enableDeadLetterSwitch
                 ? command.ConfigureIsDeadLetterSubQueue()
@@ -28,10 +28,8 @@ namespace ServiceBusAdmin.Tool.Subscription.Inputs
 
         public ReceiverOptions CreateReceiverOptions()
         {
-            var (topic, subscription) = _getFullSubscriptionName();
-
             return new ReceiverOptions(
-                new ReceiverEntityName(topic, subscription),
+                _getReceiverEntityName(),
                 _getMaxMessages(),
                 _getIsDeadLetterSubQueue(),
                 _getMessageHandlingConcurrencyLevel());

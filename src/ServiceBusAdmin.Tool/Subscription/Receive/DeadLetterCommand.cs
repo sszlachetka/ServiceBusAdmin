@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
-using ServiceBusAdmin.Tool.Subscription.Inputs;
+using ServiceBusAdmin.Tool.Input;
 using ServiceBusAdmin.Tool.Subscription.Receive.Options;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
@@ -12,7 +12,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
     public class DeadLetterCommand : SebaCommand
     {
         private readonly Func<long[]> _handleSequenceNumbers;
-        private readonly SubscriptionReceiverInput _subscriptionReceiverInput;
+        private readonly ReceiverInput _receiverInput;
 
         public DeadLetterCommand(SebaContext context,
             CommandLineApplication parentCommand) : base(context,
@@ -22,7 +22,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
             Command.Description = "Receive messages from given subscription and move them to the dead letter queue. " +
                                   "The command prints sequence numbers of dead lettered messages.";
             _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
-            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command, enableDeadLetterSwitch: false);
+            _receiverInput = new ReceiverInput(Command, enableDeadLetterSwitch: false);
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
@@ -32,7 +32,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
                 new HandleSequenceNumbersDecorator(Console, _handleSequenceNumbers(), deadLetterMessage.Callback);
             var validateDecorator = new ValidateUniqueSequenceNumberDecorator(handleSequenceNumbersDecorator.Callback);
 
-            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var options = _receiverInput.CreateReceiverOptions();
             var receiveMessages = new ReceiveMessages(options, validateDecorator.Callback);
 
             await Mediator.Send(receiveMessages, cancellationToken);

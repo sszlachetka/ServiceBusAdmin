@@ -6,7 +6,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Arguments
 {
     public static class FullSubscriptionName
     {
-        private const string ExpectedFormat = "<topic name>/<subscription name>";
+        public const string ExpectedFormat = "<topic name>/<subscription name>";
         private const string Name = "Full subscription name";
         private const string Description = "The name must be provided in following format " + ExpectedFormat + ".";
 
@@ -20,7 +20,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Arguments
             return () => ParseFullSubscriptionName(argument);
         }
 
-        private static (string topic, string subscription) ParseFullSubscriptionName(this CommandArgument<string> argument)
+        public static (string topic, string subscription) ParseFullSubscriptionName(this CommandArgument<string> argument)
         {
             var value = Validate(argument);
             var topicSubscription = value.Split('/');

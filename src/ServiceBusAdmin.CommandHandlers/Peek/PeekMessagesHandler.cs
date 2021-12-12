@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using MediatR;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.CommandHandlers.Subscription;
 
-namespace ServiceBusAdmin.CommandHandlers.Subscription.Peek
+namespace ServiceBusAdmin.CommandHandlers.Peek
 {
     internal class PeekMessagesHandler : IRequestHandler<PeekMessages>
     {

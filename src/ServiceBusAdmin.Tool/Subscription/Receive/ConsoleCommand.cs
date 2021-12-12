@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
-using ServiceBusAdmin.Tool.Subscription.Inputs;
+using ServiceBusAdmin.Tool.Input;
 using ServiceBusAdmin.Tool.Subscription.Receive.Options;
 
 namespace ServiceBusAdmin.Tool.Subscription.Receive
@@ -12,7 +12,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
     public class ConsoleCommand : SebaCommand
     {
         private readonly Func<long[]> _handleSequenceNumbers;
-        private readonly SubscriptionReceiverInput _subscriptionReceiverInput;
+        private readonly ReceiverInput _receiverInput;
         private readonly PrintToConsoleInput _printToConsoleInput;
 
         public ConsoleCommand(
@@ -21,7 +21,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
         {
             Command.Description = "Receive messages from specified subscription and print them to the console.";
             _handleSequenceNumbers = Command.ConfigureHandleSequenceNumbers();
-            _subscriptionReceiverInput = new SubscriptionReceiverInput(Command);
+            _receiverInput = new ReceiverInput(Command);
             _printToConsoleInput = new PrintToConsoleInput(Command);
         }
 
@@ -33,7 +33,7 @@ namespace ServiceBusAdmin.Tool.Subscription.Receive
                 new HandleSequenceNumbersDecorator(Console, _handleSequenceNumbers(), completeMessageDecorator.Callback);
             var validateDecorator = new ValidateUniqueSequenceNumberDecorator(handleSequenceNumbersDecorator.Callback);
 
-            var options = _subscriptionReceiverInput.CreateReceiverOptions();
+            var options = _receiverInput.CreateReceiverOptions();
             var receiveMessages = new ReceiveMessages(options, validateDecorator.Callback);
 
             await Mediator.Send(receiveMessages, cancellationToken);

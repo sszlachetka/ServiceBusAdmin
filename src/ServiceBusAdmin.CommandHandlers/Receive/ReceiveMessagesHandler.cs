@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using MediatR;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.CommandHandlers.Subscription;
 
-namespace ServiceBusAdmin.CommandHandlers.Subscription.Receive
+namespace ServiceBusAdmin.CommandHandlers.Receive
 {
     internal class ReceiveMessagesHandler : IRequestHandler<ReceiveMessages>
     {

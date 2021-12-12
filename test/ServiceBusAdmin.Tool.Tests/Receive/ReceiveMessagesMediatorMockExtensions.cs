@@ -6,8 +6,8 @@ using MediatR;
 using Moq;
 using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.CommandHandlers.Receive;
 using ServiceBusAdmin.CommandHandlers.Send;
-using ServiceBusAdmin.CommandHandlers.Subscription.Receive;
 
 namespace ServiceBusAdmin.Tool.Tests.Receive
 {

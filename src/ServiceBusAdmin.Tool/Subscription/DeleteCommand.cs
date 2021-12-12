@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Subscription.Delete;
-using ServiceBusAdmin.Tool.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
 {
@@ -13,7 +12,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public DeleteCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Delete a subscription.";
+            Command.Description = "Delete given subscription.";
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 

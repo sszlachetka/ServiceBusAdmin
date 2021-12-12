@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Subscription.Props;
-using ServiceBusAdmin.Tool.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
 {

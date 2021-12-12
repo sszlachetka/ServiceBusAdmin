@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Subscription.Create;
-using ServiceBusAdmin.Tool.Subscription.Arguments;
 
 namespace ServiceBusAdmin.Tool.Subscription
 {
@@ -13,7 +12,7 @@ namespace ServiceBusAdmin.Tool.Subscription
 
         public CreateCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Create new subscription.";
+            Command.Description = "Create a subscription.";
             _getFullSubscriptionName = Command.ConfigureFullSubscriptionNameArgument();
         }
 

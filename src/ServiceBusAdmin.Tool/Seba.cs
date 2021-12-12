@@ -3,6 +3,11 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBusAdmin.CommandHandlers;
+using ServiceBusAdmin.Tool.Peek;
+using ServiceBusAdmin.Tool.Queue;
+using ServiceBusAdmin.Tool.Receive;
+using ServiceBusAdmin.Tool.Send;
+using ServiceBusAdmin.Tool.SendBatch;
 using ServiceBusAdmin.Tool.Subscription;
 using ServiceBusAdmin.Tool.Topic;
 
@@ -65,9 +70,14 @@ namespace ServiceBusAdmin.Tool
         
         private static CommandLineApplication ConfigureCommands(CommandLineApplication app, SebaContext context)
         {
+            app.Subcommand(new PeekCommand(context, app));
             app.Subcommand(new PropsCommand(context, app));
-            app.Subcommand(new TopicCommand(context, app));
+            app.Subcommand(new QueueCommand(context, app));
+            app.Subcommand(new ReceiveCommand(context, app));
+            app.Subcommand(new SendCommand(context, app));
+            app.Subcommand(new SendBatchCommand(context, app));
             app.Subcommand(new SubscriptionCommand(context, app));
+            app.Subcommand(new TopicCommand(context, app));
 
             return app;
         }

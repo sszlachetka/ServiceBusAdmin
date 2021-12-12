@@ -1,23 +1,23 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
-using ServiceBusAdmin.CommandHandlers.Topic.List;
+using ServiceBusAdmin.CommandHandlers.Queue.List;
 
-namespace ServiceBusAdmin.Tool.Topic
+namespace ServiceBusAdmin.Tool.Queue
 {
     public class ListCommand: SebaCommand
     {
         public ListCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "List topics.";
+            Command.Description = "List queues.";
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)
         {
-            var topicsNames = await Mediator.Send(new ListTopics(), cancellationToken);
-            foreach (var topicName in topicsNames)
+            var queues = await Mediator.Send(new ListQueues(), cancellationToken);
+            foreach (var queue in queues)
             {
-                Console.Info(topicName);
+                Console.Info(queue);
             }
         }
     }

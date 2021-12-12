@@ -8,10 +8,10 @@ using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests.Receive
 {
-    public class SendCommandTests : SebaCommandTests
+    public class ResendCommandTests : SebaCommandTests
     {
         [Fact]
-        public async Task Sends_received_messages_back_to_the_topic()
+        public async Task Resends_received_messages_back_to_the_topic()
         {
             var messages = new[]
             {
@@ -25,7 +25,7 @@ namespace ServiceBusAdmin.Tool.Tests.Receive
             Mediator.SetupReceiveMessages(options, messages.Cast<IReceivedMessage>().ToArray());
             Mediator.SetupSendAnyMessage();
 
-            var result = await Seba().Execute(new[] { "receive", "send", "topic1/sub2" });
+            var result = await Seba().Execute(new[] { "receive", "resend", "topic1/sub2" });
 
             AssertSuccess(result);
             AssertConsoleOutput("3", "5", "9");
@@ -38,7 +38,7 @@ namespace ServiceBusAdmin.Tool.Tests.Receive
         }
         
         [Fact]
-        public async Task Sends_received_messages_back_to_the_queue()
+        public async Task Resends_received_messages_back_to_the_queue()
         {
             var messages = new[]
             {
@@ -52,7 +52,7 @@ namespace ServiceBusAdmin.Tool.Tests.Receive
             Mediator.SetupReceiveMessages(options, messages.Cast<IReceivedMessage>().ToArray());
             Mediator.SetupSendAnyMessage();
 
-            var result = await Seba().Execute(new[] { "receive", "send", "queue58" });
+            var result = await Seba().Execute(new[] { "receive", "resend", "queue58" });
 
             AssertSuccess(result);
             AssertConsoleOutput("3", "5", "9");

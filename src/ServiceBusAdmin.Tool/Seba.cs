@@ -6,6 +6,7 @@ using ServiceBusAdmin.CommandHandlers;
 using ServiceBusAdmin.Tool.Peek;
 using ServiceBusAdmin.Tool.Queue;
 using ServiceBusAdmin.Tool.Receive;
+using ServiceBusAdmin.Tool.Send;
 using ServiceBusAdmin.Tool.SendBatch;
 using ServiceBusAdmin.Tool.Subscription;
 using ServiceBusAdmin.Tool.Topic;

@@ -9,16 +9,15 @@ using ServiceBusAdmin.CommandHandlers.Receive;
 using ServiceBusAdmin.CommandHandlers.Send;
 using ServiceBusAdmin.Tool.Input;
 using ServiceBusAdmin.Tool.Options;
-using ServiceBusAdmin.Tool.Subscription.Options;
 
 namespace ServiceBusAdmin.Tool.Receive
 {
-    public class SendCommand : SebaCommand
+    public class ResendCommand : SebaCommand
     {
         private readonly Func<long[]> _handleSequenceNumbers;
         private readonly ReceiverInput _receiverInput;
 
-        public SendCommand(SebaContext context,
+        public ResendCommand(SebaContext context,
             CommandLineApplication parentCommand) : base(context, parentCommand)
         {
             Command.Description = $"Receive messages from given entity and send them back to the entity of origin. Main use case of this command is to receive messages from DLQ (use {IsDeadLetterSubQueue.Template} option for this purpose) and send them back to the queue or topic.";

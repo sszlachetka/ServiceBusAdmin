@@ -86,7 +86,7 @@ seba subscription props topic1/sub1
 ```
 
 ### 3. Peek messages
-Messages can be peeked from a queue or a subscription. Number of peeked messages can be controlled with `-m|--max` option (by default it's 10). You can peek message body, metadata or both at a time. This is controlled with `-o|--output-content` option, which can take one of following values: `metadata`, `body`, `all`. By default only message metadata is peeked.
+Messages can be peeked from a queue or subscription. Number of peeked messages can be controlled with `-m|--max` option (by default it's 10). You can peek message body, metadata or both at a time. This is controlled with `-o|--output-content` option, which can take one of following values: `metadata`, `body`, `all`. By default only message metadata is peeked.
 
 Peek metadata of first 10 messages from a queue
 ```shell
@@ -138,10 +138,10 @@ cat output.json | jq -c 'select(.metadata.messageId == "777")'
 ```
 
 ### 5. Receive messages
-Messages can be received from a queue or a subscription. ServiceBusAdmin uses [peek-lock mode](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock) when receiving messages. `receive` command supports following sub-commands (which you can use to decide what will happen with a received message):
+Messages can be received from a queue or subscription. ServiceBusAdmin uses [peek-lock mode](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock) when receiving messages. `receive` command supports following sub-commands (which you can use to decide what will happen with a received message):
 - `console` - print message to the console and complete the message
 - `dead-letter` - move message to dead-letter queue
-- `send` - send copy of a message back to the queue or topic and complete the original message. Main use case of this sub-command is to move messages from DLQ back to the entity of origin.
+- `resend` - send copy of a message back to the queue or topic and complete the original message. Main use case of this sub-command is to move messages from DLQ back to the entity of origin.
 
 Move first 1000 messages from subscription to its dead-letter queue 
 ```shell
@@ -160,10 +160,10 @@ seba receive dead-letter queue1 --max 1000 --message-handling-concurrency-level 
 
 Move first 1000 messages from subscription's dead-letter queue back to the topic. Handle concurrently up to 20 messages at a time. Please note that when messages are moved from DLQ to other Service Bus entities, then they get new sequence numbers, so the order in which messages are sent is meaningful. Using `--message-handling-concurrency-level` option when moving messages from DLQ to other Service Bus entity may change the order of messages.
 ```shell
-seba receive send topic1/sub1 -dlq --max 1000 --message-handling-concurrency-level 20
+seba receive resend topic1/sub1 -dlq --max 1000 --message-handling-concurrency-level 20
 ```
 
 Move three messages with sequence numbers 1699, 1799 and 1899 from subscription's dead-letter queue back to the topic.
 ```shell
-seba receive send topic1/sub1 -dlq --max 1000 --message-handling-concurrency-level 20 --handle-sequence-numbers 1699,1799,1899
+seba receive resend topic1/sub1 -dlq --max 1000 --message-handling-concurrency-level 20 --handle-sequence-numbers 1699,1799,1899
 ```

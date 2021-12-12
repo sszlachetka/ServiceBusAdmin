@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.Tool.Receive
             Command.Description = "Receive messages from given entity and handle them with a sub-command.";
             Command.Subcommand(new ConsoleCommand(context, Command));
             Command.Subcommand(new DeadLetterCommand(context, Command));
-            Command.Subcommand(new SendCommand(context, Command));
+            Command.Subcommand(new ResendCommand(context, Command));
         }
     }
 }

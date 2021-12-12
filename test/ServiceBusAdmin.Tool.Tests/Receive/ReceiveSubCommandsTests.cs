@@ -181,7 +181,7 @@ namespace ServiceBusAdmin.Tool.Tests.Receive
         public ReceiveSubCommandsSupportingDlq()
         {
             Add("console");
-            Add("send");
+            Add("resend");
         }
     }
 

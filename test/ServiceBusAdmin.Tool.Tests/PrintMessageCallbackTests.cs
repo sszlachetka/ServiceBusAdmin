@@ -5,7 +5,7 @@ using FluentAssertions;
 using FluentAssertions.Json;
 using Newtonsoft.Json.Linq;
 using ServiceBusAdmin.CommandHandlers.Models;
-using ServiceBusAdmin.Tool.Subscription.Options;
+using ServiceBusAdmin.Tool.Options;
 using Xunit;
 
 namespace ServiceBusAdmin.Tool.Tests

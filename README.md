@@ -33,14 +33,8 @@ Output format of ServiceBusAdmin is JSON so peeked messages can be easily filter
    seba subscription peek <topic_name>/<subscription_name> -dlq --max 20
     ```
    This will return only messages' metadata. If you need their body as well, then use additional option `--output-content all`
-7. Every command supports `--help` option. Use it to find out more about all supported options, arguments and sub-commands.
+7. Every command and sub-command has `--help` option. Use it to find out more about all other supported options, arguments and sub-commands. Start reading from the root command.
    ```shell
-   seba peek --help
-   seba receive --help
-   seba send --help
-   seba send-batch --help
-   seba queue --help
-   seba topic --help
-   seba subscription --help
+   seba --help
     ```
 8. Advanced usage scenarios can be found in this [documentation page](https://github.com/sszlachetka/ServiceBusAdmin/blob/master/docs/advanced-usage-scenarios.md).

@@ -76,6 +76,7 @@ namespace ServiceBusAdmin.Tool
             app.Subcommand(new ReceiveCommand(context, app));
             app.Subcommand(new SendCommand(context, app));
             app.Subcommand(new SendBatchCommand(context, app));
+            app.Subcommand(new StatusCommand(context, app));
             app.Subcommand(new SubscriptionCommand(context, app));
             app.Subcommand(new TopicCommand(context, app));
 

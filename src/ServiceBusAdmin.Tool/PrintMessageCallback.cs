@@ -2,8 +2,8 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using ServiceBusAdmin.CommandHandlers.Models;
+using ServiceBusAdmin.Tool.Options;
 using ServiceBusAdmin.Tool.Serialization;
-using ServiceBusAdmin.Tool.Subscription.Options;
 
 namespace ServiceBusAdmin.Tool
 {

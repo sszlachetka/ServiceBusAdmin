@@ -11,7 +11,7 @@ namespace ServiceBusAdmin.Tool.Options
         {
             var option = command.Option(
                 Template,
-                "Fetch messages from dead letter sub-queue, which corresponds to specified service bus entity.",
+                "Fetch messages from dead letter queue of given Service Bus entity.",
                 CommandOptionType.NoValue);
 
             return () => option.HasValue();

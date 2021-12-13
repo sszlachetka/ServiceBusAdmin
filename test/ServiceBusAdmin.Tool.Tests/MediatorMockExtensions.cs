@@ -33,6 +33,15 @@ namespace ServiceBusAdmin.Tool.Tests
                 .Callback((IRequest<Unit> request, CancellationToken _) => callback((TRequest)request))
                 .ReturnsAsync(Unit.Value);
         }
+        
+        public static void Setup<TRequest>(this Mock<IMediator> mock, 
+            Func<TRequest, Task> callback)
+            where TRequest : IRequest
+        {
+            mock.Setup(x => x.Send(It.IsAny<TRequest>(), It.IsAny<CancellationToken>()))
+                .Callback((IRequest<Unit> request, CancellationToken _) => callback((TRequest)request))
+                .ReturnsAsync(Unit.Value);
+        }
 
         public static void VerifyOnce<TRequest>(this Mock<IMediator> mock, TRequest request)
             where TRequest : IRequest
@@ -43,7 +52,7 @@ namespace ServiceBusAdmin.Tool.Tests
         public static void VerifyOnce<TRequest>(this Mock<IMediator> mock, Expression<Func<TRequest, bool>> requestMatch)
             where TRequest : IRequest
         {
-            mock.Verify(x => x.Send(It.Is<TRequest>(requestMatch), It.IsAny<CancellationToken>()), Times.Once);
+            mock.Verify(x => x.Send(It.Is(requestMatch), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Text;
 using McMaster.Extensions.CommandLineUtils;
 using ServiceBusAdmin.CommandHandlers.Models;
 using ServiceBusAdmin.Tool.Options;
-using ServiceBusAdmin.Tool.Subscription.Options;
 
 namespace ServiceBusAdmin.Tool.Input
 {

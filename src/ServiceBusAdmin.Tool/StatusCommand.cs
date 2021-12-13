@@ -9,7 +9,7 @@ namespace ServiceBusAdmin.Tool
     {
         public StatusCommand(SebaContext context, CommandLineApplication parentCommand) : base(context, parentCommand)
         {
-            Command.Description = "Return status of queues and subscriptions.";
+            Command.Description = "Return status of all queues and subscriptions.";
         }
 
         protected override async Task Execute(CancellationToken cancellationToken)

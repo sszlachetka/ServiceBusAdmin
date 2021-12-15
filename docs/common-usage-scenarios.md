@@ -206,17 +206,12 @@ If needed, this is the right time to apply necessary changes to exported message
 seba send-batch queue1 -i exported-messages
 ```
 
-Now the `queue props`
-```shell
-seba queue props queue1
-```
-
-should indicate that we have 4 additional active messages
+Now `seba queue props queue1` indicates that we have 4 additional active messages
 ```json
 {"activeMessageCount":1004,"deadLetterMessageCount":1000}
 ```
 
-You can verify their content by peeking messages from sequence number 2001
+Their content can be verified by peeking messages from sequence number 2001
 ```shell
 seba peek queue1 -o all --from-sequence-number 2001
 ```

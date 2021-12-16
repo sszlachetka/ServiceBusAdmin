@@ -94,7 +94,7 @@ Peek metadata of first 10 messages from a queue
 seba peek queue1
 ```
 
-Peek body of first 20 messages from a subscription. Full subscription name must be provided in following format <topic name>/<subscription name>.
+Peek body of first 20 messages from a subscription. Full subscription name must be provided in following format `<topic name>/<subscription name>`.
 ```shell
 seba peek topic1/sub1 -m 20 -o body
 ```
@@ -186,10 +186,10 @@ seba queue props queue1
 {"activeMessageCount":1000,"deadLetterMessageCount":1000}
 ```
 
-Let's peek a few messages from the DLQ of `queue1` and filter them by arbitrary application property. The command writes filtered messages to `exported-messages` file.
+Let's peek a few messages from the DLQ of `queue1` and filter them by arbitrary application property. The command writes filtered messages to `exported-messages.json` file.
 
 ```shell
-seba peek queue1 -dlq --max 1000 -o all | jq -c 'select(.metadata.applicationProperties.prop1 | . > 250 and . < 260)' > exported-messages
+seba peek queue1 -dlq --max 1000 -o all | jq -c 'select(.metadata.applicationProperties.prop1 | . > 250 and . < 260)' > exported-messages.json
 ```
 
 The file should contain 4 messages with `messageId`: 126, 127, 128, 129 (`enqueuedTime` and `expiresAt` fields were removed from the content below to make it more readable)
@@ -203,7 +203,7 @@ The file should contain 4 messages with `messageId`: 126, 127, 128, 129 (`enqueu
 If needed, this is the right time to apply necessary changes to exported messages. Once the file is ready, messages can be imported with `send-batch` command
 
 ```shell
-seba send-batch queue1 -i exported-messages
+seba send-batch queue1 -i exported-messages.json
 ```
 
 Now `seba queue props queue1` indicates that we have 4 additional active messages

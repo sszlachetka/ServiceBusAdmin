@@ -215,3 +215,13 @@ Their content can be verified by peeking messages from sequence number 2001
 ```shell
 seba peek queue1 -o all --from-sequence-number 2001
 ```
+
+Since messages in `exported-messages.json` file were effectively copied from DLQ to the queue of origin, then they can be safely removed from the DLQ. It can be achieved in two steps:
+1. Extract sequence numbers of messages to be removed from `exported-messages.json` file
+    ```shell
+    cat exported-messages.json | jq .metadata.sequenceNumber | tr '\n' ','
+    ```
+2. Complete messages with extracted sequence numbers by receiving them and printing to the console
+    ```shell
+    seba receive console queue1 -dlq --max 1000 --handle-sequence-numbers 126,127,128,129
+    ```

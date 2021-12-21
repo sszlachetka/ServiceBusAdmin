@@ -22,7 +22,7 @@ namespace ServiceBusAdmin.CommandHandlers.Peek
         {
             var (options, messageHandler, fromSequenceNumber) = request;
             await using var client = _clientFactory.ServiceBusClient();
-            await using var receiver = SubscriptionReceiverFactory.Create(client, options);
+            await using var receiver = ReceiverFactory.Create(client, options);
 
             var peekedCount = 0;
             IReadOnlyList<ServiceBusReceivedMessage> messages;

@@ -12,6 +12,7 @@ namespace ServiceBusAdmin.CommandHandlers.Receive
 {
     internal class ReceiveMessagesHandler : IRequestHandler<ReceiveMessages>
     {
+        private const int MaxReceivePageSize = 250; 
         private static readonly TimeSpan ReceiveMaxWaitTime = TimeSpan.FromSeconds(3);
         private readonly ServiceBusClientFactory _clientFactory;
 
@@ -22,9 +23,28 @@ namespace ServiceBusAdmin.CommandHandlers.Receive
 
         public async Task<Unit> Handle(ReceiveMessages request, CancellationToken cancellationToken)
         {
+            var (receiverOptions, receivedMessageCallback) = request;
+            var toReceiveCount = receiverOptions.MaxMessages;
+            var receivedCount = 0;
+            while (receivedCount < toReceiveCount)
+            {
+                var notReceivedCount = toReceiveCount - receivedCount;
+                var pageSize = notReceivedCount > MaxReceivePageSize ? MaxReceivePageSize : notReceivedCount;
+
+                await Receive(new ReceiveMessages(receiverOptions with { MaxMessages = pageSize }, receivedMessageCallback),
+                    cancellationToken);
+
+                receivedCount += pageSize;
+            }
+
+            return Unit.Value;
+        }
+
+        private async Task Receive(ReceiveMessages request, CancellationToken cancellationToken)
+        {
             await using var client = _clientFactory.ServiceBusClient();
             var (options, receivedMessageHandler) = request;
-            await using var receiver = SubscriptionReceiverFactory.Create(client, options);
+            await using var receiver = ReceiverFactory.Create(client, options);
 
             var receivedCount = 0;
             IReadOnlyList<ServiceBusReceivedMessage> messages;
@@ -32,15 +52,13 @@ namespace ServiceBusAdmin.CommandHandlers.Receive
             {
                 messages = await receiver.ReceiveMessagesAsync(options.MaxMessages - receivedCount,
                     ReceiveMaxWaitTime, cancellationToken);
-                
+
                 if (messages.Count == 0) continue;
 
                 receivedCount += messages.Count;
                 var receivedMessages = messages.Select(m => m.MapToReceivedMessage(receiver)).ToList();
                 await HandleReceivedMessages(receivedMessages, receivedMessageHandler, options.MessageHandlingConcurrencyLevel);
             } while (messages.Count > 0 && receivedCount < options.MaxMessages);
-            
-            return Unit.Value;
         }
 
         private static async Task HandleReceivedMessages(

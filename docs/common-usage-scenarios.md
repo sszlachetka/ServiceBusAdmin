@@ -31,7 +31,7 @@ A massage can be send to a queue
 seba send queue1 -m '{"body":{"someKey":69},"metadata":{"applicationProperties":{"key1":"value1"}}}'
 ```
 
-or to a topic
+or topic
 ```shell
 seba send topic1 -m '{"body":{"someKey":69},"metadata":{"applicationProperties":{"key1":"value1"}}}'
 ```
@@ -69,19 +69,19 @@ Messages can be send in batch to a queue
 seba send-batch queue1 -i input.json
 ```
 
-or to a topic
+or topic
 ```shell
 seba send-batch topic1 -i input.json
 ```
 
 JSON schema of messages (lines in the input file provided to `send-batch` command) is the same as the schema of message supported by `send` command and can be found [here](input-message-schema.json).
 
-Verify number of messages in a queue 
+Verify number of messages in the queue 
 ```shell
 seba queue props queue1
 ```
 
-or in a subscription
+or subscription
 ```shell
 seba subscription props topic1/sub1
 ```

@@ -20,21 +20,17 @@ Output format of ServiceBusAdmin is JSON so peeked messages can be easily filter
      ```json
     {"NamespaceName":"ssz-playground","CreatedTime":"2021-11-08T09:24:12.41+00:00","ModifiedTime":"2021-11-09T09:23:31.117+00:00"}
     ```
-4. List topics
+4. Check status of entities in your Service Bus Namespace
    ```shell
-   seba topic list
+   seba status
     ```
-5. List subscriptions
-   ```shell
-   seba subscription list <topic_name>
-    ```
-6. Peek messages from a subscription's dead letter queue
+5. Peek messages from a subscription's dead letter queue
    ```shell
    seba subscription peek <topic_name>/<subscription_name> -dlq --max 20
     ```
    This will return only messages' metadata. If you need their body as well, then use additional option `--output-content all`
-7. Every command has `--help` option. Use it to find out more about supported options, arguments and sub-commands. Start reading from the root command.
+6. Every command has `--help` option. Use it to find out more about supported options, arguments and sub-commands.
    ```shell
    seba --help
     ```
-8. Common usage scenarios can be found on this [documentation page](https://github.com/sszlachetka/ServiceBusAdmin/blob/master/docs/common-usage-scenarios.md).
+7. Common usage scenarios can be found on this [documentation page](https://github.com/sszlachetka/ServiceBusAdmin/blob/master/docs/common-usage-scenarios.md).

@@ -2,7 +2,7 @@ using Azure.Messaging.ServiceBus;
 
 namespace ServiceBusAdmin.CommandHandlers.Subscription
 {
-    internal static class SubscriptionReceiverFactory
+    internal static class ReceiverFactory
     {
         public static ServiceBusReceiver Create(ServiceBusClient client, ReceiverOptions options)
         {

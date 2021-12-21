@@ -11,7 +11,7 @@ namespace ServiceBusAdmin.CommandHandlers
         }
 
         public ReceiverEntityName EntityName { get; }
-        public int MaxMessages { get; }
+        public int MaxMessages { get; init; }
         public bool IsDeadLetterSubQueue { get; }
         public int MessageHandlingConcurrencyLevel { get; }
     }

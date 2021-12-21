@@ -5,7 +5,6 @@ namespace ServiceBusAdmin.CommandHandlers
 {
     internal class ServiceBusClientFactory
     {
-        private ServiceBusAdministrationClient? _serviceBusAdministrationClient;
         private readonly GetServiceBusConnectionString _getConnectionString;
 
         public ServiceBusClientFactory(GetServiceBusConnectionString getConnectionString)
@@ -15,7 +14,7 @@ namespace ServiceBusAdmin.CommandHandlers
         
         public ServiceBusAdministrationClient AdministrationClient()
         {
-            return _serviceBusAdministrationClient ??= new (_getConnectionString());
+            return new (_getConnectionString());
         }
 
         public ServiceBusClient ServiceBusClient()
